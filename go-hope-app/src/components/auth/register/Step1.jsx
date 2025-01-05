@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import FormInput from "../../../utils/form/FormInput";
 import PasswordInput from "../../../utils/form/PasswordInput";
-import { useCheckEmail } from "../../../hooks/auth/useCheckEmail"; // Importation du hook personnalisé
+import { useCheckEmail } from "../../../hooks/auth/useAuthHooks";
 
 const Step1 = ({
   email,
@@ -19,16 +19,16 @@ const Step1 = ({
     password: null,
     confirmPassword: null,
   });
-  const [emailError, setEmailError] = useState(null); // Erreur spécifique pour l'email
+  const [emailError, setEmailError] = useState(null);
 
-  const { loading, error, validateEmail } = useCheckEmail(); // Utilisation du hook
+  const { loading, error, handleCheckEmail } = useCheckEmail(); // Utilisation correcte du hook
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLocalError({ email: null, password: null, confirmPassword: null });
     setEmailError(null);
 
-    // Vérification locale de l'email
+    // Validation locale de l'email
     const emailPattern = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
     if (!emailPattern.test(email)) {
       setLocalError((prevErrors) => ({
@@ -39,14 +39,14 @@ const Step1 = ({
     }
 
     try {
-      // Appel du hook pour vérifier si l'email existe
-      const emailExists = await validateEmail(email);
+      // Vérifie si l'email existe
+      const emailExists = await handleCheckEmail({ email }); // Envoie un objet { email }
       if (emailExists) {
         setEmailError("L'email est déjà utilisé.");
         return;
       }
 
-      // Passer à l'étape suivante si tout est valide
+      // Passe à l'étape suivante si tout est valide
       handleNextStep(e);
     } catch (err) {
       console.error("Erreur lors de la vérification de l'email :", err);
@@ -72,7 +72,7 @@ const Step1 = ({
             required
             onChange={(e) => setEmail(e.target.value)}
           />
-          {/* Affichage de l'erreur si l'email est déjà utilisé ou invalide */}
+          {/* Gestion des erreurs */}
           {emailError && (
             <p className="text-red-500 text-sm mt-1">{emailError}</p>
           )}

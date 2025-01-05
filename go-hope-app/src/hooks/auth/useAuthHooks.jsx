@@ -1,11 +1,10 @@
 import { useState } from "react";
 import {
-  registerEmployee,
+  register,
   checkEmail,
   resendVerificationEmail,
   verifyEmail,
   refreshAccessToken,
-  getAuthenticatedUser,
   loginUser,
   logoutUser,
   resetPassword,
@@ -13,11 +12,11 @@ import {
 
 export const useAuthHooks = () => {
   // Hook pour enregistrer un employé
-  const useRegisterEmployee = () => {
+  const useRegister = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    const handleRegisterEmployee = async ({
+    const handleRegister = async ({
       email,
       password,
       termsAccepted,
@@ -26,7 +25,7 @@ export const useAuthHooks = () => {
       setLoading(true);
       setError(null);
       try {
-        const data = await registerEmployee({
+        const data = await register({
           email,
           password,
           termsAccepted,
@@ -41,7 +40,7 @@ export const useAuthHooks = () => {
       }
     };
 
-    return { handleRegisterEmployee, loading, error };
+    return { handleRegister, loading, error };
   };
 
   // Hook pour vérifier si un email existe
@@ -70,22 +69,30 @@ export const useAuthHooks = () => {
   const useResendVerificationEmail = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [success, setSuccess] = useState(null);
 
     const handleResendVerificationEmail = async (email) => {
       setLoading(true);
       setError(null);
+      setSuccess(null);
       try {
         const data = await resendVerificationEmail(email);
+        setSuccess("L'email de vérification a été renvoyé avec succès.");
         return data;
       } catch (err) {
-        setError(err.message);
+        setError(err.message || "Une erreur est survenue lors de l'envoi.");
         throw err;
       } finally {
         setLoading(false);
       }
     };
 
-    return { handleResendVerificationEmail, loading, error };
+    return {
+      handleResendVerificationEmail,
+      loading,
+      error,
+      success,
+    };
   };
 
   // Hook pour vérifier un email
@@ -130,30 +137,6 @@ export const useAuthHooks = () => {
     };
 
     return { handleRefreshAccessToken, loading, error };
-  };
-
-  // Hook pour récupérer l'utilisateur authentifié
-  const useGetAuthenticatedUser = () => {
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
-    const [user, setUser] = useState(null);
-
-    const handleGetAuthenticatedUser = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const data = await getAuthenticatedUser();
-        setUser(data);
-        return data;
-      } catch (err) {
-        setError(err.message);
-        throw err;
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    return { user, handleGetAuthenticatedUser, loading, error };
   };
 
   // Hook pour connecter un utilisateur
@@ -223,12 +206,11 @@ export const useAuthHooks = () => {
   };
 
   return {
-    useRegisterEmployee,
+    useRegister,
     useCheckEmail,
     useResendVerificationEmail,
     useVerifyEmail,
     useRefreshAccessToken,
-    useGetAuthenticatedUser,
     useLoginUser,
     useLogoutUser,
     useResetPassword,

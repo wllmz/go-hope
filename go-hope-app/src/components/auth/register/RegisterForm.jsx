@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useRegisterEmployee } from "../../../hooks/auth/useRegisterEmployee"; // Importation du hook
+import { useRegister } from "../../../hooks/auth/useAuthHooks";
 import Step2 from "./Step2";
 import Step1 from "./Step1";
 import Step3 from "./Step3";
@@ -15,11 +15,18 @@ const RegisterEmployeeForm = () => {
   const [termsEmailAccepted, setTermsEmailAccepted] = useState(false);
   const [step, setStep] = useState(1);
   const [showPassword, setShowPassword] = useState(false);
+  const [formError, setFormError] = useState(null); // État local pour les erreurs
 
-  const { loading, error, success, handleRegister } = useRegisterEmployee(); // Utilisation du hook
+  const { loading, error, success, handleRegister } = useRegister();
 
   const handleNextStep = () => {
-    setStep(2);
+    setFormError(null); // Réinitialise les erreurs à chaque étape
+    setStep((prevStep) => prevStep + 1);
+  };
+
+  const goToPreviousStep = () => {
+    setFormError(null); // Réinitialise les erreurs à chaque étape
+    setStep((prevStep) => Math.max(prevStep - 1, 1));
   };
 
   const handleSubmit = async () => {
@@ -34,12 +41,8 @@ const RegisterEmployeeForm = () => {
       await handleRegister(data); // Appel au hook pour l'enregistrement
       setStep(3); // Passe à l'étape 3 en cas de succès
     } catch (err) {
-      console.error("Erreur d'enregistrement :", err);
+      setFormError(err.message || "Une erreur est survenue."); // Stocke l'erreur pour l'afficher
     }
-  };
-
-  const goBackToStepOne = () => {
-    setStep(1);
   };
 
   return (
@@ -74,7 +77,7 @@ const RegisterEmployeeForm = () => {
             confirmPassword={confirmPassword}
             setConfirmPassword={setConfirmPassword}
             handleNextStep={handleNextStep}
-            error={error}
+            error={formError || error} // Ajout de l'erreur locale ou globale
             showPassword={showPassword}
             setShowPassword={setShowPassword}
           />
@@ -87,10 +90,10 @@ const RegisterEmployeeForm = () => {
             termsEmailAccepted={termsEmailAccepted}
             setTermsEmailAccepted={setTermsEmailAccepted}
             handleSubmit={handleSubmit}
-            error={error}
+            error={formError || error} // Ajout de l'erreur locale ou globale
             success={success}
-            loading={loading} // Passer l'état de chargement au composant
-            goBackToStepOne={goBackToStepOne}
+            loading={loading}
+            goBackToStepOne={goToPreviousStep}
           />
         )}
 

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useLogin } from "../../../hooks/auth/useLogin";
+import { useLoginUser } from "../../../hooks/auth/useAuthHooks";
 import FormInput from "../../../utils/form/FormInput";
 import PasswordInput from "../../../utils/form/PasswordInput";
 import logo from "../../../assets/Logo-FLOW.png";
@@ -8,7 +8,7 @@ import background from "../../../assets/background-flow-parent.png";
 
 const LoginForm = () => {
   const navigate = useNavigate();
-  const { loading, error, handleLogin } = useLogin();
+  const { loading, error, handleLoginUser } = useLoginUser();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showSuccessMessage, setShowSuccessMessage] = useState(false); // État pour le message de succès
@@ -18,7 +18,7 @@ const LoginForm = () => {
     const data = { email, password };
 
     try {
-      const isSuccess = await handleLogin(data);
+      const isSuccess = await handleLoginUser(data);
       if (isSuccess) {
         setShowSuccessMessage(true); // Affiche le message de succès
         setTimeout(() => {

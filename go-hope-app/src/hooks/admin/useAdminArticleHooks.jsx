@@ -1,9 +1,5 @@
 import { useState } from "react";
-import {
-  createArticle,
-  updateArticle,
-  deleteArticle,
-} from "../../services/admin/adminArticleService";
+import { createArticle, updateArticle, deleteArticle } from "../../services/";
 
 export const useArticleHooks = () => {
   // Hook pour créer un article
