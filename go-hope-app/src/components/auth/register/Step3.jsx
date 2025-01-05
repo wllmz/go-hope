@@ -1,14 +1,22 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
-import { useResendEmail } from "../../../hooks/auth/useResendEmail"; // Importation du hook
+import { useResendVerificationEmail } from "../../../hooks/auth/useAuthHooks"; // Importation du hook
 
 const Step3 = ({ email }) => {
-  const { resendEmail, loading, errorMessage, successMessage } =
-    useResendEmail(); // Utilisation du hook
+  const {
+    handleResendVerificationEmail,
+    loading,
+    error: errorMessage,
+    success: successMessage,
+  } = useResendVerificationEmail(); // Utilisation correcte du hook
 
-  const handleResendEmail = () => {
-    resendEmail(email); // Appel du hook avec l'email
+  const handleResendEmail = async () => {
+    try {
+      await handleResendVerificationEmail(email); // Appel du hook avec l'email
+    } catch (err) {
+      console.error("Erreur lors de l'envoi de l'email de vérification :", err);
+    }
   };
 
   return (
@@ -18,7 +26,6 @@ const Step3 = ({ email }) => {
       </h1>
 
       <div className="bg-yellow-100 p-4 rounded-full m-8 flex justify-center items-center">
-        {/* Utilisation de l'icône Font Awesome centrée */}
         <FontAwesomeIcon
           icon={faEnvelope}
           className="text-[#ffab00] text-5xl"
@@ -48,7 +55,7 @@ const Step3 = ({ email }) => {
         {loading ? "Envoi en cours..." : "Renvoyez le mail de vérification"}
       </button>
 
-      {/* Affichage du message de succès ou d'erreur */}
+      {/* Affichage des messages de succès ou d'erreur */}
       {successMessage && (
         <p className="text-green-500 mt-4">{successMessage}</p>
       )}

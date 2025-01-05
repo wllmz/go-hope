@@ -1,6 +1,6 @@
 import axiosInstance from "../instance/axiosInstance";
 
-export const registerEmployee = async ({
+export const register = async ({
   email,
   password,
   termsAccepted,
