@@ -11,8 +11,6 @@ import authRoutes from "./routes/Auth/authRoute.js";
 import userRoutes from "./routes/User/userRoute.js";
 import adminRoute from "./routes/Admin/adminRoute.js";
 import patientAidantRoute from "./routes/Patient-aidant/patientAidantRoute.js";
-import specialiteRoute from "./routes/Patient-aidant/specialiteRoute.js";
-import patientAidantMetierRoute from "./routes/Patient-aidant/patientAidantMetierRoute.js";
 import atelierRoute from "./routes/Atelier/atelierRoute.js";
 import participantRoute from "./routes/Atelier/particpantRoute.js";
 import categoryRoute from "./routes/Article/categoriesRoute.js";
@@ -110,8 +108,6 @@ async function startServer() {
     app.use("/api/user", userRoutes);
     app.use("/api/admin", adminRoute);
     app.use("/api/patient-aidant", patientAidantRoute);
-    app.use("/api/specialite", specialiteRoute);
-    app.use("/api/patient-aidant-metier", patientAidantMetierRoute);
     app.use("/api/atelier", [atelierRoute, participantRoute]); // Fusion des routes
     app.use("/api/categories", categoryRoute);
     app.use("/api/articles", articleRoute);

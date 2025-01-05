@@ -1,5 +1,5 @@
 import Atelier from "../../models/evenement-atelier/atelierModel.js"; // Correctement importé avec une majuscule
-import PatientAidant from "../../models/patient-aidant/patientAidantModel.js";
+import Auth from "../../models/user/userModel.js";
 
 // Fonction pour gérer les erreurs
 const handleError = (res, error, customMessage = "Erreur du serveur") => {
@@ -31,10 +31,17 @@ export const createAtelier = async (req, res) => {
       return res.status(400).json({ message: "L'atelier existe déjà." });
     }
 
-    // Vérifier l'existence de l'animatrice (PatientAidant)
-    const animatriceUser = await PatientAidant.findById(animatrice);
+    // Vérifier l'existence de l'animatrice
+    const animatriceUser = await Auth.findById(animatrice);
     if (!animatriceUser) {
-      return res.status(400).json({ message: "L'animatrice n'existe pas." });
+      return res.status(404).json({ message: "Animatrice non trouvée." });
+    }
+
+    // Vérifier que l'animatrice a le rôle `patient-aidant`
+    if (!animatriceUser.roles.includes("patient-aidant")) {
+      return res
+        .status(400)
+        .json({ message: "L'animatrice doit être un patient-aidant." });
     }
 
     // Créer l'atelier
@@ -55,11 +62,6 @@ export const createAtelier = async (req, res) => {
     });
 
     await newAtelier.save();
-
-    // Mettre à jour le PatientAidant pour inclure le nouvel atelier
-    animatriceUser.ateliers = animatriceUser.ateliers || [];
-    animatriceUser.ateliers.push(newAtelier._id);
-    await animatriceUser.save();
 
     // Envoyer le résultat
     return res
