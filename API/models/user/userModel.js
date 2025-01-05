@@ -43,8 +43,8 @@ const authSchema = new mongoose.Schema({
   },
   roles: {
     type: [String],
-    enum: ["admin", "patient", "patient-aidant"],
-    required: true,
+    enum: ["admin", "patient", "patient-aidant", "proche-aidant"],
+    default: "patient",
   },
   createdAt: {
     type: Date,

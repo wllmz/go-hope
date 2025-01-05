@@ -64,10 +64,10 @@ const setTokenCookies = (
 // 3. Fonction pour l'inscription d'un utilisateur
 export const registerUser = async (req, res) => {
   try {
-    const { email, password, roles, termsAccepted } = req.body;
+    const { email, password, termsAccepted } = req.body;
 
     // Vérification des champs nécessaires
-    if (!email || !password || !roles || termsAccepted !== true) {
+    if (!email || !password || termsAccepted !== true) {
       return res.status(400).json({
         message:
           "Email, mot de passe, rôles et acceptation des termes sont requis.",
@@ -87,10 +87,6 @@ export const registerUser = async (req, res) => {
       return res.status(400).json({ message: "Email déjà utilisé." });
     }
 
-    // Vérification des rôles
-    const validRoles = ["patient", "patient-aidant"];
-    const assignedRoles = roles.filter((role) => validRoles.includes(role));
-
     if (assignedRoles.length === 0) {
       return res
         .status(400)
@@ -104,7 +100,6 @@ export const registerUser = async (req, res) => {
     const newUser = new Auth({
       email,
       password: hashedPassword,
-      roles: assignedRoles,
       termsAccepted, // Prenez la valeur de la requête
     });
 

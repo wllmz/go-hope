@@ -15,10 +15,13 @@ import specialiteRoute from "./routes/Patient-aidant/specialiteRoute.js";
 import patientAidantMetierRoute from "./routes/Patient-aidant/patientAidantMetierRoute.js";
 import atelierRoute from "./routes/Atelier/atelierRoute.js";
 import participantRoute from "./routes/Atelier/particpantRoute.js";
-import categoryRoute from "./routes/Article/categoryRoute.js";
+import categoryRoute from "./routes/Article/categoriesRoute.js";
 import articleRoute from "./routes/Article/articleRoute.js";
 import actionRoute from "./routes/Article/actionRoute.js";
 import actionUserRoute from "./routes/Article/actionUserRoute.js";
+import forumCategoriesRoute from "./routes/forum/categoriesRoute.js";
+import forumCommentRoute from "./routes/forum/commentRoute.js";
+import forumSubjectRoute from "./routes/forum/subjectRoute.js";
 
 dotenv.config();
 
@@ -114,6 +117,9 @@ async function startServer() {
     app.use("/api/articles", articleRoute);
     app.use("/api/articles", actionRoute);
     app.use("/api/action", actionUserRoute);
+    app.use("/api/forum/categories", forumCategoriesRoute);
+    app.use("/api/forum/comments", forumCommentRoute);
+    app.use("/api/forum/subjects", forumSubjectRoute);
 
     // Middleware de gestion des erreurs
     app.use((err, req, res, next) => {
