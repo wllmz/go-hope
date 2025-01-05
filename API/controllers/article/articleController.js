@@ -1,5 +1,5 @@
 import articleModel from "../../models/article/articleModel.js";
-import categoryModel from "../../models/article/categoryModel.js";
+import categoryModel from "../../models/article/categoriesModel.js";
 
 // Gestion des erreurs
 const handleError = (res, message, error) => {

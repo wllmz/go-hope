@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const categorieForumSchema = new mongoose.Schema({
-  module: {
+  categorie: {
     type: String,
     required: true,
     unique: true,

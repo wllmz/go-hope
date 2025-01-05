@@ -60,3 +60,77 @@ export const updateComment = async (req, res) => {
     console.error(error);
   }
 };
+
+// Ajouter un like à un commentaire
+export const likeComment = async (req, res) => {
+  const { commentId } = req.params;
+  const authId = req.user.id; // ID utilisateur récupéré depuis le token
+
+  try {
+    // 1. Vérifier si le commentaire existe
+    const comment = await Comment.findById(commentId);
+    if (!comment) {
+      return res.status(404).json({ message: "Commentaire non trouvé." });
+    }
+
+    // 2. Vérifier si l'utilisateur a déjà liké ce commentaire
+    if (comment.likes.includes(authId)) {
+      return res
+        .status(400)
+        .json({ message: "Vous avez déjà aimé ce commentaire." });
+    }
+
+    // 3. Ajouter l'utilisateur à la liste des likes
+    comment.likes.push(authId);
+    await comment.save();
+
+    // 4. Retourner une réponse avec le commentaire mis à jour
+    res.status(200).json({
+      message: "Like ajouté avec succès.",
+      comment,
+    });
+  } catch (error) {
+    console.error("Erreur lors de l'ajout du like :", error);
+    res.status(500).json({
+      message: "Erreur lors de l'ajout du like.",
+      error: error.message,
+    });
+  }
+};
+
+// Retirer un like d'un commentaire
+export const unlikeComment = async (req, res) => {
+  const { commentId } = req.params;
+  const authId = req.user.id; // ID utilisateur récupéré depuis le token
+
+  try {
+    // 1. Vérifier si le commentaire existe
+    const comment = await Comment.findById(commentId);
+    if (!comment) {
+      return res.status(404).json({ message: "Commentaire non trouvé." });
+    }
+
+    // 2. Vérifier si l'utilisateur a liké ce commentaire
+    if (!comment.likes.includes(authId)) {
+      return res
+        .status(400)
+        .json({ message: "Vous n'avez pas encore aimé ce commentaire." });
+    }
+
+    // 3. Retirer l'utilisateur de la liste des likes
+    comment.likes = comment.likes.filter((like) => like.toString() !== authId);
+    await comment.save();
+
+    // 4. Retourner une réponse avec le commentaire mis à jour
+    res.status(200).json({
+      message: "Like retiré avec succès.",
+      comment,
+    });
+  } catch (error) {
+    console.error("Erreur lors du retrait du like :", error);
+    res.status(500).json({
+      message: "Erreur lors du retrait du like.",
+      error: error.message,
+    });
+  }
+};
