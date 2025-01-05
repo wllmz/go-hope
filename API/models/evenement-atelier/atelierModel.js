@@ -27,11 +27,21 @@ const atelierSchema = new mongoose.Schema({
   date_fin_formatted: {
     type: String,
   },
-  animatrice: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "PatientAidant",
-    required: true,
-  },
+  animatrice: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Auth",
+      required: true,
+    },
+    {
+      role: {
+        type: String,
+        enum: ["patient-aidant"],
+        default: "patient-aidant",
+        required: true,
+      },
+    },
+  ],
   nombre_participant: {
     type: Number,
     required: true,
