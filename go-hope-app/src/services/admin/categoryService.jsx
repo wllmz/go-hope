@@ -1,5 +1,6 @@
 import axiosInstance from "../instance/axiosInstance";
 
+<<<<<<< Updated upstream:go-hope-app/src/services/admin/categoryService.jsx
 // Créer une catégorie
 export const createCategory = async ({
   category_tittle,
@@ -20,6 +21,8 @@ export const createCategory = async ({
   }
 };
 
+=======
+>>>>>>> Stashed changes:go-hope-app/src/services/article/categoryService.jsx
 // Récupérer toutes les catégories
 export const getAllCategories = async () => {
   try {
@@ -47,6 +50,7 @@ export const getCategoryById = async (categoryId) => {
     );
   }
 };
+<<<<<<< Updated upstream:go-hope-app/src/services/admin/categoryService.jsx
 
 // Mettre à jour une catégorie
 export const updateCategory = async ({
@@ -82,3 +86,5 @@ export const deleteCategory = async (categoryId) => {
     );
   }
 };
+=======
+>>>>>>> Stashed changes:go-hope-app/src/services/article/categoryService.jsx

@@ -1,77 +1,208 @@
 import { useState } from "react";
 import {
+  getAllArticles,
+  getArticleById,
   likeArticleService,
   removeLikeArticleService,
   addToReadLaterService,
   removeFromReadLaterService,
-} from "../../services/user/articleService"; // Services pour les API
+  getReadLaterArticlesService,
+  getLikedArticlesService,
+} from "../../services/article/articleService";
 
 export const useArticleActions = () => {
-  const [actionLoading, setActionLoading] = useState(false);
-  const [error, setError] = useState(null);
+  // Hook pour récupérer tous les articles
+  const useGetAllArticles = () => {
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const [articles, setArticles] = useState([]);
 
-  const likeArticle = async (articleId) => {
-    setActionLoading(true);
-    try {
-      const response = await likeArticleService(articleId);
+    const handleGetAllArticles = async () => {
+      setLoading(true);
       setError(null);
-      return response; // Retourne la réponse si nécessaire
-    } catch (err) {
-      console.error("Erreur lors du like de l'article :", err);
-      setError("Impossible d'ajouter le like.");
-    } finally {
-      setActionLoading(false);
-    }
+      try {
+        const data = await getAllArticles();
+        setArticles(data);
+        return data;
+      } catch (err) {
+        setError(err.message);
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    return { articles, handleGetAllArticles, loading, error };
   };
 
-  const removeLike = async (articleId) => {
-    setActionLoading(true);
-    try {
-      const response = await removeLikeArticleService(articleId);
+  // Hook pour récupérer un article par ID
+  const useGetArticleById = () => {
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const [article, setArticle] = useState(null);
+
+    const handleGetArticleById = async (articleId) => {
+      setLoading(true);
       setError(null);
-      return response; // Retourne la réponse si nécessaire
-    } catch (err) {
-      console.error("Erreur lors du retrait du like :", err);
-      setError("Impossible de retirer le like.");
-    } finally {
-      setActionLoading(false);
-    }
+      try {
+        const data = await getArticleById(articleId);
+        setArticle(data);
+        return data;
+      } catch (err) {
+        setError(err.message);
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    return { article, handleGetArticleById, loading, error };
   };
 
-  const addToReadLater = async (articleId) => {
-    setActionLoading(true);
-    try {
-      const response = await addToReadLaterService(articleId);
+  // Hook pour liker un article
+  const useLikeArticle = () => {
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    const handleLikeArticle = async (articleId) => {
+      setLoading(true);
       setError(null);
-      return response; // Retourne la réponse si nécessaire
-    } catch (err) {
-      console.error("Erreur lors de l'ajout à la liste de lecture :", err);
-      setError("Impossible d'ajouter à la liste de lecture.");
-    } finally {
-      setActionLoading(false);
-    }
+      try {
+        const data = await likeArticleService(articleId);
+        return data;
+      } catch (err) {
+        setError(err.message);
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    return { handleLikeArticle, loading, error };
   };
 
-  const removeFromReadLater = async (articleId) => {
-    setActionLoading(true);
-    try {
-      const response = await removeFromReadLaterService(articleId);
+  // Hook pour retirer un like d'un article
+  const useRemoveLikeArticle = () => {
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    const handleRemoveLikeArticle = async (articleId) => {
+      setLoading(true);
       setError(null);
-      return response; // Retourne la réponse si nécessaire
-    } catch (err) {
-      console.error("Erreur lors du retrait de la liste de lecture :", err);
-      setError("Impossible de retirer de la liste de lecture.");
-    } finally {
-      setActionLoading(false);
-    }
+      try {
+        const data = await removeLikeArticleService(articleId);
+        return data;
+      } catch (err) {
+        setError(err.message);
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    return { handleRemoveLikeArticle, loading, error };
+  };
+
+  // Hook pour ajouter un article à "Lire plus tard"
+  const useAddToReadLater = () => {
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    const handleAddToReadLater = async (articleId) => {
+      setLoading(true);
+      setError(null);
+      try {
+        const data = await addToReadLaterService(articleId);
+        return data;
+      } catch (err) {
+        setError(err.message);
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    return { handleAddToReadLater, loading, error };
+  };
+
+  // Hook pour retirer un article de "Lire plus tard"
+  const useRemoveFromReadLater = () => {
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    const handleRemoveFromReadLater = async (articleId) => {
+      setLoading(true);
+      setError(null);
+      try {
+        const data = await removeFromReadLaterService(articleId);
+        return data;
+      } catch (err) {
+        setError(err.message);
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    return { handleRemoveFromReadLater, loading, error };
+  };
+
+  // Hook pour récupérer les articles "Lire plus tard"
+  const useGetReadLaterArticles = () => {
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const [readLaterArticles, setReadLaterArticles] = useState([]);
+
+    const handleGetReadLaterArticles = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const data = await getReadLaterArticlesService();
+        setReadLaterArticles(data);
+        return data;
+      } catch (err) {
+        setError(err.message);
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    return { readLaterArticles, handleGetReadLaterArticles, loading, error };
+  };
+
+  // Hook pour récupérer les articles likés
+  const useGetLikedArticles = () => {
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const [likedArticles, setLikedArticles] = useState([]);
+
+    const handleGetLikedArticles = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const data = await getLikedArticlesService();
+        setLikedArticles(data);
+        return data;
+      } catch (err) {
+        setError(err.message);
+        throw err;
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    return { likedArticles, handleGetLikedArticles, loading, error };
   };
 
   return {
-    likeArticle,
-    removeLike,
-    addToReadLater,
-    removeFromReadLater,
-    actionLoading,
-    error,
+    useGetAllArticles,
+    useGetArticleById,
+    useLikeArticle,
+    useRemoveLikeArticle,
+    useAddToReadLater,
+    useRemoveFromReadLater,
+    useGetReadLaterArticles,
+    useGetLikedArticles,
   };
 };
