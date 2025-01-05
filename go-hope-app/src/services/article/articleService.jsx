@@ -1,32 +1,9 @@
 import axiosInstance from "../instance/axiosInstance";
 
-export const matchingArticle = async () => {
-  try {
-    // Envoi de la requête GET pour récupérer les données de l'enfant
-    const response = await axiosInstance.get("/matching", {
-      headers: {
-        "Cache-Control": "no-cache",
-      },
-    });
-
-    // Vérifie que la réponse est bien structurée
-    console.log("Response from API:", response.data);
-
-    // Renvoi des données de la réponse
-    return response.data;
-  } catch (error) {
-    console.error(
-      "Erreur lors de la récupération des informations d'article:",
-      error
-    );
-    throw error; // Propagation de l'erreur
-  }
-};
-
 export const getAllArticles = async () => {
   try {
     // Envoi de la requête GET pour récupérer les données de l'enfant
-    const response = await axiosInstance.get("/article", {
+    const response = await axiosInstance.get("/articles", {
       headers: {
         "Cache-Control": "no-cache",
       },
@@ -48,7 +25,7 @@ export const getAllArticles = async () => {
 
 export const getArticleById = async (articleId) => {
   try {
-    const response = await axiosInstance.get(`/article/${articleId}`);
+    const response = await axiosInstance.get(`/articles/${articleId}`);
     return response.data;
   } catch (error) {
     console.error("Erreur lors de la récupération de l'article :", error);
@@ -59,7 +36,7 @@ export const getArticleById = async (articleId) => {
 // Ajouter un like à un article
 export const likeArticleService = async (articleId) => {
   try {
-    const response = await axiosInstance.post(`/article/like/${articleId}`);
+    const response = await axiosInstance.post(`/articles/like/${articleId}`);
     console.log("Response from likeArticle API:", response.data);
     return response.data;
   } catch (error) {
@@ -71,7 +48,7 @@ export const likeArticleService = async (articleId) => {
 // Retirer un like d'un article
 export const removeLikeArticleService = async (articleId) => {
   try {
-    const response = await axiosInstance.delete(`/article/like/${articleId}`);
+    const response = await axiosInstance.delete(`/articles/like/${articleId}`);
     console.log("Response from removeLike API:", response.data);
     return response.data;
   } catch (error) {
@@ -84,7 +61,7 @@ export const removeLikeArticleService = async (articleId) => {
 export const addToReadLaterService = async (articleId) => {
   try {
     const response = await axiosInstance.post(
-      `/article//read-later/${articleId}`
+      `/articles/read-later/${articleId}`
     );
     console.log("Response from addToReadLater API:", response.data);
     return response.data;
@@ -98,7 +75,7 @@ export const addToReadLaterService = async (articleId) => {
 export const removeFromReadLaterService = async (articleId) => {
   try {
     const response = await axiosInstance.delete(
-      `/article//read-later/${articleId}`
+      `/articles/read-later/${articleId}`
     );
     console.log("Response from removeFromReadLater API:", response.data);
     return response.data;
