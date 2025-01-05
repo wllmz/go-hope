@@ -1,14 +1,10 @@
 import axiosInstance from "../instance/axiosInstance";
 
 // Créer une catégorie
-export const createCategory = async ({
-  category_tittle,
-  sousCategoryNames,
-}) => {
+export const createCategory = async ({ category_tittle }) => {
   try {
     const response = await axiosInstance.post("/categories", {
       category_tittle,
-      sousCategoryNames,
     });
     return response.data;
   } catch (error) {
@@ -49,15 +45,10 @@ export const getCategoryById = async (categoryId) => {
 };
 
 // Mettre à jour une catégorie
-export const updateCategory = async ({
-  categoryId,
-  category_tittle,
-  sousCategoryNames,
-}) => {
+export const updateCategory = async ({ categoryId, category_tittle }) => {
   try {
     const response = await axiosInstance.put(`/categories/${categoryId}`, {
       category_tittle,
-      sousCategoryNames,
     });
     return response.data;
   } catch (error) {

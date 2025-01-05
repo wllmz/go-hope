@@ -10,26 +10,6 @@ export const createArticle = async (articleData) => {
   }
 };
 
-// Service pour récupérer tous les articles
-export const getAllArticles = async () => {
-  try {
-    const response = await axiosInstance.get("/articles");
-    return response.data.articles;
-  } catch (error) {
-    throw error.response ? error.response.data : error.message;
-  }
-};
-
-// Service pour récupérer un article par ID
-export const getArticleById = async (articleId) => {
-  try {
-    const response = await axiosInstance.get(`/articles/${articleId}`);
-    return response.data;
-  } catch (error) {
-    throw error.response ? error.response.data : error.message;
-  }
-};
-
 // Service pour mettre à jour un article
 export const updateArticle = async (articleId, updatedData) => {
   try {

@@ -2,7 +2,7 @@ import axiosInstance from "../instance/axiosInstance";
 
 export const allAtlier = async () => {
   try {
-    const response = await axiosInstance.get("/atelier", {
+    const response = await axiosInstance.get("/ateliers", {
       headers: {
         "Cache-Control": "no-cache",
       },
@@ -26,7 +26,7 @@ export const joinAtelier = async (id) => {
   try {
     // Envoi de la requête post pour rejoindre un atelier spécifique
     const response = await axiosInstance.post(
-      `/atelier/join/${id}`, // Remplacez :id par la vraie valeur
+      `/ateliers/join/${id}`, // Remplacez :id par la vraie valeur
       {}, // Body vide ou un éventuel payload
       {
         headers: {
@@ -47,7 +47,7 @@ export const leaveAtelier = async (id) => {
   try {
     // Envoi de la requête post pour rejoindre un atelier spécifique
     const response = await axiosInstance.post(
-      `/atelier/leave/${id}`, // Remplacez :id par la vraie valeur
+      `/ateliers/leave/${id}`, // Remplacez :id par la vraie valeur
       {}, // Body vide ou un éventuel payload
       {
         headers: {
