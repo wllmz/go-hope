@@ -1,5 +1,23 @@
 import axiosInstance from "../instance/axiosInstance";
 
+export const createUser = async ({ firstName, lastName, gender, phone }) => {
+  try {
+    const response = await axiosInstance.post("/user", {
+      firstName,
+      lastName,
+      gender,
+      phone,
+    });
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Erreur lors de la création ou mise à jour de l'utilisateur",
+      error
+    );
+    throw error; // Propagation de l'erreur
+  }
+};
+
 export const getUserInfo = async () => {
   try {
     // Envoi de la requête GET pour récupérer les données de l'enfant
