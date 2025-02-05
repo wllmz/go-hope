@@ -64,10 +64,10 @@ const setTokenCookies = (
 // 3. Fonction pour l'inscription d'un utilisateur
 export const registerUser = async (req, res) => {
   try {
-    const { email, password, termsAccepted } = req.body;
+    const { email, username, password, termsAccepted } = req.body;
 
     // Vérification des champs nécessaires
-    if (!email || !password || termsAccepted !== true) {
+    if (!email || !username || !password || termsAccepted !== true) {
       return res.status(400).json({
         message:
           "Email, mot de passe, rôles et acceptation des termes sont requis.",
@@ -86,6 +86,13 @@ export const registerUser = async (req, res) => {
       }
       return res.status(400).json({ message: "Email déjà utilisé." });
     }
+    // verifcation de l'existence du username
+    const existingUsername = await Auth.findOne({ username });
+    if (existingUsername) {
+      return res
+        .status(400)
+        .json({ message: "Nom d'utilisateur déjà utilisé." });
+    }
 
     if (assignedRoles.length === 0) {
       return res
@@ -99,6 +106,7 @@ export const registerUser = async (req, res) => {
     // Création de l'utilisateur
     const newUser = new Auth({
       email,
+      username,
       password: hashedPassword,
       termsAccepted, // Prenez la valeur de la requête
     });
@@ -345,5 +353,29 @@ export const checkEmail = async (req, res) => {
     return res
       .status(500)
       .json({ message: "Erreur lors de la vérification de l'email." });
+  }
+};
+
+export const checkUsername = async (req, res) => {
+  const { username } = req.body;
+
+  try {
+    const existingUsername = await Auth.findOne({ username });
+    if (existingUsername) {
+      return res
+        .status(400)
+        .json({ message: "Le nom d'utilisateur est déjà utilisé." });
+    }
+    return res.status(200).json({ message: "Nom d'utilisateur disponible." });
+  } catch (error) {
+    console.error(
+      "Erreur lors de la vérification du nom d'utilisateur:",
+      error
+    );
+    return res
+      .status(500)
+      .json({
+        message: "Erreur lors de la vérification du nom d'utilisateur.",
+      });
   }
 };

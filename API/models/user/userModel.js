@@ -24,10 +24,7 @@ const authSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  firstName: {
-    type: String,
-  },
-  lastName: {
+  username: {
     type: String,
   },
   phone: {
