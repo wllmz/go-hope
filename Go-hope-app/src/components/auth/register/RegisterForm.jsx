@@ -4,9 +4,8 @@ import Step2 from "./Step2";
 import Step1 from "./Step1";
 import Step3 from "./Step3";
 import Step0 from "./Step0";
-import ProgressBar from "../../../utils/form/ProgressBar";
 
-const RegisterEmployeeForm = () => {
+const RegisterForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -45,8 +44,6 @@ const RegisterEmployeeForm = () => {
   return (
     <div className="flex min-h-screen items-stretch justify-center bg-gray-100">
       <div className="w-full md:w-1/2 p-8 bg-white shadow-md rounded-md custom-form-width-1 ml-6">
-        <ProgressBar step={step} />
-
         {step === 0 && (
           <Step0
             email={email}
@@ -91,4 +88,4 @@ const RegisterEmployeeForm = () => {
   );
 };
 
-export default RegisterEmployeeForm;
+export default RegisterForm;

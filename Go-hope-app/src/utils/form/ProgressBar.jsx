@@ -1,13 +1,23 @@
-// src/components/auth/RegisterEmployee/ProgressBar.js
 import React from "react";
 
-const ProgressBar = ({ step }) => {
+const ProgressBar = ({ totalSteps, currentStep }) => {
+  // Crée un tableau d'indices de 0 à totalSteps - 1
+  const steps = Array.from({ length: totalSteps }, (_, i) => i);
+
   return (
-    <div className="w-full h-2 bg-gray-300 mb-4 md:hidden">
-      <div
-        className="h-full bg-blue-500 rounded"
-        style={{ backgroundColor: "#86bfce", width: `${step * 33}%` }}
-      ></div>
+    <div className="flex justify-center items-center space-x-2">
+      {steps.map((step) => {
+        // Utilisation de step + 1 pour passer à une numérotation 1-indexée
+        const isActive = step + 1 <= currentStep;
+        return (
+          <div
+            key={step}
+            className={`w-3 h-3 rounded-full transition-colors duration-300 ${
+              isActive ? "bg-blue-500" : "bg-gray-300"
+            }`}
+          ></div>
+        );
+      })}
     </div>
   );
 };
