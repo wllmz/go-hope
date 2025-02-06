@@ -1,11 +1,14 @@
 import React from "react";
-import welcome from "../../../assets/welcomeStep1.png";
+import welcome from "../../../assets/welcomeStep3.png";
 import ProgressBar from "../../../utils/form/ProgressBar";
+import { useNavigate } from "react-router-dom";
 import { FaArrowLeft } from "react-icons/fa";
 
-const Step2 = ({ handleNextStep, handlePreviousStep }) => {
+const Step4 = ({ handlePreviousStep }) => {
+  const navigate = useNavigate();
+
   return (
-    <div className="flex flex-col min-h-screen items-center justify-center relative px-4 p-9">
+    <div className="flex flex-col min-h-screen items-center justify-center px-4 relative p-9">
       <div className="absolute top-4 left-0">
         <button
           onClick={handlePreviousStep}
@@ -18,28 +21,28 @@ const Step2 = ({ handleNextStep, handlePreviousStep }) => {
       <div className="mb-8">
         <img src={welcome} alt="Bienvenue" className="w-full max-w-md" />
       </div>
-      <h1 className="text-3xl font-bold text-[0E3043] text-center mb-4">
-        Accédez au forum gratuitement
+      <h1 className="text-3xl font-bold text-[#0E3043] text-center mb-4">
+        Participez à des échanges
       </h1>
       <p className="text-xl text-[#0E3043] text-center mb-10 mt-4">
-        Profitez gratuitement de tous les accès au forum pour trouver des
-        informations ou partager votre expérience.
+        Dialoguez directement avec des patient·e·s atteint de la sclérose en
+        plaque, afin de partager des informations et des conseils
       </p>
       {/* Barre de progression */}
       <div className="w-full max-w-md mb-6">
-        <ProgressBar totalSteps={3} currentStep={1} />
+        <ProgressBar totalSteps={3} currentStep={3} />
       </div>
       {/* Zone du bouton */}
       <div className="flex justify-center mt-40">
         <button
-          onClick={handleNextStep}
+          onClick={() => navigate("/register")}
           className=" w-sm bg-[#F5943A] hover:bg-[#F1731F] text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-300"
         >
-          Suivant
+          S'inscrire
         </button>
       </div>
     </div>
   );
 };
 
-export default Step2;
+export default Step4;

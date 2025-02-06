@@ -38,7 +38,7 @@ const RegisterForm = () => {
   };
 
   const goBackToStepOne = () => {
-    setStep(1);
+    setStep(0);
   };
 
   return (
@@ -48,14 +48,9 @@ const RegisterForm = () => {
           <Step0
             email={email}
             setEmail={setEmail}
-            password={password}
-            setPassword={setPassword}
-            confirmPassword={confirmPassword}
-            setConfirmPassword={setConfirmPassword}
             handleNextStep={handleNextStep}
             error={error}
-            showPassword={showPassword}
-            setShowPassword={setShowPassword}
+            goBackToStepOne={goBackToStepOne}
           />
         )}
 
@@ -63,8 +58,15 @@ const RegisterForm = () => {
           <Step1
             username={username}
             setUsername={setUsername}
+            password={password}
+            setPassword={setPassword}
+            confirmPassword={confirmPassword}
+            setConfirmPassword={setConfirmPassword}
             handleNextStep={handleNextStep}
+            showPassword={showPassword}
+            setShowPassword={setShowPassword}
             error={error}
+            goBackToStepOne={goBackToStepOne}
           />
         )}
 

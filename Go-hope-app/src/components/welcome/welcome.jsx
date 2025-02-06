@@ -1,24 +1,36 @@
 import React, { useState } from "react";
-import Step1 from "./step/step1"; // La deuxième étape
-import Step2 from "./step/step2"; // La troisième étape
+import Step1 from "./step/step1";
+import Step2 from "./step/step2";
+import Step3 from "./step/step3";
+import Step4 from "./step/Step4";
 
 const Welcome = () => {
   const [step, setStep] = useState(1);
 
-  // Passe à l'étape suivante
-  const handleNextStep = () => {
-    setStep((prevStep) => prevStep + 1);
-  };
-
-  // Retour à l'étape précédente (optionnel)
-  const handlePreviousStep = () => {
-    setStep((prevStep) => prevStep - 1);
-  };
+  const handleNextStep = () => setStep((prev) => prev + 1);
+  const handlePreviousStep = () => setStep((prev) => prev - 1);
 
   return (
     <div className="flex min-h-screen items-center justify-center">
-      {step === 1 && <Step1 handleNextStep={handleNextStep} />}
-      {step === 2 && <Step2 handlePreviousStep={handlePreviousStep} />}
+      {step === 1 && (
+        <Step1
+          handleNextStep={handleNextStep}
+          handlePreviousStep={handlePreviousStep}
+        />
+      )}
+      {step === 2 && (
+        <Step2
+          handleNextStep={handleNextStep}
+          handlePreviousStep={handlePreviousStep}
+        />
+      )}
+      {step === 3 && (
+        <Step3
+          handleNextStep={handleNextStep}
+          handlePreviousStep={handlePreviousStep}
+        />
+      )}
+      {step === 4 && <Step4 handlePreviousStep={handlePreviousStep} />}
     </div>
   );
 };

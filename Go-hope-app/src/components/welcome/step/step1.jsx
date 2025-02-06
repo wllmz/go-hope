@@ -9,19 +9,19 @@ const Step1 = ({ handleNextStep }) => {
     <div className="flex flex-col min-h-screen items-center justify-center">
       {/* Zone du logo */}
       <div className="mb-8">
-        <img src={logo} alt="Logo" />
+        <img class="h-auto max-w-full" src={logo} alt="Logo" />
       </div>
       {/* Zone des boutons */}
-      <div className="flex space-x-4 justify-center">
+      <div className="flex space-x-4 justify-center mt-10">
         <button
           onClick={handleNextStep}
-          className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded"
+          className="w-sm bg-[#F5943A] hover:bg-[#F1731F] text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-300"
         >
           Suivant
         </button>
         <button
           onClick={() => navigate("/login")}
-          className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded"
+          className=" w-sm bg-[#F1731F] hover:bg-[#F5943A] text-white py-2 px-4 rounded-lg font-semibold "
         >
           Devenir patient-aidant
         </button>

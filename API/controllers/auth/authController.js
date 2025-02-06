@@ -338,7 +338,7 @@ export const checkEmail = async (req, res) => {
     const existingUser = await Auth.findOne({ email });
 
     if (existingUser) {
-      return res.status(400).json({ message: "L'email est déjà utilisé." });
+      return res.status(400).json({ message: "L'email est invalide." });
     }
 
     return res.status(200).json({ message: "Email disponible." });
