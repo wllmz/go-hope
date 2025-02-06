@@ -39,6 +39,15 @@ const Step0 = ({
       return;
     }
 
+    // Comparaison des mots de passe
+    if (password !== confirmPassword) {
+      setLocalError((prevErrors) => ({
+        ...prevErrors,
+        confirmPassword: "Les mots de passe ne correspondent pas.",
+      }));
+      return;
+    }
+
     try {
       // Appel du hook pour vérifier si l'email existe
       const emailExists = await validateEmail(email);
@@ -73,7 +82,6 @@ const Step0 = ({
             required
             onChange={(e) => setEmail(e.target.value)}
           />
-          {/* Affichage de l'erreur si l'email est déjà utilisé ou invalide */}
           {emailError && (
             <p className="text-red-500 text-sm mt-1">{emailError}</p>
           )}
@@ -118,7 +126,7 @@ const Step0 = ({
         <div className="flex flex-col items-center mt-20">
           <button
             type="submit"
-            disabled={loading} // Désactiver le bouton pendant le chargement
+            disabled={loading}
             className="w-full bg-[#86bfce] text-[#0a3d64] text-[25px] py-3 rounded-full hover:bg-[#86bfce]/90 text-center"
           >
             {loading ? "Vérification..." : "S'inscrire"}
@@ -126,7 +134,7 @@ const Step0 = ({
 
           <button
             type="button"
-            onClick={() => navigate("/login")} // Utilisation correcte de navigate
+            onClick={() => navigate("/login")}
             className="text-[#f9a825] text-sm mt-4 block text-center bg-transparent"
           >
             Déjà un compte ?

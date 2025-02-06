@@ -94,12 +94,6 @@ export const registerUser = async (req, res) => {
         .json({ message: "Nom d'utilisateur déjà utilisé." });
     }
 
-    if (assignedRoles.length === 0) {
-      return res
-        .status(400)
-        .json({ message: "Veuillez sélectionner au moins un rôle valide." });
-    }
-
     // Hachage du mot de passe
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -372,10 +366,8 @@ export const checkUsername = async (req, res) => {
       "Erreur lors de la vérification du nom d'utilisateur:",
       error
     );
-    return res
-      .status(500)
-      .json({
-        message: "Erreur lors de la vérification du nom d'utilisateur.",
-      });
+    return res.status(500).json({
+      message: "Erreur lors de la vérification du nom d'utilisateur.",
+    });
   }
 };
