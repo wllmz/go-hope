@@ -1,11 +1,12 @@
 import React from "react";
-import welcome from "../../../assets/welcomeStep1.png";
+import { FaArrowLeft } from "react-icons/fa"; // Import de l'icône de flèche
+import welcome from "../../../assets/welcomeStep2.png";
 import ProgressBar from "../../../utils/form/ProgressBar";
-import { FaArrowLeft } from "react-icons/fa";
 
-const Step2 = ({ handleNextStep, handlePreviousStep }) => {
+const Step3 = ({ handleNextStep, handlePreviousStep }) => {
   return (
-    <div className="flex flex-col min-h-screen items-center justify-center relative px-4 p-9">
+    <div className="flex flex-col min-h-screen items-center justify-center relative p-9">
+      {/* Flèche de retour en haut à gauche */}
       <div className="absolute top-4 left-0">
         <button
           onClick={handlePreviousStep}
@@ -14,22 +15,22 @@ const Step2 = ({ handleNextStep, handlePreviousStep }) => {
           <FaArrowLeft />
         </button>
       </div>
-      {/* Zone de l'image */}
+      {/* Contenu de la Step3 */}
       <div className="mb-8">
         <img src={welcome} alt="Bienvenue" className="w-full max-w-md" />
       </div>
-      <h1 className="text-3xl font-bold text-[0E3043] text-center mb-4">
-        Accédez au forum gratuitement
+      <h1 className="text-3xl font-bold text-[#0E3043] text-center mb-4">
+        Accédez à des informations sur la SEP
       </h1>
       <p className="text-xl text-[#0E3043] text-center mb-10 mt-4">
-        Profitez gratuitement de tous les accès au forum pour trouver des
-        informations ou partager votre expérience.
+        Réalisez et/ou regardez des contenus multimédia, Masterclass, vidéo-
+        conférences pour aider nos patient·e·s.
       </p>
       {/* Barre de progression */}
       <div className="w-full max-w-md mb-6">
-        <ProgressBar totalSteps={3} currentStep={1} />
+        <ProgressBar totalSteps={3} currentStep={2} />
       </div>
-      {/* Zone du bouton */}
+      {/* Bouton principal */}
       <div className="flex justify-center mt-40">
         <button
           onClick={handleNextStep}
@@ -42,4 +43,4 @@ const Step2 = ({ handleNextStep, handlePreviousStep }) => {
   );
 };
 
-export default Step2;
+export default Step3;
