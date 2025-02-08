@@ -1,7 +1,5 @@
 import React, { useState } from "react";
-import { FaArrowLeft } from "react-icons/fa";
 import Conditions from "../../../utils/form/Conditions"; // Composant pour afficher les conditions
-import { useNavigate } from "react-router-dom";
 import bg from "../../../assets/bg-papillon.png";
 
 const Step2 = ({
@@ -16,7 +14,6 @@ const Step2 = ({
 }) => {
   const [validationError, setValidationError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
-  const navigate = useNavigate();
 
   const onSubmit = (e) => {
     e.preventDefault();
@@ -31,22 +28,34 @@ const Step2 = ({
 
   return (
     <div className="flex flex-col min-h-screen items-center relative px-4">
-      <div className="w-full max-w-3xl">
+      <div className="w-full max-w-3xl sm:shadow rounded-lg sm:mt-25 mt-5 sm:p-10 bg-white">
         {/* Header identique à Step0 */}
         <div className="flex justify-between items-center mb-6">
           <button
             onClick={goBackToStepOne}
             className="flex items-center text-[#0E3043]"
           >
-            <FaArrowLeft className="w-6 h-6 mr-2" />
+            <svg
+              className="w-6 h-6 mr-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1}
+                d="M15 19l-7-7 7-7"
+              />
+            </svg>
             Inscription
           </button>
-          {/* Définition de la taille de l'image */}
-          <img src={bg} alt="Background Papillon" className="w-32 md:w-40" />
+          <img src={bg} alt="Background Papillon" />
         </div>
 
         {/* Texte d'introduction */}
-        <p className="text-[#0E3043] text-xl text-center mb-10 mt-10">
+        <p className="text-md sm:text-xl text-[#0E3043] mb-10 mt-4">
           Lisez attentivement les conditions générales d’utilisation et la
           politique de confidentialité.
         </p>
@@ -95,12 +104,14 @@ const Step2 = ({
 
         {/* Bouton de validation avec le même style que Step0 */}
         <form onSubmit={onSubmit}>
-          <button
-            type="submit"
-            className="w-full bg-[#0E3043] text-white text-[25px] py-3 rounded-lg font-normal hover:bg-[#86bfce]/90 text-center"
-          >
-            Créer mon profil
-          </button>
+          <div className="flex flex-col gap-4 justify-center mt-10 w-full p-5 items-center">
+            <button
+              type="submit"
+              className="w-full sm:w-[300px] bg-[#1D5F84] hover:bg-[#1D5F84] text-white py-2 px-2 rounded-lg font-semibold text-lg"
+            >
+              Créer mon profil
+            </button>
+          </div>
         </form>
 
         {successMessage && (

@@ -68,8 +68,7 @@ const Step1 = ({
 
   return (
     <div className="flex flex-col min-h-screen items-center relative px-4">
-      <div className="w-full max-w-3xl">
-        {/* Header identique à Step0 */}
+      <div className="w-full max-w-3xl sm:shadow rounded-lg sm:mt-25 mt-5 sm:p-10 bg-white">
         <div className="flex justify-between items-center mb-6">
           <button
             onClick={goBackToStepOne}
@@ -95,7 +94,7 @@ const Step1 = ({
         </div>
 
         {/* Texte d'introduction identique */}
-        <p className="text-[#0E3043] text-xl text-center mb-10 mt-25">
+        <p className="text-md sm:text-xl text-[#0E3043] mb-10 mt-4">
           Créez votre nom d’utilisateur et votre mot de passe. Au moins 8
           caractères, incluant une majuscule, une minuscule et un chiffre
         </p>
@@ -151,19 +150,19 @@ const Step1 = ({
             )}
           </div>
 
-          <div className="flex flex-col items-center mt-20">
+          <div className="flex flex-col gap-4 justify-center mt-10 w-full p-5 items-center">
             <button
               type="submit"
               disabled={loading}
-              className="w-lg bg-[#0E3043] text-white text-[25px] py-3 rounded-lg font-normal hover:bg-[#0E3043]/90 text-center"
+              className="w-full sm:w-[300px] bg-[#1D5F84] hover:bg-[#1D5F84] text-white py-2 px-2 rounded-lg font-semibold text-lg"
             >
-              {loading ? "Vérification..." : "S'inscrire"}
+              {loading ? "Vérification..." : "Valider"}
             </button>
 
             <button
               type="button"
               onClick={() => navigate("/login")}
-              className="text-[#f9a825] text-sm mt-4 block text-center bg-transparent"
+              className="text-[#f9a825] text-sm  mt-4 block text-center bg-transparent mb-5"
             >
               Déjà un compte ?
             </button>

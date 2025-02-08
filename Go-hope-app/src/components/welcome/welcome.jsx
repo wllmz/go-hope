@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Step1 from "./step/step1";
 import Step2 from "./step/step2";
-import Step3 from "./step/step3";
+import Step3 from "./step/Step3";
 import Step4 from "./step/Step4";
 
 const Welcome = () => {
@@ -11,7 +11,7 @@ const Welcome = () => {
   const handlePreviousStep = () => setStep((prev) => prev - 1);
 
   return (
-    <div className="flex min-h-screen items-center justify-center">
+    <div className=" min-h-screen items-center justify-center w-full">
       {step === 1 && (
         <Step1
           handleNextStep={handleNextStep}

@@ -19,12 +19,12 @@ const Step4 = ({ handlePreviousStep }) => {
       </div>
       {/* Zone de l'image */}
       <div className="mb-8">
-        <img src={welcome} alt="Bienvenue" className="w-full max-w-md" />
+        <img src={welcome} alt="Bienvenue" className="w-54 sm:w-full" />
       </div>
-      <h1 className="text-3xl font-bold text-[#0E3043] text-center mb-4">
+      <h1 className="text-2xl sm:text-3xl font-bold text-[#0E3043] text-center mb-4">
         Participez à des échanges
       </h1>
-      <p className="text-xl text-[#0E3043] text-center mb-10 mt-4">
+      <p className="text-lg sm:text-xl text-[#0E3043] text-center mb-10 mt-4">
         Dialoguez directement avec des patient·e·s atteint de la sclérose en
         plaque, afin de partager des informations et des conseils
       </p>
@@ -33,10 +33,10 @@ const Step4 = ({ handlePreviousStep }) => {
         <ProgressBar totalSteps={3} currentStep={3} />
       </div>
       {/* Zone du bouton */}
-      <div className="flex justify-center mt-40">
+      <div className="flex flex-col sm:flex-row gap-4 justify-center mt-10 w-full p-5">
         <button
           onClick={() => navigate("/register")}
-          className=" w-sm bg-[#F5943A] hover:bg-[#F1731F] text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-300"
+          className="w-full sm:w-lg bg-[#F5943A] hover:bg-[#F1731F] text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-300"
         >
           S'inscrire
         </button>

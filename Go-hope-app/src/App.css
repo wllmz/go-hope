@@ -1,15 +1,27 @@
-/* fade.css */
-.fade-enter {
-  opacity: 0;
+/* Par défaut (mobile) */
+/* Ici, on définit le background pour les écrans inférieurs à 640px (ou jusqu'à 639px) */
+.step-container {
+  background-image: url("./assets/gohopebg-mobile.png");
+  background-position: top;
+  background-repeat: no-repeat;
+  background-size: contain; /* Ajustez cette valeur pour le mobile */
 }
-.fade-enter-active {
-  opacity: 1;
-  transition: opacity 300ms;
+.step-container-1 {
+  background-image: none;
 }
-.fade-exit {
-  opacity: 1;
-}
-.fade-exit-active {
-  opacity: 0;
-  transition: opacity 300ms;
+
+/* Pour les écrans de taille desktop (à partir de 640px) */
+@media (min-width: 640px) {
+  .step-container {
+    background-image: url("./assets/bg-gohope2.png");
+
+    background-repeat: no-repeat;
+    background-size: cover; /* Ajustez cette valeur pour le desktop */
+  }
+  .step-container-1 {
+    background-image: url("./assets/bg-gohope2.png");
+
+    background-repeat: no-repeat;
+    background-size: cover; /* Ajustez cette valeur pour le desktop */
+  }
 }

@@ -17,24 +17,24 @@ const Step3 = ({ handleNextStep, handlePreviousStep }) => {
       </div>
       {/* Contenu de la Step3 */}
       <div className="mb-8">
-        <img src={welcome} alt="Bienvenue" className="w-full max-w-md" />
+        <img src={welcome} alt="Bienvenue" className="w-54 sm:w-full" />
       </div>
-      <h1 className="text-3xl font-bold text-[#0E3043] text-center mb-4">
+      <h1 className="text-2xl sm:text-3xl font-bold text-[#0E3043] text-center mb-4">
         Accédez à des informations sur la SEP
       </h1>
-      <p className="text-xl text-[#0E3043] text-center mb-10 mt-4">
-        Réalisez et/ou regardez des contenus multimédia, Masterclass, vidéo-
-        conférences pour aider nos patient·e·s.
+      <p className="text-lg sm:text-xl text-[#0E3043] text-center mb-10 mt-4">
+        Réalisez et/ou regardez des contenus multimédia, Masterclass,
+        vidéo-conférences pour aider nos patient·e·s.
       </p>
       {/* Barre de progression */}
       <div className="w-full max-w-md mb-6">
         <ProgressBar totalSteps={3} currentStep={2} />
       </div>
       {/* Bouton principal */}
-      <div className="flex justify-center mt-40">
+      <div className="flex flex-col sm:flex-row gap-4 justify-center mt-10 w-full p-5">
         <button
           onClick={handleNextStep}
-          className=" w-sm bg-[#F5943A] hover:bg-[#F1731F] text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-300"
+          className="w-full sm:w-lg bg-[#F5943A] hover:bg-[#F1731F] text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-300"
         >
           Suivant
         </button>
