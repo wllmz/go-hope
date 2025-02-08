@@ -291,7 +291,7 @@ export const verifyEmail = async (req, res) => {
     setTokenCookies(res, accessToken, refreshToken);
 
     // Redirection vers la page d'accueil après la vérification de l'email
-    return res.redirect(`${FRONTEND_URL}/user`);
+    return res.redirect(`${FRONTEND_URL}/verification`);
   } catch (error) {
     console.error("Erreur lors de la vérification de l'email:", error);
     res

@@ -36,11 +36,11 @@ const Step0 = ({ email, setEmail, handleNextStep, goBackToStepOne }) => {
 
   return (
     <div className="flex flex-col min-h-screen items-center relative px-4">
-      <div className="w-full max-w-3xl">
+      <div className="w-full max-w-3xl sm:shadow rounded-lg sm:mt-25 mt-5 sm:p-10 bg-white ">
         {/* Header avec le bouton de retour à gauche et l'image à droite */}
         <div className="flex justify-between items-center mb-6">
           <button
-            onClick={goBackToStepOne}
+            onClick={() => navigate("/")}
             className="flex items-center text-[#0E3043]"
           >
             <svg
@@ -62,7 +62,7 @@ const Step0 = ({ email, setEmail, handleNextStep, goBackToStepOne }) => {
           <img src={bg} alt="Background Papillon" />
         </div>
 
-        <p className="text-[#0E3043] text-xl text-center mb-10 mt-25">
+        <p className="text-md sm:text-xl text-[#0E3043] mb-10 mt-4">
           Entrez votre adresse mail pour votre nouveau compte. Vous pourrez le
           modifier à tout moment.
         </p>
@@ -85,11 +85,11 @@ const Step0 = ({ email, setEmail, handleNextStep, goBackToStepOne }) => {
             {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
           </div>
 
-          <div className="flex flex-col items-center mt-20">
+          <div className="flex flex-col gap-4 justify-center mt-10 w-full p-5 items-center">
             <button
               type="submit"
               disabled={loading}
-              className="w-lg bg-[#0E3043] text-white text-[25px] py-3 rounded-lg font-normal hover:bg-[#0E3043]/90 text-center"
+              className="w-full sm:w-[300px] bg-[#1D5F84] hover:bg-[#1D5F84] text-white py-2 px-2 rounded-lg font-semibold text-lg"
             >
               {loading ? "Vérification..." : "S'inscrire"}
             </button>
