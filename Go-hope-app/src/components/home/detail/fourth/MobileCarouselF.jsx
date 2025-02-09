@@ -82,11 +82,11 @@ const MobileCarousel = () => {
         {slideData.map((slide, index) => (
           <div
             key={index}
-            className="flex-shrink-0 w-full min-w-full snap-start flex justify-center"
+            className="flex-shrink-0 w-full min-w-full snap-start flex justify-center p-3"
           >
             {/* Carte avec hauteur fixe, largeur limitée et couleurs dynamiques */}
             <div
-              className={`p-6 rounded-xl shadow-lg flex flex-col h-auto w-full max-w-md ${slide.cardColor}`}
+              className={`p-6 rounded-xl shadow flex flex-col h-auto w-full max-w-md ${slide.cardColor}`}
             >
               <div className="flex justify-center mt-4">
                 <img

@@ -79,7 +79,7 @@ const MobileCarousel = () => {
             {/* La carte aura une largeur maximale définie */}
             <div className="border border-orange-500 p-6 rounded-xl shadow-md flex flex-col h-[500px] w-full max-w-md">
               {/* Conteneur pour l'image */}
-              <div className="flex justify-center mt-10">
+              <div className="flex justify-center mt-13">
                 <img
                   className="mx-auto mb-4 w-full max-w-xs h-32 object-contain"
                   src={slide.image}
