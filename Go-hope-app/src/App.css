@@ -1,4 +1,5 @@
 /* Par défaut (mobile) */
+
 /* Ici, on définit le background pour les écrans inférieurs à 640px (ou jusqu'à 639px) */
 .step-container {
   background-image: url("./assets/gohopebg-mobile.png");
@@ -23,5 +24,56 @@
 
     background-repeat: no-repeat;
     background-size: cover; /* Ajustez cette valeur pour le desktop */
+  }
+}
+
+@font-face {
+  font-family: "Halcom";
+  src: url("./fonts/Halcom-Regular-BF648a71453957a.otf") format("opentype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Appliquer la police Halcom à la majorité des éléments */
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+button,
+span,
+a,
+div,
+input,
+label,
+li,
+ul,
+ol {
+  font-family: "Halcom", sans-serif;
+}
+
+/* Pour Firefox */
+.no-scrollbar {
+  scrollbar-width: none; /* Masque la scrollbar */
+  -ms-overflow-style: none; /* IE 10+ */
+}
+
+/* Pour Chrome, Safari et Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@media (min-width: 1050px) {
+  .hide-above-1050 {
+    display: none !important;
+  }
+}
+
+@media (maw-width: 1050px) {
+  .show-above-1050 {
+    display: none !important;
   }
 }
