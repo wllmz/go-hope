@@ -21,13 +21,13 @@ const Step1 = ({ handleNextStep }) => {
           onClick={handleNextStep}
           className="w-full sm:w-[300px] bg-[#F5943A] hover:bg-[#F1731F] text-white font-semibold py-2 px-2 rounded-lg shadow-md transition duration-300 text-lg"
         >
-          Suivant
+          Créer un compte
         </button>
         <button
           onClick={() => navigate("/login")}
           className="w-full sm:w-[300px] bg-[#F5943A] hover:bg-[#F1731F] text-white py-2 px-2 rounded-lg font-semibold text-lg"
         >
-          Devenir patient-aidant
+          Connexion
         </button>
       </div>
     </div>

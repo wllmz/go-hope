@@ -47,12 +47,12 @@ const articles = new mongoose.Schema({
     enum: ["En cours", "Correction", "Publié"],
     default: "En cours",
   },
-  likes: {
+  read: {
     type: [mongoose.Schema.Types.ObjectId],
     ref: "Auth",
     default: [],
   },
-  readLater: {
+  favoris: {
     type: [mongoose.Schema.Types.ObjectId],
     ref: "Auth",
     default: [],
