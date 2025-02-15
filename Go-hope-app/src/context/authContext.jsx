@@ -1,7 +1,7 @@
 import React, { createContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAuthenticatedUser } from "../services/auth/authService"; // Appel à /me
-import useAuthRefresh from "./useAuthRefresh";
+import useAuthRefresh from "../hooks/refresh/useTokenRefresh";
 
 export const AuthContext = createContext();
 

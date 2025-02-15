@@ -4,7 +4,7 @@ import { useCheckEmail } from "../../../hooks/auth/useCheckEmail"; // Hook perso
 import { useNavigate } from "react-router-dom";
 import bg from "../../../assets/bg-papillon.png";
 
-const Step0 = ({ email, setEmail, handleNextStep, goBackToStepOne }) => {
+const Step0 = ({ email, setEmail, handleNextStep }) => {
   const [localError, setLocalError] = useState({ email: null });
   const [emailError, setEmailError] = useState(null);
   const navigate = useNavigate();

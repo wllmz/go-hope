@@ -1,33 +1,36 @@
 import express from "express";
 import {
-  getLikedArticlesByUser,
-  getReadLaterByUser,
+  getReadArticlesByUser,
+  getFavorisByUser,
 } from "../../controllers/article/actionUserController.js";
 import { verifyToken } from "../../middleware/jwtMiddleware.js";
 
 const router = express.Router();
 
-// Utiliser les routes
-router.get("/like", verifyToken, getLikedArticlesByUser);
-router.get("/read", verifyToken, getReadLaterByUser);
+// Récupérer les articles marqués comme lus par l'utilisateur
+router.get("/read", verifyToken, getReadArticlesByUser);
+
+// Récupérer les articles ajoutés aux favoris par l'utilisateur
+router.get("/fav", verifyToken, getFavorisByUser);
+
 /**
  * @swagger
  * tags:
  *   name: ActionUser
- *   description: Gestion des actions sur les articles (likes, liste de lecture, etc.)
+ *   description: Gestion des actions sur les articles (articles marqués comme lus, favoris, etc.)
  */
 
 /**
  * @swagger
- * /api/action/like:
+ * /api/action/read:
  *   get:
- *     summary: Récupérer les articles aimés par l'utilisateur connecté
+ *     summary: Récupérer les articles marqués comme lus par l'utilisateur connecté
  *     tags: [ActionUser]
  *     security:
  *       - cookieAuth: []
  *     responses:
  *       200:
- *         description: Liste des articles aimés récupérée avec succès
+ *         description: Liste des articles marqués comme lus récupérée avec succès
  *         content:
  *           application/json:
  *             schema:
@@ -49,15 +52,15 @@ router.get("/read", verifyToken, getReadLaterByUser);
 
 /**
  * @swagger
- * /api/action/read:
+ * /api/action/fav:
  *   get:
- *     summary: Récupérer les articles ajoutés à la liste "Lire plus tard"
+ *     summary: Récupérer les articles ajoutés aux favoris par l'utilisateur connecté
  *     tags: [ActionUser]
  *     security:
  *       - cookieAuth: []
  *     responses:
  *       200:
- *         description: Liste des articles "Lire plus tard" récupérée avec succès
+ *         description: Liste des articles favoris récupérée avec succès
  *         content:
  *           application/json:
  *             schema:

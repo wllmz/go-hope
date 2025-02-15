@@ -6,6 +6,10 @@ const categories = new mongoose.Schema({
     required: true,
     unique: true,
   },
+  category_image: {
+    type: String,
+    required: true,
+  },
 });
 
 export default mongoose.model("Category", categories);

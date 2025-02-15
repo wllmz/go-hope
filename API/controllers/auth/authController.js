@@ -1,4 +1,4 @@
-import Auth from "../../models/user/userModel.js";
+import Auth from "../../models/User/userModel.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
@@ -9,7 +9,10 @@ dotenv.config();
 const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET;
 const JWT_RESET_PASSWORD_SECRET = process.env.JWT_RESET_PASSWORD_SECRET;
-const FRONTEND_URL = process.env.FRONTEND_URL;
+const FRONTEND_URL =
+  process.env.NODE_ENV === "production"
+    ? process.env.FRONTEND_PROD_URL
+    : process.env.FRONTEND_DEV_URL;
 
 // 1. Fonction utilitaire pour générer les tokens (AccessToken et RefreshToken)
 const generateTokens = (user) => {
@@ -33,45 +36,38 @@ const generateTokens = (user) => {
 };
 
 // 2. Fonction utilitaire pour enregistrer les tokens dans les cookies
-const setTokenCookies = (
-  res,
-  accessToken,
-  refreshToken,
-  expiresIn = 15 * 60 * 1000
-) => {
+const setTokenCookies = (res, accessToken, refreshToken) => {
   res.cookie("accessToken", accessToken, {
-    httpOnly: false,
-    secure: false,
-    // sameSite: "None",
-    // domain: ".flow-parents.com", // Inclure tous les sous-domaines
-    // path: "/",
-    // maxAge: 15 * 60 * 1000, // 15 minutes
+    httpOnly: true,
+    secure: true,
+    sameSite: "None",
+    domain: ".flow-parents.com", // Inclure tous les sous-domaines
+    path: "/",
+    maxAge: 15 * 60 * 1000, // 15 minutes
   });
 
   res.cookie("refreshToken", refreshToken, {
-    httpOnly: false,
-    secure: false,
-    // sameSite: "None",
-    // domain: ".flow-parents.com", // Inclure tous les sous-domaines
-    // path: "/",
-    // maxAge: 7 * 24 * 60 * 60 * 1000, // 7 jours
+    httpOnly: true,
+    secure: true,
+    sameSite: "None",
+    domain: ".flow-parents.com",
+    path: "/",
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 jours
   });
 
-  // Log pour vérifier ce qui est envoyé dans les en-têtes Set-Cookie
   console.log("Set-Cookie headers envoyés : ", res.getHeaders()["set-cookie"]);
 };
 
 // 3. Fonction pour l'inscription d'un utilisateur
 export const registerUser = async (req, res) => {
   try {
-    const { email, username, password, termsAccepted } = req.body;
+    const { email, password, roles } = req.body;
 
     // Vérification des champs nécessaires
-    if (!email || !username || !password || termsAccepted !== true) {
-      return res.status(400).json({
-        message:
-          "Email, mot de passe, rôles et acceptation des termes sont requis.",
-      });
+    if (!email || !password || !roles) {
+      return res
+        .status(400)
+        .json({ message: "Email, mot de passe et rôles sont requis." });
     }
 
     // Vérification de l'existence de l'utilisateur
@@ -86,12 +82,15 @@ export const registerUser = async (req, res) => {
       }
       return res.status(400).json({ message: "Email déjà utilisé." });
     }
-    // verifcation de l'existence du username
-    const existingUsername = await Auth.findOne({ username });
-    if (existingUsername) {
+
+    // Vérification des rôles
+    const validRoles = ["admin_company", "employee"];
+    const assignedRoles = roles.filter((role) => validRoles.includes(role));
+
+    if (assignedRoles.length === 0) {
       return res
         .status(400)
-        .json({ message: "Nom d'utilisateur déjà utilisé." });
+        .json({ message: "Veuillez sélectionner au moins un rôle valide." });
     }
 
     // Hachage du mot de passe
@@ -100,9 +99,8 @@ export const registerUser = async (req, res) => {
     // Création de l'utilisateur
     const newUser = new Auth({
       email,
-      username,
       password: hashedPassword,
-      termsAccepted, // Prenez la valeur de la requête
+      roles: assignedRoles,
     });
 
     await newUser.save();
@@ -166,25 +164,23 @@ export const loginUser = async (req, res) => {
   }
 };
 
-// 5. Fonction pour rafraîchir le Access Tokenexport const refreshToken = (req, res) => {
+// 5. Fonction pour rafraîchir l'Access Token
 export const refreshToken = (req, res) => {
-  const refreshToken = req.cookies.refreshToken;
+  const refreshTokenCookie = req.cookies.refreshToken;
 
-  // Vérifiez si le refreshToken est présent dans les cookies
   console.log(
     "Token de rafraîchissement reçu dans les cookies : ",
-    refreshToken
+    refreshTokenCookie
   );
 
-  if (!refreshToken) {
+  if (!refreshTokenCookie) {
     console.log("Aucun refreshToken trouvé.");
     return res
       .status(401)
       .json({ message: "Token de rafraîchissement manquant." });
   }
 
-  // Vérification du refreshToken
-  jwt.verify(refreshToken, JWT_REFRESH_SECRET, (err, decoded) => {
+  jwt.verify(refreshTokenCookie, JWT_REFRESH_SECRET, (err, decoded) => {
     if (err) {
       console.error("Erreur de vérification du refreshToken : ", err);
       return res
@@ -194,17 +190,24 @@ export const refreshToken = (req, res) => {
 
     console.log("Le refreshToken est valide. Données décodées : ", decoded);
 
-    // Génération d'un nouveau accessToken
     const newAccessToken = jwt.sign(
       { id: decoded.id, roles: decoded.roles },
       JWT_SECRET,
-      { expiresIn: "15m" } // Durée de validité du nouveau accessToken (15 minutes)
+      { expiresIn: "15m" }
     );
 
-    // Afficher le nouveau accessToken généré (pour le débogage)
+    // Mise à jour du cookie accessToken
+    res.cookie("accessToken", newAccessToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "None",
+      domain: ".flow-parents.com",
+      path: "/",
+      maxAge: 15 * 60 * 1000,
+    });
+
     console.log("Nouveau accessToken généré : ", newAccessToken);
 
-    // Renvoi de la réponse avec accessToken
     res.status(200).json({
       accessToken: newAccessToken,
       message: "Token rafraîchi avec succès.",
@@ -232,17 +235,17 @@ export const logoutUser = (req, res) => {
 
     // Suppression des cookies
     res.clearCookie("accessToken", {
-      httpOnly: false,
-      secure: false, // Utiliser `true` en production avec HTTPS
-      // sameSite: "None", // Aligner avec les paramètres des cookies
-      // path: "/", // Couvrir tout le domaine
+      httpOnly: true,
+      secure: true,
+      sameSite: "None",
+      path: "/",
     });
 
     res.clearCookie("refreshToken", {
-      httpOnly: false,
-      secure: false,
-      // sameSite: "None",
-      // path: "/",
+      httpOnly: true,
+      secure: true,
+      sameSite: "None",
+      path: "/",
     });
 
     console.log("Cookies supprimés avec succès !");
@@ -257,7 +260,7 @@ export const logoutUser = (req, res) => {
   }
 };
 
-// 7. Route pour vérifier l'email
+// 7. Fonction pour vérifier l'email
 export const verifyEmail = async (req, res) => {
   const { email } = req.query;
 
@@ -291,7 +294,7 @@ export const verifyEmail = async (req, res) => {
     setTokenCookies(res, accessToken, refreshToken);
 
     // Redirection vers la page d'accueil après la vérification de l'email
-    return res.redirect(`${FRONTEND_URL}/verification`);
+    return res.redirect(`${FRONTEND_URL}/user`);
   } catch (error) {
     console.error("Erreur lors de la vérification de l'email:", error);
     res
@@ -338,7 +341,7 @@ export const checkEmail = async (req, res) => {
     const existingUser = await Auth.findOne({ email });
 
     if (existingUser) {
-      return res.status(400).json({ message: "L'email est invalide." });
+      return res.status(400).json({ message: "L'email est déjà utilisé." });
     }
 
     return res.status(200).json({ message: "Email disponible." });
@@ -354,20 +357,17 @@ export const checkUsername = async (req, res) => {
   const { username } = req.body;
 
   try {
-    const existingUsername = await Auth.findOne({ username });
-    if (existingUsername) {
-      return res
-        .status(400)
-        .json({ message: "Le nom d'utilisateur est déjà utilisé." });
+    const existingUser = await Auth.findOne({ username });
+
+    if (existingUser) {
+      return res.status(400).json({ message: "username est déjà utilisé." });
     }
-    return res.status(200).json({ message: "Nom d'utilisateur disponible." });
+
+    return res.status(200).json({ message: "username disponible." });
   } catch (error) {
-    console.error(
-      "Erreur lors de la vérification du nom d'utilisateur:",
-      error
-    );
-    return res.status(500).json({
-      message: "Erreur lors de la vérification du nom d'utilisateur.",
-    });
+    console.error("Erreur lors de la vérification de l'email:", error);
+    return res
+      .status(500)
+      .json({ message: "Erreur lors de la vérification de l'email." });
   }
 };

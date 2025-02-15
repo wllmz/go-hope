@@ -1,10 +1,12 @@
 import articleModel from "../../models/article/articleModel.js";
 import mongoose from "mongoose";
 
-export const getLikedArticlesByUser = async (req, res) => {
+/**
+ * Récupère les articles que l'utilisateur a marqués comme lus.
+ */
+export const getReadArticlesByUser = async (req, res) => {
   const authId = req.user.id; // Récupérer l'ID utilisateur depuis le token
 
-  // Log pour vérifier l'ID utilisateur
   console.log("ID utilisateur récupéré depuis le token:", authId);
 
   // Vérification de la validité de l'ID utilisateur
@@ -14,42 +16,49 @@ export const getLikedArticlesByUser = async (req, res) => {
   }
 
   try {
-    // Conversion correcte en ObjectId avec 'new'
+    // Conversion en ObjectId
     const objectIdUser = new mongoose.Types.ObjectId(authId);
-    console.log("ObjectId pour la recherche dans 'likes' :", objectIdUser);
+    console.log("ObjectId pour la recherche dans 'read' :", objectIdUser);
 
-    // Recherche des articles où l'utilisateur a liké l'article
-    const likedArticles = await articleModel
+    // Recherche des articles où l'utilisateur a marqué l'article comme lu
+    const readArticles = await articleModel
       .find({
-        likes: objectIdUser, // Chercher des articles où l'ID de l'utilisateur est dans le tableau "likes"
+        read: objectIdUser,
       })
-      .populate("category"); // Peupler les catégories si nécessaire
+      .populate("category");
 
-    // Log pour voir les articles trouvés
-    console.log("Articles trouvés :", likedArticles);
+    console.log("Articles marqués comme lus trouvés :", readArticles);
 
-    if (!likedArticles || likedArticles.length === 0) {
-      console.log("Aucun article aimé trouvé pour l'utilisateur:", authId);
-      return res.status(404).json({ message: "Aucun article aimé trouvé." });
+    if (!readArticles || readArticles.length === 0) {
+      console.log(
+        "Aucun article marqué comme lu trouvé pour l'utilisateur:",
+        authId
+      );
+      return res
+        .status(404)
+        .json({ message: "Aucun article marqué comme lu trouvé." });
     }
 
-    // Retourner les articles trouvés
     res.status(200).json({
-      message: "Articles trouvés.",
-      articles: likedArticles, // Renvoi des articles trouvés
+      message: "Articles marqués comme lus trouvés.",
+      articles: readArticles,
     });
   } catch (error) {
-    // Log détaillé de l'erreur pour comprendre la source
-    console.error("Erreur lors de la récupération des articles likés :", error);
+    console.error(
+      "Erreur lors de la récupération des articles marqués comme lus :",
+      error
+    );
     res.status(500).json({
-      message: "Erreur lors de la récupération des articles likés.",
+      message: "Erreur lors de la récupération des articles marqués comme lus.",
       error: error.message,
     });
   }
 };
 
-// article readlater
-export const getReadLaterByUser = async (req, res) => {
+/**
+ * Récupère les articles que l'utilisateur a ajoutés à ses favoris.
+ */
+export const getFavorisByUser = async (req, res) => {
   const authId = req.user.id;
   console.log("User ID:", authId);
 
@@ -59,34 +68,36 @@ export const getReadLaterByUser = async (req, res) => {
   }
 
   try {
-    // Conversion correcte en ObjectId avec 'new'
+    // Conversion en ObjectId
     const objectIdUser = new mongoose.Types.ObjectId(authId);
-    console.log("ObjectId pour la recherche dans 'readLater' :", objectIdUser);
+    console.log("ObjectId pour la recherche dans 'favoris' :", objectIdUser);
 
-    // Recherche des articles où l'utilisateur a ajouté l'article à la liste "Lire plus tard"
-    const readLaterArticles = await articleModel
+    // Recherche des articles où l'utilisateur a ajouté l'article aux favoris
+    const favorisArticles = await articleModel
       .find({
-        readLater: objectIdUser,
+        favoris: objectIdUser,
       })
       .populate("category");
 
-    console.log("Articles trouvés dans readLater :", readLaterArticles);
+    console.log("Articles favoris trouvés :", favorisArticles);
 
-    if (readLaterArticles.length === 0) {
+    if (favorisArticles.length === 0) {
       return res
         .status(404)
-        .json({ message: "Aucun article trouvé dans votre liste de lecture." });
+        .json({ message: "Aucun article trouvé dans vos favoris." });
     }
 
-    res.status(200).json({ readLaterArticles });
+    res.status(200).json({
+      message: "Articles favoris trouvés.",
+      favorisArticles,
+    });
   } catch (error) {
     console.error(
-      "Erreur lors de la récupération des articles dans la liste de lecture :",
+      "Erreur lors de la récupération des articles favoris :",
       error
     );
     res.status(500).json({
-      message:
-        "Erreur lors de la récupération des articles dans la liste de lecture.",
+      message: "Erreur lors de la récupération des articles favoris.",
       error: error.message,
     });
   }

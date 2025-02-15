@@ -8,7 +8,7 @@ const handleError = (res, message, error) => {
 
 // Fonction pour créer une catégorie
 export const createCategory = async (req, res) => {
-  const { category_tittle } = req.body;
+  const { category_tittle, category_image } = req.body;
 
   if (!category_tittle) {
     return res.status(400).json({
@@ -18,7 +18,7 @@ export const createCategory = async (req, res) => {
 
   try {
     // Création d'une nouvelle catégorie
-    const newCategory = new categoryModel({ category_tittle });
+    const newCategory = new categoryModel({ category_tittle, category_image });
 
     // Sauvegarder la catégorie dans la base de données
     await newCategory.save();
@@ -63,7 +63,7 @@ export const getCategoryById = async (req, res) => {
 // Fonction pour mettre à jour une catégorie
 export const updateCategory = async (req, res) => {
   const { categoryId } = req.params;
-  const { category_tittle } = req.body;
+  const { category_tittle, category_image } = req.body;
 
   if (!category_tittle) {
     return res.status(400).json({
@@ -74,7 +74,7 @@ export const updateCategory = async (req, res) => {
   try {
     const updatedCategory = await categoryModel.findByIdAndUpdate(
       categoryId,
-      { category_tittle },
+      { category_tittle, category_image },
       { new: true } // Retourne la catégorie mise à jour
     );
 
