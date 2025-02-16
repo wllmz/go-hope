@@ -12,6 +12,10 @@ import ArticlePage from "./pages/article/articlePage";
 import CategoriesPage from "./pages/article/categoriePage";
 import ArticleByidPage from "./pages/article/articleByidPage";
 import AllArticle from "./pages/article/allArticlePage";
+import ForumPage from "./pages/forum/forumPage";
+import AllSubject from "./pages/forum/allSubjectPage";
+import SubjectByid from "./pages/forum/subjectByIdPage";
+import CategorieForumPage from "./pages/forum/categorieForumPage";
 
 function App() {
   return (
@@ -31,6 +35,17 @@ function App() {
             />
             <Route path="/articles/:articleId" element={<ArticleByidPage />} />
             <Route path="/all-articles" element={<AllArticle />} />
+
+            <Route path="/forum" element={<ForumPage />} />
+            <Route
+              path="/forum/categories/:categoryId"
+              element={<CategorieForumPage />}
+            />
+            <Route
+              path="/forum/subjects/:subjectId"
+              element={<SubjectByid />}
+            />
+            <Route path="/all-subjects" element={<AllSubject />} />
           </Routes>
         </main>
       </AuthProvider>
