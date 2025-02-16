@@ -1,5 +1,5 @@
 import React from "react";
-import ArticleById from "../../components/articles/articleById";
+import ArticleById from "../../components/articles/second/articleById";
 import Menu from "../../components/layout/menu";
 const articleByidPage = () => {
   return (

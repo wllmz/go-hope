@@ -4,13 +4,10 @@ const articles = new mongoose.Schema({
   title: {
     type: String,
     required: true,
-    unique: true,
   },
   image: {
     type: String,
     required: true,
-    match:
-      /^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)$/i,
   },
   content: {
     type: String,

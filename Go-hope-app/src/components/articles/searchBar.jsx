@@ -26,14 +26,13 @@ const SearchBar = () => {
   }, [searchTerm, articles]);
 
   const handleArticleClick = (articleId) => {
-    // Réinitialiser la recherche et rediriger vers l'article
     setSearchTerm("");
     setFilteredArticles([]);
     navigate(`/articles/${articleId}`);
   };
 
   return (
-    <div className="relative mx-auto mb-5">
+    <div className="relative w-full sm:max-w-xl mx-auto mb-5">
       <input
         type="text"
         value={searchTerm}
@@ -42,7 +41,7 @@ const SearchBar = () => {
         className="w-full p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 shadow-sm bg-white"
       />
       {filteredArticles.length > 0 && (
-        <ul className="absolute z-20 w-full bg-white border border-gray-300 rounded-lg mt-2 shadow-lg max-h-60 overflow-y-auto text-start">
+        <ul className="absolute z-20 w-full sm:max-w-xl bg-white border border-gray-300 rounded-lg mt-2 shadow-lg max-h-60 overflow-y-auto text-left">
           {filteredArticles.map((article) => (
             <li
               key={article._id}
