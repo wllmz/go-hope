@@ -3,7 +3,7 @@ import {
   addSubjectToFavorites,
   removeSubjectFromFavorites,
   allSubjectFav,
-} from "../services/forum/favoritesService";
+} from "../../services/forum/actionSubjectService";
 
 export const useSubjectFavorites = () => {
   const [favorites, setFavorites] = useState([]);

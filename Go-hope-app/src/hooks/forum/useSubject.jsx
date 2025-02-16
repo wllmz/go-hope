@@ -1,52 +1,53 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   createSubjectForum,
   listAllSubjects,
   getSubjectByIdForum,
   updateSubjectForum,
   deleteSubjectForum,
-} from "../../services/forum/subjectService"; // Assurez-vous que le chemin est correct
+} from "../../services/forum/subjectService";
 
-export const useSubjectsForum = () => {
+const useSubjectsForum = () => {
   const [subjects, setSubjects] = useState([]);
   const [currentSubject, setCurrentSubject] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Récupérer tous les sujets
-  const fetchSubjects = async () => {
+  // Récupérer tous les sujets (fonction mémorisée)
+  // Exemple dans useSubjectsForum
+  const fetchSubjects = useCallback(async () => {
     setLoading(true);
     try {
       const data = await listAllSubjects();
-      setSubjects(data.subjects);
+      setSubjects(data);
       setError(null);
     } catch (err) {
       setError(err);
     } finally {
       setLoading(false);
     }
-  };
+  }, []); // dépendances
 
-  // Récupérer un sujet spécifique
-  const fetchSubjectById = async (subjectId) => {
+  // Récupérer un sujet spécifique (fonction mémorisée)
+  const fetchSubjectById = useCallback(async (subjectId) => {
     setLoading(true);
     try {
       const data = await getSubjectByIdForum(subjectId);
-      setCurrentSubject(data.subjects);
+      setCurrentSubject(data);
       setError(null);
     } catch (err) {
       setError(err);
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  // Créer un sujet
-  const createSubject = async (subjectData) => {
+  // Créer un sujet (fonction mémorisée)
+  const createSubject = useCallback(async (subjectData) => {
     setLoading(true);
     try {
       const newSubject = await createSubjectForum(subjectData);
-      setSubjects((prev) => [...prev, newSubject]); // Ajouter le nouveau sujet
+      setSubjects((prev) => [...prev, newSubject]);
       setError(null);
       return newSubject;
     } catch (err) {
@@ -55,10 +56,10 @@ export const useSubjectsForum = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  // Mettre à jour un sujet
-  const updateSubject = async (subjectId, updateData) => {
+  // Mettre à jour un sujet (fonction mémorisée)
+  const updateSubject = useCallback(async (subjectId, updateData) => {
     setLoading(true);
     try {
       const updatedSubject = await updateSubjectForum(subjectId, updateData);
@@ -73,10 +74,10 @@ export const useSubjectsForum = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  // Supprimer un sujet
-  const deleteSubject = async (subjectId) => {
+  // Supprimer un sujet (fonction mémorisée)
+  const deleteSubject = useCallback(async (subjectId) => {
     setLoading(true);
     try {
       await deleteSubjectForum(subjectId);
@@ -88,12 +89,12 @@ export const useSubjectsForum = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   // Charger les sujets au montage
   useEffect(() => {
     fetchSubjects();
-  }, []);
+  }, [fetchSubjects]);
 
   return {
     subjects,
@@ -107,3 +108,5 @@ export const useSubjectsForum = () => {
     deleteSubject,
   };
 };
+
+export default useSubjectsForum;

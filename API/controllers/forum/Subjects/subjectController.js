@@ -16,7 +16,7 @@ export const listAllSubjects = async (req, res) => {
     const subjects = await Subject.find({})
       .select("+favoris") // Forcer l'inclusion du champ favoris
       .populate("categories", "categorie") // Populate les catégories
-      .populate("author", "firstName email"); // Populate l'auteur
+      .populate("author", "username"); // Populate l'auteur
     res.status(200).json(subjects);
   } catch (error) {
     res.status(500).json({

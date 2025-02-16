@@ -7,7 +7,7 @@ import {
   deleteCategorieForum,
 } from "../../services/forum/categorieService"; // Assurez-vous que le chemin est correct
 
-export const useCategoriesForum = () => {
+const useCategoriesForum = () => {
   const [categories, setCategories] = useState([]);
   const [currentCategory, setCurrentCategory] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -18,7 +18,7 @@ export const useCategoriesForum = () => {
     setLoading(true);
     try {
       const data = await listAllCategoriesForum();
-      setCategories(data.categories);
+      setCategories(data);
       setError(null);
     } catch (err) {
       setError(err);
@@ -32,7 +32,7 @@ export const useCategoriesForum = () => {
     setLoading(true);
     try {
       const data = await getCategorieByIdForum(categoryId);
-      setCurrentCategory(data.categories);
+      setCurrentCategory(data);
       setError(null);
     } catch (err) {
       setError(err);
@@ -110,3 +110,5 @@ export const useCategoriesForum = () => {
     deleteCategory,
   };
 };
+
+export default useCategoriesForum;
