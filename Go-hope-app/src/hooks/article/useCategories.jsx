@@ -32,8 +32,9 @@ const useCategories = () => {
     setLoading(true);
     setError(null);
     try {
-      const allCategories = await getAllCategories();
-      setCategories(allCategories);
+      const data = await getAllCategories();
+      // On utilise data.categories si disponible, sinon data
+      setCategories(data.categories);
     } catch (err) {
       setError(err.message);
     } finally {

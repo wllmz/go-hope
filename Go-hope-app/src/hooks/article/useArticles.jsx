@@ -19,7 +19,8 @@ const useArticles = () => {
     setError(null);
     try {
       const data = await getAllArticles();
-      setArticles(data);
+      // Si l'API renvoie un objet avec une propriété "articles", utilisez-la, sinon utilisez directement data
+      setArticles(data.articles);
     } catch (err) {
       setError(err.message || "Erreur lors de la récupération des articles.");
     } finally {
@@ -33,7 +34,9 @@ const useArticles = () => {
     setError(null);
     try {
       const data = await getArticleById(articleId);
-      setCurrentArticle(data);
+      console.log("Données reçues :", data);
+      // Si l'API renvoie { article: { ... } }, on prend data.article
+      setCurrentArticle(data.article || data);
     } catch (err) {
       setError(err.message || "Erreur lors de la récupération de l'article.");
     } finally {
@@ -47,6 +50,7 @@ const useArticles = () => {
     setError(null);
     try {
       const data = await createArticle(articleData);
+      // Si l'API renvoie l'article créé dans data.article, on l'ajoute au tableau
       setArticles((prev) => [...prev, data.article]);
     } catch (err) {
       setError(err.message || "Erreur lors de la création de l'article.");

@@ -27,6 +27,12 @@ const articles = new mongoose.Schema({
     enum: ["Conseil", "Article", "Outil"],
     required: true,
   },
+  // Nouveau champ pour spécifier le format de l'article (fiche ou vidéo)
+  mediaType: {
+    type: String,
+    enum: ["Fiche", "Vidéo"],
+    default: "Fiche", // vous pouvez changer la valeur par défaut selon vos besoins
+  },
   category: [
     {
       type: mongoose.Schema.Types.ObjectId,

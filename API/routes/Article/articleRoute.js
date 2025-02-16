@@ -28,8 +28,6 @@ router.delete("/:articleId", verifyToken, AdminRole, deleteArticle);
 
 //SWAGGER:
 
-//SWAGGER:
-
 /**
  * @swagger
  * tags:

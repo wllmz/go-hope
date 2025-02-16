@@ -2,7 +2,7 @@ import axiosInstance from "../instance/axiosInstance";
 
 export const getReadArticleUser = async () => {
   try {
-    const response = await axiosInstance.get("/read");
+    const response = await axiosInstance.get("/action/read");
     return response.data;
   } catch (error) {
     return error.response.data;
@@ -11,7 +11,7 @@ export const getReadArticleUser = async () => {
 
 export const getReadbyUser = async () => {
   try {
-    const response = await axiosInstance.get("/read/user");
+    const response = await axiosInstance.get("/action/fav/");
     return response.data;
   } catch (error) {
     return error.response.data;

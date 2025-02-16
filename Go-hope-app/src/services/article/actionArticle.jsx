@@ -3,7 +3,7 @@ import axiosInstance from "../instance/axiosInstance";
 // Marquer un article comme lu (anciennement "like")
 export const markArticleAsReadService = async (articleId) => {
   try {
-    const response = await axiosInstance.post(`/articles/like/${articleId}`);
+    const response = await axiosInstance.post(`/articles/read/${articleId}`);
     console.log("Response from markArticleAsRead API:", response.data);
     return response.data;
   } catch (error) {
@@ -15,7 +15,7 @@ export const markArticleAsReadService = async (articleId) => {
 // Annuler le marquage d'un article comme lu (anciennement retirer le like)
 export const unmarkArticleAsReadService = async (articleId) => {
   try {
-    const response = await axiosInstance.delete(`/articles/like/${articleId}`);
+    const response = await axiosInstance.delete(`/articles/read/${articleId}`);
     console.log("Response from unmarkArticleAsRead API:", response.data);
     return response.data;
   } catch (error) {
@@ -30,9 +30,7 @@ export const unmarkArticleAsReadService = async (articleId) => {
 // Ajouter un article aux favoris (anciennement "read later")
 export const addToFavorisService = async (articleId) => {
   try {
-    const response = await axiosInstance.post(
-      `/articles/read-later/${articleId}`
-    );
+    const response = await axiosInstance.post(`/articles/fav/${articleId}`);
     console.log("Response from addToFavoris API:", response.data);
     return response.data;
   } catch (error) {
@@ -44,9 +42,7 @@ export const addToFavorisService = async (articleId) => {
 // Retirer un article des favoris
 export const removeFromFavorisService = async (articleId) => {
   try {
-    const response = await axiosInstance.delete(
-      `/articles/read-later/${articleId}`
-    );
+    const response = await axiosInstance.delete(`/articles/fav/${articleId}`);
     console.log("Response from removeFromFavoris API:", response.data);
     return response.data;
   } catch (error) {

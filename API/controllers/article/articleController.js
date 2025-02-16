@@ -18,6 +18,7 @@ export const createArticle = async (req, res) => {
     category,
     status,
     saisonier, // Le mois à activer
+    mediaType, // Nouveau champ : "Fiche" ou "Vidéo"
   } = req.body;
 
   // Validation des champs obligatoires
@@ -47,18 +48,17 @@ export const createArticle = async (req, res) => {
       .json({ message: "Le mois doit être un format valide entre 01 et 12." });
   }
 
-  // Initialiser tous les mois comme inactifs par défaut
+  // Initialiser tous les mois comme actifs par défaut
   const allMonths = Array.from({ length: 12 }, (_, index) => ({
     month: (index + 1).toString().padStart(2, "0"),
     isActive: true,
   }));
 
-  // Si `saisonier` est fourni, on active les mois spécifiés et laisse les autres désactivés
+  // Si `saisonier` est fourni, on active uniquement les mois spécifiés
   if (saisonier && saisonier.length > 0) {
     allMonths.forEach((month) => {
       month.isActive = false;
     });
-
     saisonier.forEach((month) => {
       const monthIndex = allMonths.findIndex(
         (item) => item.month === month.month
@@ -70,13 +70,14 @@ export const createArticle = async (req, res) => {
   }
 
   try {
-    // Créer un nouvel article avec les données reçues
+    // Créer un nouvel article avec les données reçues, y compris mediaType
     const newArticle = new articleModel({
       title,
       image,
       content,
       time_lecture,
       type,
+      mediaType, // ajout du champ mediaType
       category: categoryTitles.map((cat) => cat._id),
       status: status || "En cours",
       saisonier: allMonths,
@@ -151,6 +152,7 @@ export const updateArticle = async (req, res) => {
     category,
     status,
     saisonier,
+    mediaType, // nouveau champ
   } = req.body;
 
   if (!title || !image || !content || !time_lecture || !type || !category) {
@@ -181,7 +183,6 @@ export const updateArticle = async (req, res) => {
       allMonths.forEach((month) => {
         month.isActive = false;
       });
-
       saisonier.forEach((month) => {
         const monthIndex = allMonths.findIndex(
           (item) => item.month === month.month
@@ -200,6 +201,7 @@ export const updateArticle = async (req, res) => {
         content,
         time_lecture,
         type,
+        mediaType, // mettre à jour mediaType
         category: categoryIds,
         status: status || "En cours",
         saisonier: allMonths,

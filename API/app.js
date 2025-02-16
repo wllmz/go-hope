@@ -105,7 +105,7 @@ async function startServer() {
     app.use("/api/auth", authRoutes);
     app.use("/api/user", userRoutes);
     app.use("/api/admin", adminRoute);
-    app.use("/api/patient-aidant", patientAidantRoute);
+    app.use("/api/patient-aidants", patientAidantRoute);
     app.use("/api/categories", categoryRoute);
     app.use("/api/articles", articleRoute);
     app.use("/api/articles", actionRoute);

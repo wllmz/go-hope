@@ -38,21 +38,21 @@ const generateTokens = (user) => {
 // 2. Fonction utilitaire pour enregistrer les tokens dans les cookies
 const setTokenCookies = (res, accessToken, refreshToken) => {
   res.cookie("accessToken", accessToken, {
-    httpOnly: true,
-    secure: true,
-    sameSite: "None",
-    domain: ".flow-parents.com", // Inclure tous les sous-domaines
-    path: "/",
-    maxAge: 15 * 60 * 1000, // 15 minutes
+    httpOnly: false,
+    secure: false,
+    // sameSite: "None",
+    // domain: ".flow-parents.com", // Inclure tous les sous-domaines
+    // path: "/",
+    // maxAge: 15 * 60 * 1000, // 15 minutes
   });
 
   res.cookie("refreshToken", refreshToken, {
-    httpOnly: true,
-    secure: true,
-    sameSite: "None",
-    domain: ".flow-parents.com",
-    path: "/",
-    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 jours
+    httpOnly: false,
+    secure: false,
+    // sameSite: "None",
+    // domain: ".flow-parents.com",
+    // path: "/",
+    // maxAge: 7 * 24 * 60 * 60 * 1000, // 7 jours
   });
 
   console.log("Set-Cookie headers envoyés : ", res.getHeaders()["set-cookie"]);
@@ -198,12 +198,12 @@ export const refreshToken = (req, res) => {
 
     // Mise à jour du cookie accessToken
     res.cookie("accessToken", newAccessToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "None",
-      domain: ".flow-parents.com",
-      path: "/",
-      maxAge: 15 * 60 * 1000,
+      httpOnly: false,
+      secure: false,
+      // sameSite: "None",
+      // domain: ".flow-parents.com",
+      // path: "/",
+      // maxAge: 15 * 60 * 1000,
     });
 
     console.log("Nouveau accessToken généré : ", newAccessToken);
@@ -235,17 +235,17 @@ export const logoutUser = (req, res) => {
 
     // Suppression des cookies
     res.clearCookie("accessToken", {
-      httpOnly: true,
-      secure: true,
-      sameSite: "None",
-      path: "/",
+      httpOnly: false,
+      secure: false,
+      // sameSite: "None",
+      // path: "/",
     });
 
     res.clearCookie("refreshToken", {
-      httpOnly: true,
-      secure: true,
-      sameSite: "None",
-      path: "/",
+      httpOnly: false,
+      secure: false,
+      // sameSite: "None",
+      // path: "/",
     });
 
     console.log("Cookies supprimés avec succès !");
