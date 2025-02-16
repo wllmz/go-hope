@@ -15,10 +15,10 @@ export const listAllCategoriesForum = async (req, res) => {
   }
 };
 
-// Créer une nouvelle catégorie
 export const createCategorieForum = async (req, res) => {
-  const { categorie } = req.body;
+  const { categorie, image } = req.body;
 
+  // Vérifier que le nom de la catégorie est fourni
   if (!categorie) {
     return res
       .status(400)
@@ -26,7 +26,7 @@ export const createCategorieForum = async (req, res) => {
   }
 
   try {
-    const author = req.user.id; // Récupération de l'auteur depuis le token
+    const author = req.user.id; // Récupérer l'auteur depuis le token
 
     // Vérifier si une catégorie avec ce nom existe déjà
     const existingCategorie = await categorieForum.findOne({ categorie });
@@ -36,18 +36,23 @@ export const createCategorieForum = async (req, res) => {
         .json({ message: "Une catégorie avec ce nom existe déjà." });
     }
 
-    // Créer une nouvelle catégorie
-    const newCategorie = await categorieForum.create({ categorie, author });
-    res.status(201).json({
+    // Créer une nouvelle catégorie en incluant l'image si elle est fournie
+    const newCategorie = await categorieForum.create({
+      categorie,
+      image, // L'image peut être optionnelle
+      author,
+    });
+
+    return res.status(201).json({
       message: "Catégorie créée avec succès.",
       categorie: newCategorie,
     });
   } catch (error) {
-    res.status(500).json({
+    console.error("Erreur lors de la création de la catégorie :", error);
+    return res.status(500).json({
       message: "Erreur lors de la création de la catégorie.",
       error: error.message,
     });
-    console.error(error);
   }
 };
 
@@ -73,10 +78,20 @@ export const deleteCategorieForum = async (req, res) => {
 
 // Mettre à jour une catégorie par ID
 export const updateCategorieForum = async (req, res) => {
+  const { categorie, image } = req.body;
+
+  // Validation du champ obligatoire
+  if (!categorie) {
+    return res
+      .status(400)
+      .json({ message: "Le nom de la catégorie est requis." });
+  }
+
   try {
+    // Mise à jour de la catégorie en utilisant uniquement les champs fournis
     const updatedCategorie = await categorieForum.findByIdAndUpdate(
       req.params.categorieId,
-      req.body,
+      { categorie, image },
       { new: true }
     );
 
@@ -89,11 +104,11 @@ export const updateCategorieForum = async (req, res) => {
       categorie: updatedCategorie,
     });
   } catch (error) {
+    console.error("Erreur lors de la mise à jour de la catégorie :", error);
     res.status(500).json({
       message: "Erreur lors de la mise à jour de la catégorie.",
       error: error.message,
     });
-    console.error(error);
   }
 };
 
