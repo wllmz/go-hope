@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import useArticles from "../../hooks/article/useArticles";
+import useArticles from "../../../hooks/article/useArticles";
 
 const CategorieById = () => {
   const { categoryId } = useParams();

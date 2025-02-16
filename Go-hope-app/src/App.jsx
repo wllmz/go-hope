@@ -11,6 +11,7 @@ import Login from "./pages/auth/loginPage";
 import ArticlePage from "./pages/article/articlePage";
 import CategoriesPage from "./pages/article/categoriePage";
 import ArticleByidPage from "./pages/article/articleByidPage";
+import AllArticle from "./pages/article/allArticlePage";
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
               element={<CategoriesPage />}
             />
             <Route path="/articles/:articleId" element={<ArticleByidPage />} />
+            <Route path="/all-articles" element={<AllArticle />} />
           </Routes>
         </main>
       </AuthProvider>

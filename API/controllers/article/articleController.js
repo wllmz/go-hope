@@ -15,7 +15,7 @@ export const createArticle = async (req, res) => {
     content,
     time_lecture,
     type,
-    category,
+    category, // Attend un tableau d'IDs de catégories
     status,
     saisonier, // Le mois à activer
     mediaType, // Nouveau champ : "Fiche" ou "Vidéo"
@@ -28,11 +28,11 @@ export const createArticle = async (req, res) => {
       .json({ message: "Tous les champs obligatoires doivent être fournis." });
   }
 
-  // Vérifier si toutes les catégories existent dans la base de données par leur titre
-  const categoryTitles = await categoryModel.find({
-    category_tittle: { $in: category },
+  // Vérifier si toutes les catégories existent dans la base de données par leur _id
+  const foundCategories = await categoryModel.find({
+    _id: { $in: category },
   });
-  if (categoryTitles.length !== category.length) {
+  if (foundCategories.length !== category.length) {
     return res
       .status(404)
       .json({ message: "Certaines catégories n'ont pas été trouvées." });
@@ -78,7 +78,7 @@ export const createArticle = async (req, res) => {
       time_lecture,
       type,
       mediaType, // ajout du champ mediaType
-      category: categoryTitles.map((cat) => cat._id),
+      category: foundCategories.map((cat) => cat._id),
       status: status || "En cours",
       saisonier: allMonths,
     });
@@ -98,7 +98,10 @@ export const createArticle = async (req, res) => {
 // Récupérer tous les articles
 export const getArticles = async (req, res) => {
   try {
-    const articles = await articleModel.find().populate("category");
+    const articles = await articleModel
+      .find()
+      .select("+favoris")
+      .populate("category");
 
     if (!articles) {
       return res.status(404).json({ message: "Aucun article trouvé." });
