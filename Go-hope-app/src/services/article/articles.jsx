@@ -9,12 +9,13 @@ export const createArticle = async (articleData) => {
   }
 };
 
-export const getAllArticle = async () => {
+export const getAllArticles = async () => {
   try {
     const response = await axiosInstance.get("/articles");
     return response.data;
   } catch (error) {
-    return error.response.data;
+    // Vérifie si error.response existe, sinon renvoie error.message
+    throw error.response?.data || error.message;
   }
 };
 

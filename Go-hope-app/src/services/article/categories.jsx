@@ -9,7 +9,7 @@ export const createCategory = async (createCategory) => {
   }
 };
 
-export const listAllCategories = async () => {
+export const getAllCategories = async () => {
   try {
     const response = await axiosInstance.get("/categories");
     return response.data;
