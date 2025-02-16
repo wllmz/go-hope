@@ -18,6 +18,8 @@ import actionUserRoute from "./routes/Article/actionUserRoute.js";
 import forumCategoriesRoute from "./routes/forum/categoriesRoute.js";
 import forumCommentRoute from "./routes/forum/commentRoute.js";
 import forumSubjectRoute from "./routes/forum/subjectRoute.js";
+import actionSubject from "./routes/forum/actionSubject.js";
+import allAction from "./routes/forum/allAction.js";
 
 dotenv.config();
 
@@ -113,6 +115,8 @@ async function startServer() {
     app.use("/api/forum/categories", forumCategoriesRoute);
     app.use("/api/forum/comments", forumCommentRoute);
     app.use("/api/forum/subjects", forumSubjectRoute);
+    app.use("/api/forum/fav", actionSubject);
+    app.use("/api/forum/favoris", allAction);
 
     // Middleware de gestion des erreurs
     app.use((err, req, res, next) => {

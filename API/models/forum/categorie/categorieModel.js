@@ -15,6 +15,10 @@ const categorieForumSchema = new mongoose.Schema({
     ref: "Auth",
     required: true,
   },
+  image: {
+    type: String,
+    required: true,
+  },
 });
 
 // Exporter le modèle Module

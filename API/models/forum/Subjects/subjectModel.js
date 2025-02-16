@@ -4,8 +4,13 @@ const subjectSchema = new mongoose.Schema({
   title: {
     type: String,
     required: true,
+    unique: true,
   },
-  description: {
+  content: {
+    type: String,
+    required: true,
+  },
+  image: {
     type: String,
     required: true,
   },
@@ -19,11 +24,15 @@ const subjectSchema = new mongoose.Schema({
   author: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Auth",
-    required: true,
   },
   created_at: {
     type: Date,
     default: Date.now,
+  },
+  favoris: {
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: "Auth",
+    default: [],
   },
 });
 

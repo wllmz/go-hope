@@ -15,7 +15,7 @@ const router = express.Router();
 router.get("/", verifyToken, AdminRole, listAllSubjects);
 
 // Créer un nouveau sujet pour une catégorie spécifique
-router.post("/:categorieId", verifyToken, createSubject);
+router.post("/", verifyToken, createSubject);
 
 // Supprimer un sujet par ID
 router.delete("/:subjectId", verifyToken, deleteSubject);
@@ -43,7 +43,7 @@ router.get("/:subjectId", verifyToken, getSubjectById);
  *       - cookieAuth: []
  *     responses:
  *       200:
- *         description: Liste des sujets récupérée avec succès
+ *         description: Liste des sujets récupérée avec succès.
  *         content:
  *           application/json:
  *             schema:
@@ -53,89 +53,112 @@ router.get("/:subjectId", verifyToken, getSubjectById);
  *                 properties:
  *                   _id:
  *                     type: string
- *                     description: ID du sujet
  *                     example: "64bdefc9d5f6d2c0012345678"
  *                   title:
  *                     type: string
- *                     description: Titre du sujet
- *                     example: "Qu'est-ce que le Machine Learning ?"
- *                   categorie:
+ *                     example: "Introduction au Machine Learning"
+ *                   content:
  *                     type: string
- *                     description: ID de la catégorie liée
- *                     example: "64bdefc9d5f6d2c0012345679"
+ *                     example: "Contenu détaillé du sujet..."
+ *                   image:
+ *                     type: string
+ *                     example: "https://example.com/image.jpg"
+ *                   categories:
+ *                     type: array
+ *                     items:
+ *                       type: string
+ *                     example: ["64bdefc9d5f6d2c0012345679"]
  *                   author:
  *                     type: object
  *                     properties:
- *                       username:
+ *                       firstName:
  *                         type: string
- *                         description: Nom d'utilisateur de l'auteur
- *                         example: "JohnDoe"
+ *                         example: "John"
  *                       email:
  *                         type: string
- *                         description: Email de l'auteur
- *                         example: "johndoe@example.com"
+ *                         example: "john@example.com"
+ *                   favoris:
+ *                     type: array
+ *                     items:
+ *                       type: string
+ *                     example: ["64bdefc9d5f6d2c0012345677"]
+ *                   created_at:
+ *                     type: string
+ *                     format: date-time
  *       500:
- *         description: Erreur serveur
+ *         description: Erreur serveur.
  */
 
 /**
  * @swagger
- * /api/forum/subjects/{categorieId}:
+ * /api/forum/subjects/:
  *   post:
- *     summary: Créer un nouveau sujet pour une catégorie spécifique
+ *     summary: Créer un nouveau sujet
  *     tags: [forum-Subjects]
  *     security:
  *       - cookieAuth: []
- *     parameters:
- *       - in: path
- *         name: categorieId
- *         required: true
- *         schema:
- *           type: string
- *         description: ID de la catégorie liée au sujet
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - title
+ *               - content
+ *               - category
  *             properties:
  *               title:
  *                 type: string
- *                 description: Titre du sujet
  *                 example: "Introduction au Deep Learning"
- *               description:
+ *               image:
  *                 type: string
- *                 description: Description du sujet
- *                 example: "Exploration des concepts de base du Deep Learning"
+ *                 example: "https://example.com/image.jpg"
+ *               content:
+ *                 type: string
+ *                 example: "Contenu détaillé du sujet..."
+ *               category:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 example: ["64bdefc9d5f6d2c0012345679"]
  *     responses:
  *       201:
- *         description: Sujet créé avec succès
+ *         description: Sujet créé avec succès.
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 _id:
+ *                 message:
  *                   type: string
- *                   description: ID du sujet
- *                   example: "64bdefc9d5f6d2c0012345678"
- *                 title:
- *                   type: string
- *                   description: Titre du sujet
- *                   example: "Introduction au Deep Learning"
- *                 categorie:
- *                   type: string
- *                   description: ID de la catégorie liée
- *                   example: "64bdefc9d5f6d2c0012345679"
- *                 author:
- *                   type: string
- *                   description: ID de l'auteur
- *                   example: "64bdefc9d5f6d2c0012345677"
+ *                   example: "Sujet créé avec succès."
+ *                 subject:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                     title:
+ *                       type: string
+ *                     content:
+ *                       type: string
+ *                     image:
+ *                       type: string
+ *                     category:
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *                     author:
+ *                       type: string
+ *                     created_at:
+ *                       type: string
+ *                       format: date-time
+ *       400:
+ *         description: Erreur de validation.
  *       404:
- *         description: Catégorie non trouvée
+ *         description: Certaines catégories n'ont pas été trouvées.
  *       500:
- *         description: Erreur serveur
+ *         description: Erreur serveur.
  */
 
 /**
@@ -152,14 +175,14 @@ router.get("/:subjectId", verifyToken, getSubjectById);
  *         required: true
  *         schema:
  *           type: string
- *         description: ID du sujet à supprimer
+ *         description: ID du sujet à supprimer.
  *     responses:
  *       200:
- *         description: Sujet supprimé avec succès
+ *         description: Sujet supprimé avec succès.
  *       404:
- *         description: Sujet non trouvé
+ *         description: Sujet non trouvé.
  *       500:
- *         description: Erreur serveur
+ *         description: Erreur serveur.
  */
 
 /**
@@ -176,29 +199,62 @@ router.get("/:subjectId", verifyToken, getSubjectById);
  *         required: true
  *         schema:
  *           type: string
- *         description: ID du sujet à mettre à jour
+ *         description: ID du sujet à mettre à jour.
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - title
+ *               - content
+ *               - category
  *             properties:
  *               title:
  *                 type: string
- *                 description: Nouveau titre du sujet
  *                 example: "Introduction avancée au Machine Learning"
- *               description:
+ *               image:
  *                 type: string
- *                 description: Nouvelle description
- *                 example: "Concepts avancés et applications pratiques"
+ *                 example: "https://example.com/image.jpg"
+ *               content:
+ *                 type: string
+ *                 example: "Nouveau contenu détaillé..."
+ *               category:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 example: ["64bdefc9d5f6d2c0012345679"]
  *     responses:
  *       200:
- *         description: Sujet mis à jour avec succès
+ *         description: Sujet mis à jour avec succès.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Sujet mis à jour avec succès."
+ *                 subject:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                     title:
+ *                       type: string
+ *                     content:
+ *                       type: string
+ *                     image:
+ *                       type: string
+ *                     category:
+ *                       type: array
+ *                       items:
+ *                         type: string
  *       404:
- *         description: Sujet non trouvé
+ *         description: Sujet non trouvé.
  *       500:
- *         description: Erreur serveur
+ *         description: Erreur serveur.
  */
 
 /**
@@ -215,10 +271,10 @@ router.get("/:subjectId", verifyToken, getSubjectById);
  *         required: true
  *         schema:
  *           type: string
- *         description: ID du sujet à récupérer
+ *         description: ID du sujet à récupérer.
  *     responses:
  *       200:
- *         description: Sujet récupéré avec succès
+ *         description: Sujet récupéré avec succès.
  *         content:
  *           application/json:
  *             schema:
@@ -226,16 +282,32 @@ router.get("/:subjectId", verifyToken, getSubjectById);
  *               properties:
  *                 _id:
  *                   type: string
- *                   description: ID du sujet
  *                   example: "64bdefc9d5f6d2c0012345678"
  *                 title:
  *                   type: string
- *                   description: Titre du sujet
  *                   example: "Introduction au Machine Learning"
- *                 categorie:
+ *                 content:
  *                   type: string
- *                   description: ID de la catégorie liée
- *                   example: "64bdefc9d5f6d2c0012345679"
+ *                 image:
+ *                   type: string
+ *                 category:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                 author:
+ *                   type: object
+ *                   properties:
+ *                     firstName:
+ *                       type: string
+ *                     email:
+ *                       type: string
+ *                 favoris:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                 created_at:
+ *                   type: string
+ *                   format: date-time
  *                 comments:
  *                   type: array
  *                   items:
@@ -243,23 +315,17 @@ router.get("/:subjectId", verifyToken, getSubjectById);
  *                     properties:
  *                       _id:
  *                         type: string
- *                         description: ID du commentaire
- *                         example: "64cdefc9d5f6d2c0012345678"
  *                       content:
  *                         type: string
- *                         description: Contenu du commentaire
- *                         example: "Très intéressant !"
  *                       author:
  *                         type: object
  *                         properties:
  *                           username:
  *                             type: string
- *                             description: Nom d'utilisateur de l'auteur
- *                             example: "JaneDoe"
  *       404:
- *         description: Sujet non trouvé
+ *         description: Sujet non trouvé.
  *       500:
- *         description: Erreur serveur
+ *         description: Erreur serveur.
  */
 
 export default router;
