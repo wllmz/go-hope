@@ -3,7 +3,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import useSubjectsForum from "../../../hooks/forum/useSubject";
 import { useUserInfo } from "../../../hooks/user/useUserInfo";
 import { useSubjectFavorites } from "../../../hooks/forum/useActionSubject";
-import { FaBookmark, FaRegBookmark, FaBookOpen, FaCheck } from "react-icons/fa";
+import { FaBookmark, FaRegBookmark } from "react-icons/fa";
+import CommentsSection from "./CommentsSection"; // Vérifiez le chemin d'importation
 
 const SubjectById = () => {
   const { subjectId } = useParams();
@@ -11,21 +12,15 @@ const SubjectById = () => {
   const { currentSubject, loading, error, fetchSubjectById } =
     useSubjectsForum();
   const { user, loading: userLoading, error: userError } = useUserInfo();
-  const {
-    addToFavorites,
-    removeFromFavorites,
-    markSubjectAsRead,
-    unmarkSubjectAsRead,
-    actionLoading,
-  } = useSubjectFavorites();
+  const { addToFavorites, removeFromFavorites, actionLoading } =
+    useSubjectFavorites();
 
   const [isFavorite, setIsFavorite] = useState(false);
   const [isRead, setIsRead] = useState(false);
-  const [showSuccessAnimation, setShowSuccessAnimation] = useState(false);
 
   console.log("ID du subject depuis l'URL :", subjectId);
 
-  // Fonction pour récupérer le subject
+  // Fonction pour récupérer le sujet
   const fetchSubject = async () => {
     try {
       await fetchSubjectById(subjectId);
@@ -34,13 +29,14 @@ const SubjectById = () => {
     }
   };
 
+  // Récupération du sujet quand subjectId change
   useEffect(() => {
     if (subjectId) {
       fetchSubject();
     }
   }, [subjectId]);
 
-  // Mettre à jour isFavorite et isRead lorsque le subject ou l'utilisateur change
+  // Mettre à jour isFavorite et isRead lorsque currentSubject ou user change
   useEffect(() => {
     if (currentSubject && user) {
       const userId = user._id.toString();
@@ -78,6 +74,7 @@ const SubjectById = () => {
     }
   };
 
+  // Gestion des états de chargement et d'erreur
   if (loading || userLoading) {
     return <div className="text-center py-4">Chargement...</div>;
   }
@@ -102,6 +99,7 @@ const SubjectById = () => {
   return (
     <div className="flex min-h-screen items-stretch justify-center bg-[#f1f4f4]">
       <div className="w-9/12 mx-auto p-6 bg-white shadow-lg rounded-lg">
+        {/* Bouton Retour */}
         <button
           onClick={handleBackClick}
           className="flex items-center gap-2 text-orange-500 hover:text-orange-600 transition-colors"
@@ -125,7 +123,7 @@ const SubjectById = () => {
           <span className="text-lg">{currentSubject.title}</span>
         </button>
 
-        {/* Bouton de favori (icône signet) */}
+        {/* Bouton de favori */}
         <div className="flex justify-end mb-4">
           <button
             onClick={(e) => {
@@ -152,6 +150,8 @@ const SubjectById = () => {
             className="w-full h-auto rounded mb-4"
           />
         )}
+
+        {/* Détails du subject */}
         <h1 className="text-3xl font-bold mb-4">{currentSubject.title}</h1>
         <p className="mb-4">{currentSubject.content}</p>
         <p className="text-gray-700 mb-2">
@@ -161,6 +161,12 @@ const SubjectById = () => {
         <p className="text-gray-700 mb-2">
           <strong>Type :</strong> {currentSubject.type}
         </p>
+
+        {/* Section des commentaires */}
+        <CommentsSection
+          initialComments={currentSubject.comments}
+          subjectId={currentSubject._id}
+        />
       </div>
     </div>
   );

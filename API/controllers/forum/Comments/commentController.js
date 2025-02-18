@@ -44,20 +44,42 @@ export const deleteComment = async (req, res) => {
 
 export const updateComment = async (req, res) => {
   try {
-    const updatedComment = await Comment.findByIdAndUpdate(
-      req.params.commentId,
-      req.body,
-      { new: true }
+    const { commentId } = req.params;
+    const { content } = req.body;
+
+    // Validation du contenu
+    if (!content || content.trim() === "") {
+      return res
+        .status(400)
+        .json({ message: "Le contenu est requis pour la mise à jour." });
+    }
+
+    console.log(
+      `Tentative de mise à jour du commentaire avec l'ID: ${commentId}`
     );
 
-    if (!updatedComment) {
-      res.status(404).json({ message: "Commentaire non trouvé" });
-    } else {
-      res.status(200).json(updatedComment);
+    // Vérification de l'existence du commentaire
+    const existingComment = await Comment.findById(commentId);
+    if (!existingComment) {
+      console.log(`Commentaire non trouvé pour l'ID: ${commentId}`);
+      return res.status(404).json({ message: "Commentaire non trouvé" });
     }
+
+    // Mise à jour du contenu du commentaire
+    existingComment.content = content;
+
+    // Sauvegarde du commentaire mis à jour
+    const updatedComment = await existingComment.save();
+
+    console.log("Commentaire mis à jour avec succès:", updatedComment);
+    return res.status(200).json(updatedComment);
   } catch (error) {
-    res.status(500).json({ message: "Erreur serveur." });
-    console.error(error);
+    console.error("Erreur lors de la mise à jour du commentaire:", error);
+    return res
+      .status(500)
+      .json({
+        message: "Erreur serveur lors de la mise à jour du commentaire",
+      });
   }
 };
 
