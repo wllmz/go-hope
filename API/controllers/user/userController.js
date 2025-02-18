@@ -29,7 +29,7 @@ const handleError = (res, message, error) => {
 // Route pour créer ou mettre à jour un utilisateur
 export const createUser = async (req, res) => {
   try {
-    const { username, gender, phone } = req.body;
+    const { username, gender, phone, image } = req.body;
 
     if (!username) {
       return res.status(400).json({ message: "Prénom et nom sont requis." });
@@ -44,13 +44,15 @@ export const createUser = async (req, res) => {
         username,
         gender,
         phone,
-        roles: req.user.roles, // Assurez-vous que 'req.user' est défini correctement
+        roles: req.user.roles,
+        image,
       });
     } else {
       // Mettre à jour un utilisateur existant
       user.username = username;
       user.gender = gender;
       user.phone = phone;
+      user.image = image;
     }
 
     await user.save();
@@ -76,7 +78,7 @@ export const updateUserField = async (req, res) => {
       return res.status(400).json({ message: `Le champ ${field} est requis.` });
     }
 
-    const allowedFields = ["username", "gender", "phone", "email"];
+    const allowedFields = ["username", "gender", "phone", "email", "image"];
     if (!allowedFields.includes(field)) {
       return res
         .status(400)

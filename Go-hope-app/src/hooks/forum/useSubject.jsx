@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import {
   createSubjectForum,
   listAllSubjects,
@@ -14,7 +14,6 @@ const useSubjectsForum = () => {
   const [error, setError] = useState(null);
 
   // Récupérer tous les sujets (fonction mémorisée)
-  // Exemple dans useSubjectsForum
   const fetchSubjects = useCallback(async () => {
     setLoading(true);
     try {
@@ -26,7 +25,7 @@ const useSubjectsForum = () => {
     } finally {
       setLoading(false);
     }
-  }, []); // dépendances
+  }, []);
 
   // Récupérer un sujet spécifique (fonction mémorisée)
   const fetchSubjectById = useCallback(async (subjectId) => {
@@ -96,6 +95,18 @@ const useSubjectsForum = () => {
     fetchSubjects();
   }, [fetchSubjects]);
 
+  // Nouvelle constante pour filtrer les sujets de l'utilisateur
+  // On utilise useMemo pour ne recalculer que si `subjects` ou `userId` changent.
+  const getUserSubjects = useCallback(
+    (userId) => {
+      return subjects.filter(
+        (subject) =>
+          subject.author && subject.author._id && subject.author._id === userId
+      );
+    },
+    [subjects]
+  );
+
   return {
     subjects,
     currentSubject,
@@ -106,6 +117,7 @@ const useSubjectsForum = () => {
     createSubject,
     updateSubject,
     deleteSubject,
+    getUserSubjects, // Ajout de la fonction de filtrage par utilisateur
   };
 };
 
