@@ -16,7 +16,7 @@ const FirstComponent = () => {
         <div className="flex flex-col md:flex-row md:items-center md:justify-center md:gap-x-25">
           {/* Texte (placé à gauche sur desktop) */}
           <div className="order-2 md:order-1 flex justify-center md:justify-start">
-            <h1 className="text-xl md:text-3xl text-[#0E3043] mt-4 mb-4 ">
+            <h1 className="text-xl md:text-3xl text-[#0E3043] mt-4 mb-4 font-semibold">
               Soyez entouré de votre compagnon au quotidien
             </h1>
           </div>

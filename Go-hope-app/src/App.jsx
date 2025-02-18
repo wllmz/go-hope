@@ -16,6 +16,9 @@ import ForumPage from "./pages/forum/forumPage";
 import AllSubject from "./pages/forum/allSubjectPage";
 import SubjectByid from "./pages/forum/subjectByIdPage";
 import CategorieForumPage from "./pages/forum/categorieForumPage";
+import ComptePage from "./pages/compte/comptePage";
+import AllFavoritesSubjectPage from "./pages/compte/allFavoritesSubjectPage";
+import AllSubjectByMePage from "./pages/compte/allSubjectByMePage";
 
 function App() {
   return (
@@ -46,6 +49,15 @@ function App() {
               element={<SubjectByid />}
             />
             <Route path="/all-subjects" element={<AllSubject />} />
+            <Route path="/compte" element={<ComptePage />} />
+            <Route
+              path="/forum/mes-favoris"
+              element={<AllFavoritesSubjectPage />}
+            />
+            <Route
+              path="/forum/mes-articles"
+              element={<AllSubjectByMePage />}
+            />
           </Routes>
         </main>
       </AuthProvider>

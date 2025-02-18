@@ -12,7 +12,7 @@ const Step1 = ({ handleNextStep }) => {
         <img className="h-auto w-xl sm:w-xl" src={logo} alt="Logo" />
       </div>
       {/* Zone d'information */}
-      <h1 className="text-2xl sm:text-3xl font-bold text-[#0E3043] text-center mb-4">
+      <h1 className="text-2xl sm:text-3xl font-medium text-[#0E3043] text-center mb-4">
         Application d’aide aux personnes souffrantes de la Sclérose en plaques
       </h1>
       {/* Zone des boutons */}

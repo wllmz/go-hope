@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   addSubjectToFavorites,
   removeSubjectFromFavorites,
@@ -11,7 +11,7 @@ export const useSubjectFavorites = () => {
   const [error, setError] = useState(null);
 
   // Récupérer tous les sujets favoris de l'utilisateur
-  const fetchFavorites = async () => {
+  const fetchFavorites = useCallback(async () => {
     setLoading(true);
     try {
       const data = await allSubjectFav();
@@ -23,7 +23,7 @@ export const useSubjectFavorites = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   // Ajouter un sujet aux favoris
   const addToFavorites = async (subjectId) => {
