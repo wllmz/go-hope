@@ -1,17 +1,16 @@
 import React from "react";
 
-const UserSubjects = ({
+const SubjectList = ({
   subjects,
   loading,
   error,
   onNavigateToAllSubjects,
+  handleSubjectClick,
 }) => {
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md">
+    <div className="p-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-gray-800">
-          Mes enregistrements
-        </h1>
+        <h1 className="text-3xl font-bold text-gray-800">Forum</h1>
         <button
           onClick={onNavigateToAllSubjects}
           className="flex items-center text-orange-500 hover:text-orange-600 transition-colors"
@@ -40,14 +39,13 @@ const UserSubjects = ({
         <p className="mt-4 text-red-500">
           Erreur lors du chargement des sujets: {error.message}
         </p>
-      ) : subjects.length === 0 ? (
-        <p className="mt-4 text-gray-600">Aucun sujet trouvé.</p>
       ) : (
         <ul className="mt-4 space-y-4">
           {subjects.map((subject) => (
             <li
               key={subject._id}
-              className="p-4 border border-gray-200 rounded-lg shadow-sm hover:bg-gray-50 transition-colors"
+              onClick={() => handleSubjectClick(subject._id)}
+              className="cursor-pointer p-4 border border-gray-200 rounded-lg shadow-sm hover:bg-gray-50 transition-colors"
             >
               <h2 className="text-xl font-semibold text-gray-700">
                 {subject.title}
@@ -61,4 +59,4 @@ const UserSubjects = ({
   );
 };
 
-export default UserSubjects;
+export default SubjectList;

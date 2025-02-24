@@ -5,11 +5,11 @@ import { useNavigate } from "react-router-dom";
 import useSubjectsForum from "../../hooks/forum/useSubject";
 import UserProfile from "./UserProfile";
 import UserFavorites from "./UserFavorites";
-import UserSubjects from "./UserSubjects";
+import UserSubjects from "../forum/SubjectList";
+import ThirdComponent from "../home/detail/third/thirdComponent";
 
 const InfoUser = () => {
   const navigate = useNavigate();
-
   const { user } = useUserInfo();
   const {
     favorites,
@@ -18,6 +18,9 @@ const InfoUser = () => {
     error: favoritesError,
   } = useSubjectFavorites();
   const { loading, error, getUserSubjects } = useSubjectsForum();
+
+  // Obtenir les sujets filtrés pour l'utilisateur connecté
+  const userSubjects = user ? getUserSubjects(user._id) : [];
 
   useEffect(() => {
     fetchFavorites();
@@ -31,25 +34,33 @@ const InfoUser = () => {
     navigate("/forum/mes-articles");
   };
 
-  // Obtenir les sujets filtrés pour l'utilisateur connecté
-  const userSubjects = user ? getUserSubjects(user._id) : [];
+  const handleSubjectClick = (subjectId) => {
+    navigate(`/forum/subjects/${subjectId}`);
+  };
+
+  // Afficher seulement 3 favoris et 3 sujets
+  const displayedFavorites = favorites.slice(0, 3);
+  const displayedSubjects = userSubjects.slice(0, 3);
 
   return (
-    <div className="w-full min-h-scree mt-10">
+    <div className="max-w-6xl mx-auto p-5 bg-white">
       <UserProfile user={user} />
       <UserFavorites
-        favorites={favorites}
+        favorites={displayedFavorites}
         loading={favoritesLoading}
         error={favoritesError}
         onNavigateToAllFavorites={onNavigateToAllFavorites}
+        handleSubjectClick={handleSubjectClick}
       />
-
       <UserSubjects
-        subjects={userSubjects}
+        subjects={displayedSubjects}
         loading={loading}
         error={error}
         onNavigateToMySubjects={onNavigateToMySubjects}
+        onNavigateToAllSubjects={handleNavigateToAllSubjects}
+        handleSubjectClick={handleSubjectClick}
       />
+      <ThirdComponent />
     </div>
   );
 };
