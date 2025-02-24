@@ -5,16 +5,18 @@ const UserFavorites = ({
   loading,
   error,
   onNavigateToAllFavorites,
+  handleSubjectClick,
 }) => {
   return (
-    <div className="p-6 px-16">
+    <div className="p-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Mes enregistrements</h1>
+        <h1 className="text-3xl font-bold text-gray-800">Mes favoris</h1>
         <button
           onClick={onNavigateToAllFavorites}
-          className="text-orange-500 hover:text-orange-600 transition-colors"
+          className="flex items-center text-orange-500 hover:text-orange-600 transition-colors"
           title="Voir tous les sujets"
         >
+          <span className="mr-2 text-lg">Voir tout</span>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-6 w-6"
@@ -31,7 +33,6 @@ const UserFavorites = ({
           </svg>
         </button>
       </div>
-      <h1 className="text-2xl font-bold">Mes favoris</h1>
       {loading ? (
         <p className="mt-4">Chargement des favoris...</p>
       ) : error ? (
@@ -45,7 +46,8 @@ const UserFavorites = ({
           {favorites.map((subject) => (
             <li
               key={subject._id}
-              className="p-3 border rounded shadow hover:bg-gray-100 transition-colors"
+              onClick={() => handleSubjectClick(subject._id)}
+              className="cursor-pointer p-4 border border-gray-200 rounded-lg shadow-sm hover:bg-gray-50 transition-colors"
             >
               <h2 className="text-lg font-semibold">{subject.title}</h2>
               <p className="text-gray-600">{subject.content}</p>

@@ -92,7 +92,7 @@ const AllSubject = () => {
         />
         <SubjectList
           subjects={displayedSubjects}
-          onSubjectClick={handleSubjectClick}
+          handleSubjectClick={handleSubjectClick}
           onNavigateToAllSubjects={handleNavigateToAllSubjects}
           onFavoritesUpdate={fetchSubjects}
         />

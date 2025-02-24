@@ -1,15 +1,14 @@
 import React from "react";
 
-const UserSubjects = ({ subjects, loading, error, onNavigateToMySubjects }) => {
+const UserSubjects = ({ subjects, loading, error, handleBackClick }) => {
   return (
     <>
       <div className="p-6 px-16">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold">Mes enregistrements</h1>
+        <div className=" justify-between items-center mb-6">
           <button
-            onClick={onNavigateToMySubjects}
-            className="text-orange-500 hover:text-orange-600 transition-colors"
-            title="Voir tous les sujets"
+            onClick={handleBackClick}
+            className="flex items-center gap-2 text-orange-500 hover:text-orange-600 transition-colors"
+            title="Retour"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -17,6 +16,7 @@ const UserSubjects = ({ subjects, loading, error, onNavigateToMySubjects }) => {
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
+              style={{ transform: "scaleX(-1)" }}
             >
               <path
                 strokeLinecap="round"
@@ -25,7 +25,10 @@ const UserSubjects = ({ subjects, loading, error, onNavigateToMySubjects }) => {
                 d="M9 5l7 7-7 7"
               />
             </svg>
+            <span className="text-lg">Retour</span>
           </button>
+
+          <h1 className="text-2xl font-bold mt-10">Mes enregistrements</h1>
         </div>
         {loading ? (
           <p className="mt-4">Chargement des sujets...</p>
