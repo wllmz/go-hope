@@ -1,32 +1,36 @@
 import { useState, useContext } from "react";
-import { AuthContext } from "../../context/authContext"; // Import du contexte Auth
+import { AuthContext } from "../../context/authContext";
 import { login, getAuthenticatedUser } from "../../services/auth/authService";
 
 export const useLogin = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const { setUser } = useContext(AuthContext); // Pour mettre à jour l'utilisateur dans le contexte
+  const { setUser } = useContext(AuthContext);
 
   const handleLogin = async ({ email, password }) => {
     setLoading(true);
     setError(null);
-
     try {
-      // Effectuer la requête de connexion
-      await login({ email, password });
+      // Appel au service de login
+      const response = await login({ email, password });
 
-      // Récupérer les informations utilisateur via /me
+      // Si la réponse ne contient pas de token, c'est qu'il y a une erreur
+      if (!response.accessToken) {
+        setError(response.message || "Identifiant ou mot de passe incorrect.");
+        setLoading(false);
+        return false;
+      }
+
+      // Récupérer les informations utilisateur
       const authenticatedUser = await getAuthenticatedUser();
-
-      // Mettre à jour le contexte utilisateur
       setUser(authenticatedUser);
-
       setLoading(false);
-      return true; // Indique que la connexion a réussi
+      return true;
     } catch (err) {
-      setLoading(false);
+      // Remonte le message d'erreur renvoyé par l'API
       setError(err.response?.data?.message || "Erreur lors de la connexion.");
-      return false; // Indique une erreur
+      setLoading(false);
+      return false;
     }
   };
 
