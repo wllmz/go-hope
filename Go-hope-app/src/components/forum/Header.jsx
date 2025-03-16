@@ -8,7 +8,7 @@ const Header = () => {
         <h1 className="text-2xl sm:text-3xl font-semibold text-gray-800 mb-6 pl-2 sm:pl-32">
           Forum
         </h1>
-        <div className="mb-12 flex justify-center px-5">
+        <div className="p-6 max-w-4xl mx-auto">
           <SearchBar />
         </div>
       </div>

@@ -1,8 +1,8 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-// Assurez-vous que le chemin correspond au nom réel du fichier
 import useSubjectsForum from "../../hooks/forum/useSubject";
 import useCategoriesForum from "../../hooks/forum/useCategorie";
+import { useSubjectFavorites } from "../../hooks/forum/useActionSubject";
 import { useUserInfo } from "../../hooks/user/useUserInfo";
 import Header from "./Header";
 import CategoryList from "./CategoryList";
@@ -28,13 +28,30 @@ const AllSubject = () => {
 
   const { user, loading: userLoading, error: userError } = useUserInfo();
 
+  const { addToFavorites, removeFromFavorites, actionLoading, error } =
+    useSubjectFavorites();
+
+  // État local pour les favoris
+  const [favorites, setFavorites] = useState({});
+
   // Re-fetch des données au montage
   useEffect(() => {
     fetchSubjects();
     fetchCategories();
-    // On peut utiliser un tableau de dépendances vide si les fonctions sont stables
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Initialiser l'état des favoris quand les sujets ou l'utilisateur changent
+  useEffect(() => {
+    if (!user) return;
+    const userId = user._id.toString();
+    const fav = {};
+    subjects.forEach((subject) => {
+      const favorisStr = subject.favoris?.map((fav) => fav.toString()) || [];
+      fav[subject._id] = favorisStr.includes(userId);
+    });
+    setFavorites(fav);
+  }, [subjects, user]);
 
   // Gestion des chargements et erreurs
   if (subjectsLoading || categoriesLoading || userLoading) {
@@ -64,6 +81,20 @@ const AllSubject = () => {
       </div>
     );
   }
+
+  const handleFavorisClick = async (subjectId) => {
+    if (favorites[subjectId]) {
+      // Si le sujet est déjà favorisé, le retirer
+      await removeFromFavorites(subjectId);
+      setFavorites((prev) => ({ ...prev, [subjectId]: false }));
+    } else {
+      // Sinon, l'ajouter aux favoris
+      await addToFavorites(subjectId);
+      setFavorites((prev) => ({ ...prev, [subjectId]: true }));
+    }
+    // Mise à jour des sujets pour refléter la modification (optionnel)
+    await fetchSubjects();
+  };
 
   // Préparation des données à afficher
   const displayedSubjects = subjects;
@@ -95,6 +126,9 @@ const AllSubject = () => {
           handleSubjectClick={handleSubjectClick}
           onNavigateToAllSubjects={handleNavigateToAllSubjects}
           onFavoritesUpdate={fetchSubjects}
+          handleFavorisClick={handleFavorisClick}
+          actionLoading={actionLoading}
+          favorites={favorites}
         />
       </div>
     </div>

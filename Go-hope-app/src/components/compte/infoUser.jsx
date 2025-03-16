@@ -45,6 +45,13 @@ const InfoUser = () => {
   return (
     <div className="max-w-6xl mx-auto p-5 bg-white">
       <UserProfile user={user} />
+      <UserSubjects
+        subjects={displayedSubjects}
+        loading={loading}
+        error={error}
+        onNavigateToAllSubjects={onNavigateToMySubjects}
+        handleSubjectClick={handleSubjectClick}
+      />
       <UserFavorites
         favorites={displayedFavorites}
         loading={favoritesLoading}
@@ -52,14 +59,7 @@ const InfoUser = () => {
         onNavigateToAllFavorites={onNavigateToAllFavorites}
         handleSubjectClick={handleSubjectClick}
       />
-      <UserSubjects
-        subjects={displayedSubjects}
-        loading={loading}
-        error={error}
-        onNavigateToMySubjects={onNavigateToMySubjects}
-        onNavigateToAllSubjects={handleNavigateToAllSubjects}
-        handleSubjectClick={handleSubjectClick}
-      />
+
       <ThirdComponent />
     </div>
   );

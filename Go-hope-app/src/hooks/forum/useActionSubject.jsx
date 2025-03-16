@@ -15,7 +15,6 @@ export const useSubjectFavorites = () => {
     setLoading(true);
     try {
       const data = await allSubjectFav();
-      // On suppose que la réponse contient une propriété "favorisSubjects"
       setFavorites(data.favorisSubjects || []);
       setError(null);
     } catch (err) {

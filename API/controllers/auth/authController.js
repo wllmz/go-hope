@@ -9,10 +9,7 @@ dotenv.config();
 const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET;
 const JWT_RESET_PASSWORD_SECRET = process.env.JWT_RESET_PASSWORD_SECRET;
-const FRONTEND_URL =
-  process.env.NODE_ENV === "production"
-    ? process.env.FRONTEND_PROD_URL
-    : process.env.FRONTEND_DEV_URL;
+const FRONTEND_URL = process.env.FRONTEND_URL;
 
 // 1. Fonction utilitaire pour générer les tokens (AccessToken et RefreshToken)
 const generateTokens = (user) => {
@@ -61,10 +58,10 @@ const setTokenCookies = (res, accessToken, refreshToken) => {
 // 3. Fonction pour l'inscription d'un utilisateur
 export const registerUser = async (req, res) => {
   try {
-    const { email, password, roles } = req.body;
+    const { email, password, termsAccepted } = req.body;
 
     // Vérification des champs nécessaires
-    if (!email || !password || !roles) {
+    if (!email || !password || !termsAccepted) {
       return res
         .status(400)
         .json({ message: "Email, mot de passe et rôles sont requis." });
@@ -83,15 +80,15 @@ export const registerUser = async (req, res) => {
       return res.status(400).json({ message: "Email déjà utilisé." });
     }
 
-    // Vérification des rôles
-    const validRoles = ["admin_company", "employee"];
-    const assignedRoles = roles.filter((role) => validRoles.includes(role));
+    // // Vérification des rôles
+    // const validRoles = ["admin_company", "employee"];
+    // const assignedRoles = roles.filter((role) => validRoles.includes(role));
 
-    if (assignedRoles.length === 0) {
-      return res
-        .status(400)
-        .json({ message: "Veuillez sélectionner au moins un rôle valide." });
-    }
+    // if (assignedRoles.length === 0) {
+    //   return res
+    //     .status(400)
+    //     .json({ message: "Veuillez sélectionner au moins un rôle valide." });
+    // }
 
     // Hachage du mot de passe
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -100,7 +97,7 @@ export const registerUser = async (req, res) => {
     const newUser = new Auth({
       email,
       password: hashedPassword,
-      roles: assignedRoles,
+      termsAccepted,
     });
 
     await newUser.save();
@@ -294,7 +291,7 @@ export const verifyEmail = async (req, res) => {
     setTokenCookies(res, accessToken, refreshToken);
 
     // Redirection vers la page d'accueil après la vérification de l'email
-    return res.redirect(`${FRONTEND_URL}/user`);
+    return res.redirect(`${FRONTEND_URL}/home`);
   } catch (error) {
     console.error("Erreur lors de la vérification de l'email:", error);
     res
@@ -369,5 +366,33 @@ export const checkUsername = async (req, res) => {
     return res
       .status(500)
       .json({ message: "Erreur lors de la vérification de l'email." });
+  }
+};
+
+// Controller pour renvoyer l'email de vérification
+export const resendVerificationEmail = async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    // Vérifier si l'utilisateur existe dans la base de données
+    const user = await Auth.findOne({ email }); // Utilisation du bon modèle Auth
+    if (!user) {
+      return res.status(404).json({ message: "Utilisateur non trouvé." });
+    }
+
+    // Vérifier si l'email n'est pas déjà vérifié
+    if (user.verifyEmail) {
+      return res.status(400).json({ message: "Email déjà vérifié." });
+    }
+
+    // Envoyer l'email de vérification
+    await sendVerificationEmail(email); // Utilisation de la fonction existante pour envoyer l'email
+
+    return res.status(200).json({ message: "Email de vérification renvoyé." });
+  } catch (error) {
+    console.error("Erreur lors de l'envoi de l'email de vérification :", error);
+    return res
+      .status(500)
+      .json({ message: "Erreur lors de l'envoi de l'email de vérification." });
   }
 };

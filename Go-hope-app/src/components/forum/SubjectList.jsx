@@ -1,4 +1,10 @@
 import React from "react";
+import {
+  FaThumbsUp,
+  FaComment,
+  FaBookmark,
+  FaRegBookmark,
+} from "react-icons/fa";
 
 const SubjectList = ({
   subjects,
@@ -6,6 +12,9 @@ const SubjectList = ({
   error,
   onNavigateToAllSubjects,
   handleSubjectClick,
+  actionLoading,
+  handleFavorisClick,
+  favorites,
 }) => {
   return (
     <div className="p-6">
@@ -47,10 +56,38 @@ const SubjectList = ({
               onClick={() => handleSubjectClick(subject._id)}
               className="cursor-pointer p-4 border border-gray-200 rounded-lg shadow-sm hover:bg-gray-50 transition-colors"
             >
-              <h2 className="text-xl font-semibold text-gray-700">
-                {subject.title}
-              </h2>
+              <div className="flex justify-between items-center">
+                <h2 className="text-xl font-semibold text-gray-700">
+                  {subject.title}
+                </h2>
+                <button
+                  className="text-xl text-orange-500 hover:text-orange-600 focus:outline-none"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleFavorisClick(subject._id);
+                  }}
+                  disabled={actionLoading}
+                  title={
+                    favorites[subject._id]
+                      ? "Retirer des favoris"
+                      : "Ajouter aux favoris"
+                  }
+                >
+                  {favorites[subject._id] ? <FaBookmark /> : <FaRegBookmark />}
+                </button>
+              </div>
               <p className="mt-2 text-gray-600">{subject.content}</p>
+              {/* Affichage côte à côte des icônes et chiffres */}
+              <div className="flex gap-6 mt-2">
+                <div className="flex items-center">
+                  <FaThumbsUp className="mr-1" />
+                  <span>{subject.favoris?.length || 0}</span>
+                </div>
+                <div className="flex items-center">
+                  <FaComment className="mr-1" />
+                  <span>{subject.commentCount || 0}</span>
+                </div>
+              </div>
             </li>
           ))}
         </ul>

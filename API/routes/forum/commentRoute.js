@@ -7,6 +7,7 @@ import {
   unlikeComment,
 } from "../../controllers/forum/Comments/commentController.js";
 import { verifyToken } from "../../middleware/jwtMiddleware.js";
+import { AdminRole } from "../../middleware/authMiddleware.js";
 
 const router = express.Router();
 
@@ -14,10 +15,10 @@ const router = express.Router();
 router.post("/:subjectId", verifyToken, createComment);
 
 // Supprimer un commentaire par ID
-router.delete("/:commentId", verifyToken, deleteComment);
+router.delete("/:commentId", verifyToken, AdminRole, deleteComment);
 
 // Mettre à jour un commentaire par ID
-router.put("/:commentId", verifyToken, updateComment);
+router.put("/:commentId", verifyToken, AdminRole, updateComment);
 
 // Route pour ajouter un like à un commentaire
 router.post("/:commentId/like", verifyToken, likeComment);

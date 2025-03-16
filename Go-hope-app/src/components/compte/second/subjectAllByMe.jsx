@@ -12,6 +12,10 @@ const InfoUser = () => {
   const handleBackClick = () => {
     navigate(-1);
   };
+
+  const handleSubjectClick = (subjectId) => {
+    navigate(`/forum/subjects/${subjectId}`);
+  };
   // Obtenir les sujets filtrés pour l'utilisateur connecté
   const userSubjects = user ? getUserSubjects(user._id) : [];
 
@@ -22,6 +26,7 @@ const InfoUser = () => {
         loading={loading}
         error={error}
         handleBackClick={handleBackClick}
+        handleSubjectClick={handleSubjectClick}
       />
     </div>
   );

@@ -34,6 +34,11 @@ const subjectSchema = new mongoose.Schema({
     ref: "Auth",
     default: [],
   },
+  // Champ pour stocker le nombre de commentaires
+  commentCount: {
+    type: Number,
+    default: 0,
+  },
 });
 
 export default mongoose.model("Subjects", subjectSchema);

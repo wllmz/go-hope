@@ -8,6 +8,7 @@ import {
   resetPassword,
   checkEmail,
   checkUsername,
+  resendVerificationEmail,
 } from "../../controllers/auth/authController.js";
 import { verifyToken } from "../../middleware/jwtMiddleware.js";
 const router = express.Router();
@@ -34,6 +35,9 @@ router.post("/reset-password", resetPassword);
 router.post("/check-email", checkEmail);
 
 router.post("/check-username", checkUsername);
+
+// Route pour vérifier pour verify email
+router.post("/resend-verification-email", resendVerificationEmail);
 
 router.get("/me", verifyToken, (req, res) => {
   console.log("Utilisateur autorisé :", req.user); // Pour debug

@@ -9,14 +9,15 @@ const handleError = (res, message, error) => {
 };
 
 /**
- * Lister tous les sujets
+ * Lister tous les sujets avec le nombre de commentaires
  */
 export const listAllSubjects = async (req, res) => {
   try {
     const subjects = await Subject.find({})
-      .select("+favoris") // Forcer l'inclusion du champ favoris
-      .populate("categories", "categorie") // Populate les catégories
-      .populate("author", "username"); // Populate l'auteur
+      .select("+favoris") // Inclut le champ favoris
+      .populate("categories", "categorie")
+      .populate("author", "username");
+
     res.status(200).json(subjects);
   } catch (error) {
     res.status(500).json({
@@ -31,7 +32,7 @@ export const listAllSubjects = async (req, res) => {
  * Créer un nouveau sujet en enregistrant également l'auteur
  */
 export const createSubject = async (req, res) => {
-  const user = req.user.id; // Récupération de l'utilisateur depuis le token
+  // const user = req.user.id; // Récupération de l'utilisateur depuis le token
   const { title, image, content, category } = req.body;
 
   // Validation des champs obligatoires
@@ -197,14 +198,12 @@ export const getFavorisSubjectsByUser = async (req, res) => {
     const favorisSubjects = await Subject.find({ favoris: objectIdUser })
       .select("+favoris")
       .populate("categories", "categorie")
-      .populate("author", "firstName email");
+      .populate("author", "username");
 
     console.log("Sujets favoris trouvés :", favorisSubjects);
 
     if (favorisSubjects.length === 0) {
-      return res
-        .status(404)
-        .json({ message: "Aucun sujet trouvé dans vos favoris." });
+      return res.status(201).json({ message: "aucun sujets en favoris" });
     }
 
     res.status(200).json({

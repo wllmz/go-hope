@@ -12,7 +12,7 @@ import { AdminRole } from "../../middleware/authMiddleware.js";
 const router = express.Router();
 
 // Lister tous les sujets
-router.get("/", verifyToken, AdminRole, listAllSubjects);
+router.get("/", verifyToken, listAllSubjects);
 
 // Créer un nouveau sujet pour une catégorie spécifique
 router.post("/", verifyToken, createSubject);
