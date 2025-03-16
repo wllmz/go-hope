@@ -27,39 +27,117 @@ function App() {
       <AuthProvider>
         <main>
           <Routes>
+            {/* Routes publiques */}
             <Route path="/" element={<WelcomePage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/login" element={<Login />} />
             <Route path="/verification" element={<VerificationPage />} />
-            <Route path="/home" element={<Home />} />
-            <Route path="/la-sep" element={<ArticlePage />} />
+
+            {/* Routes protégées */}
+            <Route
+              path="/home"
+              element={
+                <PrivateRoute>
+                  <Home />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/la-sep"
+              element={
+                <PrivateRoute>
+                  <ArticlePage />
+                </PrivateRoute>
+              }
+            />
             <Route
               path="/categories/:categoryId"
-              element={<CategoriesPage />}
+              element={
+                <PrivateRoute>
+                  <CategoriesPage />
+                </PrivateRoute>
+              }
             />
-            <Route path="/articles/:articleId" element={<ArticleByidPage />} />
-            <Route path="/all-articles" element={<AllArticle />} />
-
-            <Route path="/forum" element={<ForumPage />} />
+            <Route
+              path="/articles/:articleId"
+              element={
+                <PrivateRoute>
+                  <ArticleByidPage />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/all-articles"
+              element={
+                <PrivateRoute>
+                  <AllArticle />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/forum"
+              element={
+                <PrivateRoute>
+                  <ForumPage />
+                </PrivateRoute>
+              }
+            />
             <Route
               path="/forum/categories/:categoryId"
-              element={<CategorieForumPage />}
+              element={
+                <PrivateRoute>
+                  <CategorieForumPage />
+                </PrivateRoute>
+              }
             />
             <Route
               path="/forum/subjects/:subjectId"
-              element={<SubjectByid />}
+              element={
+                <PrivateRoute>
+                  <SubjectByid />
+                </PrivateRoute>
+              }
             />
-            <Route path="/all-subjects" element={<AllSubject />} />
-            <Route path="/compte" element={<ComptePage />} />
+            <Route
+              path="/all-subjects"
+              element={
+                <PrivateRoute>
+                  <AllSubject />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/compte"
+              element={
+                <PrivateRoute>
+                  <ComptePage />
+                </PrivateRoute>
+              }
+            />
             <Route
               path="/forum/mes-favoris"
-              element={<AllFavoritesSubjectPage />}
+              element={
+                <PrivateRoute>
+                  <AllFavoritesSubjectPage />
+                </PrivateRoute>
+              }
             />
             <Route
               path="/forum/mes-articles"
-              element={<AllSubjectByMePage />}
+              element={
+                <PrivateRoute>
+                  <AllSubjectByMePage />
+                </PrivateRoute>
+              }
             />
-            <Route path="/search" element={<SearchResultsPage />} />
+            <Route
+              path="/search"
+              element={
+                <PrivateRoute>
+                  <SearchResultsPage />
+                </PrivateRoute>
+              }
+            />
           </Routes>
         </main>
       </AuthProvider>

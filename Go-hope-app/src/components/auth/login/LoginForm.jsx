@@ -18,24 +18,30 @@ const LoginForm = () => {
     e.preventDefault();
     setEmailError(null); // Réinitialiser l'erreur email
 
-    const data = { email, password };
-
+    // Vérification du format de l'email
     const emailPattern = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
     if (!emailPattern.test(email)) {
       setEmailError("L'email doit être valide.");
       return;
     }
 
+    const data = { email, password };
+
     try {
       const isSuccess = await handleLogin(data);
-      if (isSuccess) {
-        setShowSuccessMessage(true); // Affiche le message de succès
-        setTimeout(() => {
-          navigate("/home"); // Redirige après 2 secondes
-        }, 2000);
+      if (!isSuccess) {
+        // En cas d'erreur, le hook useLogin met à jour l'état error et on arrête ici
+        return;
       }
+      // Connexion réussie
+      setShowSuccessMessage(true);
+      // Redirige vers /home après 2 secondes
+      setTimeout(() => {
+        navigate("/home");
+      }, 2000);
     } catch (err) {
       console.error("Erreur de connexion :", err);
+      setShowSuccessMessage(false);
     }
   };
 
@@ -44,7 +50,7 @@ const LoginForm = () => {
       <div className="w-full md:w-1/2 rounded-md custom-form-width-1">
         <div className="flex flex-col min-h-screen items-center relative px-4">
           <div className="w-full max-w-3xl sm:shadow rounded-lg sm:mt-25 mt-5 sm:p-10 bg-white">
-            {/* Header avec le bouton de retour à gauche et l'image à droite */}
+            {/* Header avec bouton de retour et image */}
             <div className="flex justify-between items-center mb-6">
               <button
                 onClick={() => navigate("/")}
@@ -81,7 +87,6 @@ const LoginForm = () => {
                 {emailError && (
                   <p className="text-red-500 text-sm mt-1">{emailError}</p>
                 )}
-                {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
 
                 <PasswordInput
                   type="password"
@@ -93,7 +98,7 @@ const LoginForm = () => {
                   onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
-
+              {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
               {showSuccessMessage && (
                 <div className="mb-4 text-green-500">Connexion réussie !</div>
               )}
