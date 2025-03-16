@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { FaBookmark, FaRegBookmark } from "react-icons/fa";
+import {
+  FaBookmark,
+  FaRegBookmark,
+  FaThumbsUp,
+  FaComment,
+} from "react-icons/fa";
 import { useSubjectFavorites } from "../../../hooks/forum/useActionSubject";
 import { useNavigate } from "react-router-dom";
 import { useUserInfo } from "../../../hooks/user/useUserInfo";
@@ -20,7 +25,7 @@ const SubjectListLong = ({ subjects, onSubjectClick, onFavoritesUpdate }) => {
     const initialFavorites = {};
     subjects.forEach((subject) => {
       // Convertir chaque favori en chaîne pour comparer correctement
-      const favorisStr = subject.favoris.map((fav) => fav.toString());
+      const favorisStr = subject.favoris?.map((fav) => fav.toString()) || [];
       initialFavorites[subject._id] = favorisStr.includes(userId);
     });
     console.log("Favoris initialisés :", initialFavorites);
@@ -69,14 +74,14 @@ const SubjectListLong = ({ subjects, onSubjectClick, onFavoritesUpdate }) => {
           />
         </svg>
       </button>
-      {error && (
-        <p className="text-red-500">{error.message || JSON.stringify(error)}</p>
-      )}
       {subjects.map((subject) => (
         <div
           key={subject._id}
           className="border border-gray-300 rounded p-4 shadow hover:shadow-lg transition"
-          onClick={() => onSubjectClick(subject._id)}
+          onClick={(e) => {
+            e.stopPropagation();
+            onSubjectClick(subject._id);
+          }}
         >
           <div className="flex justify-between items-center">
             <h2 className="text-2xl font-bold">{subject.title}</h2>
@@ -103,23 +108,24 @@ const SubjectListLong = ({ subjects, onSubjectClick, onFavoritesUpdate }) => {
               className="w-full h-auto rounded mt-2"
             />
           )}
-          <p className="text-gray-600 mt-2">
-            <strong>Temps de lecture :</strong> {subject.time_lecture} minutes
-          </p>
+
           <p className="mt-2 text-gray-700">
             {subject.content.length > 200
               ? subject.content.slice(0, 200) + "..."
               : subject.content}
           </p>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onSubjectClick(subject._id);
-            }}
-            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-          >
-            Lire la suite
-          </button>
+
+          {/* Affichage côte à côte des icônes et chiffres */}
+          <div className="flex gap-6 mt-2">
+            <div className="flex items-center">
+              <FaThumbsUp className="mr-1" />
+              <span>{subject.favoris?.length || 0}</span>
+            </div>
+            <div className="flex items-center">
+              <FaComment className="mr-1" />
+              <span>{subject.commentCount || 0}</span>
+            </div>
+          </div>
         </div>
       ))}
     </div>

@@ -154,13 +154,6 @@ const SubjectById = () => {
         {/* Détails du subject */}
         <h1 className="text-3xl font-bold mb-4">{currentSubject.title}</h1>
         <p className="mb-4">{currentSubject.content}</p>
-        <p className="text-gray-700 mb-2">
-          <strong>Temps de lecture :</strong> {currentSubject.time_lecture}{" "}
-          minutes
-        </p>
-        <p className="text-gray-700 mb-2">
-          <strong>Type :</strong> {currentSubject.type}
-        </p>
 
         {/* Section des commentaires */}
         <CommentsSection

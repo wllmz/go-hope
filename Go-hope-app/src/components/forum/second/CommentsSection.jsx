@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { FaEdit, FaTrash, FaSave, FaTimes } from "react-icons/fa";
+import { FaThumbsUp } from "react-icons/fa";
 import useComments from "../../../hooks/forum/useComments"; // Vérifiez le chemin
+import { useUserInfo } from "../../../hooks/user/useUserInfo";
 
 const CommentsSection = ({ initialComments, subjectId }) => {
-  const { addComment, updateComment, removeComment } = useComments();
+  const { addComment, likeAComment, unlikeAComment } = useComments();
+  const { user } = useUserInfo();
 
   // Stockage des commentaires locaux
   const [comments, setComments] = useState(
     Array.isArray(initialComments) ? initialComments : []
   );
-  const [editingCommentId, setEditingCommentId] = useState(null);
-  const [editContent, setEditContent] = useState("");
   const [newCommentContent, setNewCommentContent] = useState("");
 
   // MàJ du state local quand initialComments change
@@ -43,61 +43,26 @@ const CommentsSection = ({ initialComments, subjectId }) => {
     }
   };
 
-  // Lancement de l'édition d'un commentaire
-  const handleEdit = (comment) => {
-    if (!comment || !comment._id) {
-      console.error("Commentaire invalide pour édition:", comment);
-      return;
-    }
-    console.log("Démarrage de l'édition du commentaire:", comment);
-    setEditingCommentId(comment._id);
-    setEditContent(comment.content);
-  };
-
-  // Sauvegarde de la mise à jour d'un commentaire
-  const handleUpdate = async (commentId) => {
-    if (!editContent.trim()) return;
-    if (!commentId) {
-      console.error("ID du commentaire introuvable pour la mise à jour.");
+  // Fonction pour gérer le like/unlike d'un commentaire
+  const handleLikeToggle = async (comment) => {
+    if (!user) {
+      console.error("Utilisateur non connecté.");
       return;
     }
     try {
-      console.log("Mise à jour du commentaire. ID:", commentId);
-      console.log("Contenu mis à jour:", editContent);
-      const updatedComment = await updateComment(commentId, {
-        content: editContent,
-      });
-      console.log("Réponse de l'update:", updatedComment);
-      if (!updatedComment || !updatedComment._id) {
-        console.error(
-          "La réponse de updateComment ne contient pas d'ID valide :",
-          updatedComment
-        );
+      // Vérifier si le commentaire est déjà liké par l'utilisateur
+      const isLiked = comment.likes?.includes(user._id);
+      let updatedComment;
+      if (isLiked) {
+        updatedComment = await unlikeAComment(comment._id, {});
+      } else {
+        updatedComment = await likeAComment(comment._id, {});
       }
-      setComments((prevComments) =>
-        prevComments.map((c) => (c._id === commentId ? updatedComment : c))
+      setComments((prev) =>
+        prev.map((c) => (c._id === comment._id ? updatedComment : c))
       );
-      setEditingCommentId(null);
     } catch (err) {
-      console.error("Erreur lors de la mise à jour du commentaire :", err);
-    }
-  };
-
-  // Suppression d'un commentaire
-  const handleDelete = async (commentId) => {
-    if (!commentId) {
-      console.error("ID du commentaire introuvable pour la suppression.");
-      return;
-    }
-    try {
-      console.log("Suppression du commentaire avec l'ID:", commentId);
-      await removeComment(commentId);
-      setComments((prevComments) =>
-        prevComments.filter((c) => c._id !== commentId)
-      );
-      console.log("Commentaire supprimé.");
-    } catch (err) {
-      console.error("Erreur lors de la suppression du commentaire :", err);
+      console.error("Erreur lors de la mise à jour du like :", err);
     }
   };
 
@@ -107,51 +72,23 @@ const CommentsSection = ({ initialComments, subjectId }) => {
       {validComments.length > 0 ? (
         validComments.map((comment) => (
           <div key={comment._id} className="mb-4 border p-4 rounded">
-            {editingCommentId === comment._id ? (
-              <div>
-                <textarea
-                  value={editContent}
-                  onChange={(e) => setEditContent(e.target.value)}
-                  className="w-full border rounded p-2"
-                />
-                <div className="flex gap-2 mt-2">
-                  <button
-                    onClick={() => handleUpdate(comment._id)}
-                    className="flex items-center gap-1 text-green-600"
-                  >
-                    <FaSave /> Sauvegarder
-                  </button>
-                  <button
-                    onClick={() => setEditingCommentId(null)}
-                    className="flex items-center gap-1 text-red-600"
-                  >
-                    <FaTimes /> Annuler
-                  </button>
-                </div>
+            <div>
+              <p className="mb-1">{comment.content}</p>
+              <p className="text-sm text-gray-500">
+                Par {comment.author?.firstName || "Inconnu"} le{" "}
+                {new Date(comment.created_at).toLocaleDateString()}
+              </p>
+              <div className="flex gap-2 mt-2">
+                <button
+                  onClick={() => handleLikeToggle(comment)}
+                  className="px-3 py-1 bg-blue-500 text-white rounded flex items-center gap-1"
+                  title="Aimer / Ne plus aimer"
+                >
+                  <FaThumbsUp />
+                  <span>{comment.likes ? comment.likes.length : 0}</span>
+                </button>
               </div>
-            ) : (
-              <div>
-                <p className="mb-1">{comment.content}</p>
-                <p className="text-sm text-gray-500">
-                  Par {comment.author?.firstName || "Inconnu"} le{" "}
-                  {new Date(comment.created_at).toLocaleDateString()}
-                </p>
-                <div className="flex gap-2 mt-2">
-                  <button
-                    onClick={() => handleEdit(comment)}
-                    className="flex items-center gap-1 text-blue-600"
-                  >
-                    <FaEdit /> Modifier
-                  </button>
-                  <button
-                    onClick={() => handleDelete(comment._id)}
-                    className="flex items-center gap-1 text-red-600"
-                  >
-                    <FaTrash /> Supprimer
-                  </button>
-                </div>
-              </div>
-            )}
+            </div>
           </div>
         ))
       ) : (

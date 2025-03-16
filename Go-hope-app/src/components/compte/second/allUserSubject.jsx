@@ -1,6 +1,12 @@
 import React from "react";
 
-const UserSubjects = ({ subjects, loading, error, handleBackClick }) => {
+const UserSubjects = ({
+  subjects,
+  loading,
+  error,
+  handleBackClick,
+  handleSubjectClick,
+}) => {
   return (
     <>
       <div className="p-6 px-16">
@@ -43,7 +49,8 @@ const UserSubjects = ({ subjects, loading, error, handleBackClick }) => {
             {subjects.map((subject) => (
               <li
                 key={subject._id}
-                className="p-3 border rounded shadow hover:bg-gray-100 transition-colors"
+                onClick={() => handleSubjectClick(subject._id)}
+                className="cursor-pointer p-4 border border-gray-200 rounded-lg shadow-sm hover:bg-gray-50 transition-colors"
               >
                 <h2 className="text-lg font-semibold">{subject.title}</h2>
                 <p className="text-gray-600">{subject.content}</p>

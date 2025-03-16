@@ -15,10 +15,10 @@ const router = express.Router();
 router.post("/", verifyToken, AdminRole, createCategory);
 
 // Route pour récupérer toutes les catégories avec leurs sous-catégories
-router.get("/", verifyToken, AdminRole, getAllCategories);
+router.get("/", verifyToken, getAllCategories);
 
 // Route pour récupérer une catégorie par son ID
-router.get("/:categoryId", verifyToken, AdminRole, getCategoryById);
+router.get("/:categoryId", verifyToken, getCategoryById);
 
 // Route pour mettre à jour une catégorie (lier à une nouvelle sous-catégorie)
 router.put("/:categoryId", verifyToken, AdminRole, updateCategory);

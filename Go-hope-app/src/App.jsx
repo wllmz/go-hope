@@ -19,6 +19,7 @@ import CategorieForumPage from "./pages/forum/categorieForumPage";
 import ComptePage from "./pages/compte/comptePage";
 import AllFavoritesSubjectPage from "./pages/compte/allFavoritesSubjectPage";
 import AllSubjectByMePage from "./pages/compte/allSubjectByMePage";
+import SearchResultsPage from "./pages/forum/searchPage";
 
 function App() {
   return (
@@ -58,6 +59,7 @@ function App() {
               path="/forum/mes-articles"
               element={<AllSubjectByMePage />}
             />
+            <Route path="/search" element={<SearchResultsPage />} />
           </Routes>
         </main>
       </AuthProvider>

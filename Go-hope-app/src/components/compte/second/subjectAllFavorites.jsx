@@ -20,6 +20,10 @@ const InfoUser = () => {
     navigate(-1);
   };
 
+  const handleSubjectClick = (subjectId) => {
+    navigate(`/forum/subjects/${subjectId}`);
+  };
+
   return (
     <div className="w-full min-h-scree mt-10">
       <UserFavorites
@@ -27,6 +31,7 @@ const InfoUser = () => {
         loading={favoritesLoading}
         error={favoritesError}
         handleBackClick={handleBackClick}
+        handleSubjectClick={handleSubjectClick}
       />
     </div>
   );
