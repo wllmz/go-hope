@@ -6,7 +6,7 @@ import { useUserInfo } from "../../hooks/user/useUserInfo";
 import SearchBar from "./searchBar";
 import ArticleCard from "./ArticleCard";
 
-const ArticleListLong = ({ articles, onArticleClick, onFavoritesUpdate }) => {
+const SearchResult = ({ articles, onArticleClick, onFavoritesUpdate }) => {
   const navigate = useNavigate();
   const { addToFavoris, removeFromFavoris, actionLoading, error } =
     useArticleActions();
@@ -116,4 +116,4 @@ const ArticleListLong = ({ articles, onArticleClick, onFavoritesUpdate }) => {
   );
 };
 
-export default ArticleListLong;
+export default SearchResult;

@@ -5,7 +5,7 @@ import { useUserInfo } from "../../hooks/user/useUserInfo";
 import SearchBar from "./searchBar";
 import SubjectCard from "./SubjectCard"; // Import du composant commun
 
-const SubjectListLong = ({ subjects, onSubjectClick, onFavoritesUpdate }) => {
+const SearchResult = ({ subjects, onSubjectClick, onFavoritesUpdate }) => {
   const navigate = useNavigate();
   const { addToFavorites, removeFromFavorites, actionLoading, error } =
     useSubjectFavorites();
@@ -99,4 +99,4 @@ const SubjectListLong = ({ subjects, onSubjectClick, onFavoritesUpdate }) => {
   );
 };
 
-export default SubjectListLong;
+export default SearchResult;

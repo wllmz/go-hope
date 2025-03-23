@@ -1,28 +1,12 @@
 import React from "react";
-import Slider from "react-slick"; // Import du slider
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
-import { FaBookmark, FaRegBookmark } from "react-icons/fa";
 
 const UserFavorites = ({
-  favorites, // Tableau des sujets favoris
+  favorites,
   loading,
   error,
   onNavigateToAllFavorites,
   handleSubjectClick,
-  // Ajout de ces props pour permettre la modification des favoris depuis ce composant
-  handleFavorisClick,
-  actionLoading,
 }) => {
-  // Configuration du slider
-  const sliderSettings = {
-    dots: true,
-    infinite: false,
-    speed: 500,
-    slidesToShow: 1, // Afficher une slide à la fois
-    slidesToScroll: 1,
-  };
-
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
@@ -60,33 +44,18 @@ const UserFavorites = ({
       ) : favorites.length === 0 ? (
         <p className="mt-4">Aucun favori.</p>
       ) : (
-        <Slider {...sliderSettings}>
+        <ul className="mt-4 space-y-2">
           {favorites.map((subject) => (
-            <div key={subject._id} className="px-2">
-              <div
-                onClick={() => handleSubjectClick(subject._id)}
-                className="cursor-pointer p-4 border border-gray-200 rounded-lg shadow-sm hover:bg-gray-50 transition-colors"
-              >
-                <div className="flex justify-between items-center">
-                  <h2 className="text-lg font-semibold">{subject.title}</h2>
-                  <button
-                    className="text-xl text-orange-500 hover:text-orange-600 focus:outline-none"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleFavorisClick(subject._id);
-                    }}
-                    disabled={actionLoading}
-                    title="Retirer des favoris"
-                  >
-                    {/** Puisque ce composant affiche les sujets favoris, on affiche toujours l'icône de favori actif */}
-                    <FaBookmark />
-                  </button>
-                </div>
-                <p className="text-gray-600">{subject.content}</p>
-              </div>
-            </div>
+            <li
+              key={subject._id}
+              onClick={() => handleSubjectClick(subject._id)}
+              className="cursor-pointer p-4 border border-gray-200 rounded-lg shadow-sm hover:bg-gray-50 transition-colors"
+            >
+              <h2 className="text-lg font-semibold">{subject.title}</h2>
+              <p className="text-gray-600">{subject.content}</p>
+            </li>
           ))}
-        </Slider>
+        </ul>
       )}
     </div>
   );
