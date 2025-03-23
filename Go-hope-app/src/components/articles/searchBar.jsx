@@ -1,58 +1,76 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import useArticles from "../../hooks/article/useArticles";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const SearchBar = () => {
+  const [query, setQuery] = useState("");
   const navigate = useNavigate();
-  const { articles, fetchAllArticles } = useArticles();
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filteredArticles, setFilteredArticles] = useState([]);
+  const location = useLocation();
 
-  // Charger tous les articles au montage
+  // Lorsqu'on arrive sur la page de résultats, on récupère le terme dans l'URL
   useEffect(() => {
-    fetchAllArticles();
-  }, [fetchAllArticles]);
+    const params = new URLSearchParams(location.search);
+    const q = params.get("query") || "";
+    setQuery(q);
+  }, [location.search]);
 
-  // Filtrer les articles en fonction du terme de recherche
-  useEffect(() => {
-    if (searchTerm.trim() === "") {
-      setFilteredArticles([]);
-    } else {
-      const results = articles.filter((article) =>
-        article.title.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-      setFilteredArticles(results);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (query.trim() !== "") {
+      // Redirige vers "/search?query=leTerme"
+      navigate(`/search?query=${encodeURIComponent(query)}`);
     }
-  }, [searchTerm, articles]);
-
-  const handleArticleClick = (articleId) => {
-    setSearchTerm("");
-    setFilteredArticles([]);
-    navigate(`/articles/${articleId}`);
   };
 
+  const handleBackClick = () => {
+    // Revient à la page précédente
+    navigate(-1);
+  };
+
+  // On affiche le chevron si un paramètre "query" est présent
+  const params = new URLSearchParams(location.search);
+  const showBackArrow =
+    params.get("query") && params.get("query").trim() !== "";
+
   return (
-    <div className="relative w-full sm:max-w-xl mx-auto mb-5">
-      <input
-        type="text"
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        placeholder="Rechercher un article..."
-        className="w-full p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 shadow-sm bg-white"
-      />
-      {filteredArticles.length > 0 && (
-        <ul className="absolute z-20 w-full sm:max-w-xl bg-white border border-gray-300 rounded-lg mt-2 shadow-lg max-h-60 overflow-y-auto text-left">
-          {filteredArticles.map((article) => (
-            <li
-              key={article._id}
-              onClick={() => handleArticleClick(article._id)}
-              className="cursor-pointer p-3 hover:bg-orange-100 transition-colors"
+    <div className="p-4 ">
+      {/* Conteneur arrondi, style "pill" */}
+      <div className="flex items-center bg-white rounded-full px-4 py-2 shadow-sm m-auto w-11/12 sm:w-96 md:w-[400px] lg:w-[500px]">
+        {/* Chevron de retour, affiché uniquement si on a déjà une recherche */}
+        {showBackArrow && (
+          <button
+            onClick={handleBackClick}
+            className="text-gray-500 hover:text-gray-700 transition-colors mr-2"
+            title="Retour"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              style={{ transform: "scaleX(-1)" }}
             >
-              {article.title}
-            </li>
-          ))}
-        </ul>
-      )}
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 5l7 7-7 7"
+              />
+            </svg>
+          </button>
+        )}
+
+        {/* Formulaire avec champ de saisie (pas de bouton "Rechercher") */}
+        <form onSubmit={handleSubmit} className="flex items-center flex-grow">
+          <input
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Rechercher..."
+            className="bg-transparent flex-grow focus:outline-none text-gray-700"
+          />
+        </form>
+      </div>
     </div>
   );
 };

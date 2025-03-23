@@ -48,3 +48,14 @@ export const deleteArticle = async (articleId) => {
     return error.response.data;
   }
 };
+
+export const searchArticle = async (query) => {
+  try {
+    const response = await axiosInstance.get("/articles/search", {
+      params: { q: query },
+    });
+    return response.data;
+  } catch (error) {
+    return error.response.data;
+  }
+};

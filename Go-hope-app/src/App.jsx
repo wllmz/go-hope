@@ -19,7 +19,7 @@ import CategorieForumPage from "./pages/forum/categorieForumPage";
 import ComptePage from "./pages/compte/comptePage";
 import AllFavoritesSubjectPage from "./pages/compte/allFavoritesSubjectPage";
 import AllSubjectByMePage from "./pages/compte/allSubjectByMePage";
-import SearchResultsPage from "./pages/forum/searchPage";
+import SearchResultsPage from "./pages/article/searchResultPage";
 
 function App() {
   return (

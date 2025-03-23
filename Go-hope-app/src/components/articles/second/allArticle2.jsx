@@ -42,22 +42,19 @@ const AllArticle = () => {
     navigate(`/articles/${articleId}`);
   };
 
-
-
   return (
     <div className="w-full min-h-screen">
       <Header
         selectedMediaType={selectedMediaType}
         setSelectedMediaType={setSelectedMediaType}
       />
-  
 
       <div className="max-w-6xl mx-auto p-5 bg-white">
         <ArticleList
-          articles={filteredArticles} // On affiche uniquement les articles filtrés
+          articles={filteredArticles}
           selectedMediaType={selectedMediaType}
           onArticleClick={handleArticleClick}
-          onFavoritesUpdate={fetchAllArticles} // Re-fetch des articles après modification
+          onFavoritesUpdate={fetchAllArticles}
         />
       </div>
     </div>

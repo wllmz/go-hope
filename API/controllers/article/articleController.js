@@ -15,7 +15,7 @@ export const createArticle = async (req, res) => {
     content,
     time_lecture,
     type,
-    category, // Attend un tableau d'IDs de catégories
+    category, // Peut être un tableau ou une chaîne
     status,
     saisonier, // Le mois à activer
     mediaType, // Nouveau champ : "Fiche" ou "Vidéo"
@@ -28,11 +28,25 @@ export const createArticle = async (req, res) => {
       .json({ message: "Tous les champs obligatoires doivent être fournis." });
   }
 
+  // Si category n'est pas un tableau, le convertir en tableau
+  const categoriesArray = Array.isArray(category) ? category : [category];
+
+  // Vérifier que chaque élément est un ObjectId valide (24 caractères hexadécimaux)
+  const invalidIds = categoriesArray.filter(
+    (id) => !/^[0-9a-fA-F]{24}$/.test(id)
+  );
+  if (invalidIds.length > 0) {
+    return res.status(400).json({
+      message: "Certaines catégories ne sont pas des IDs valides.",
+      invalidIds,
+    });
+  }
+
   // Vérifier si toutes les catégories existent dans la base de données par leur _id
   const foundCategories = await categoryModel.find({
-    _id: { $in: category },
+    _id: { $in: categoriesArray },
   });
-  if (foundCategories.length !== category.length) {
+  if (foundCategories.length !== categoriesArray.length) {
     return res
       .status(404)
       .json({ message: "Certaines catégories n'ont pas été trouvées." });
@@ -239,5 +253,46 @@ export const deleteArticle = async (req, res) => {
     res.status(200).json({ message: "Article supprimé avec succès." });
   } catch (error) {
     handleError(res, "Erreur lors de la suppression de l'article.", error);
+  }
+};
+
+export const searchArticles = async (req, res) => {
+  try {
+    const { q } = req.query;
+
+    // Vérifier qu'on a bien un terme de recherche
+    if (!q || q.trim() === "") {
+      return res
+        .status(400)
+        .json({ message: "Veuillez fournir un terme de recherche." });
+    }
+
+    // 1) Trouver les catégories qui matchent le terme de recherche
+    const foundCategories = await categoryModel.find({
+      category_tittle: { $regex: q, $options: "i" },
+    });
+
+    // 2) En extraire les IDs
+    const categoryIds = foundCategories.map((cat) => cat._id);
+
+    // 3) Rechercher dans Article :
+    const articles = await articleModel
+      .find({
+        $or: [
+          { title: { $regex: q, $options: "i" } },
+          { category: { $in: categoryIds } },
+        ],
+      })
+      .populate("category");
+
+    // 4) Vérifier si on a trouvé des résultats
+    if (!articles || articles.length === 0) {
+      return res.status(404).json({ message: "Aucun article trouvé." });
+    }
+
+    // 5) Renvoyer les articles trouvés
+    res.status(200).json({ articles });
+  } catch (error) {
+    handleError(res, "Erreur lors de la recherche d'articles.", error);
   }
 };

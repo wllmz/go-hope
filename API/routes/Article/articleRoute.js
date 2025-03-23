@@ -5,11 +5,14 @@ import {
   getArticleById,
   updateArticle,
   deleteArticle,
+  searchArticles,
 } from "../../controllers/article/articleController.js";
 import { verifyToken } from "../../middleware/jwtMiddleware.js";
 import { AdminRole } from "../../middleware/authMiddleware.js";
 
 const router = express.Router();
+
+router.get("/search", searchArticles);
 
 // Route pour créer un article
 router.post("/", verifyToken, AdminRole, createArticle);
