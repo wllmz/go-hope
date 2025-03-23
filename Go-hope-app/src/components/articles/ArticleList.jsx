@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { FaBookmark, FaRegBookmark } from "react-icons/fa";
 import { useArticleActions } from "../../hooks/article/useArticleActions";
 import { useUserInfo } from "../../hooks/user/useUserInfo";
+import SearchBar from "./searchBar";
+import ArticleCard from "./ArticleCard";
+import { useNavigate } from "react-router-dom";
+import Slider from "react-slick"; // N'oubliez pas d'importer slick-carousel CSS
 
 const ArticleList = ({
   articles,
@@ -13,6 +16,7 @@ const ArticleList = ({
   const { addToFavoris, removeFromFavoris, actionLoading, error } =
     useArticleActions();
   const { user } = useUserInfo();
+  const navigate = useNavigate();
 
   // État local pour stocker l'état "favoris" de chaque article
   const [favorites, setFavorites] = useState({});
@@ -23,11 +27,9 @@ const ArticleList = ({
     const userId = user._id.toString();
     const initialFavorites = {};
     articles.forEach((article) => {
-      // Convertir chaque favori en chaîne pour comparer correctement
-      const favorisStr = article.favoris.map((fav) => fav.toString());
-      initialFavorites[article._id] = favorisStr.includes(userId);
+      const favIds = article.favoris.map((fav) => fav.toString());
+      initialFavorites[article._id] = favIds.includes(userId);
     });
-    console.log("Favoris initialisés :", initialFavorites);
     setFavorites(initialFavorites);
   }, [articles, user]);
 
@@ -44,6 +46,26 @@ const ArticleList = ({
     if (onFavoritesUpdate) {
       await onFavoritesUpdate();
     }
+  };
+
+  // Détecter si l'affichage est en mode mobile
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 640); // Par exemple, moins de 640px
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // Paramètres du carrousel pour mobile
+  const sliderSettings = {
+    dots: true,
+    infinite: false,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
   };
 
   return (
@@ -77,45 +99,35 @@ const ArticleList = ({
       </div>
       {error && <p className="text-red-500 mb-4">{error}</p>}
       {articles && articles.length > 0 ? (
-        <ul className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {articles.map((article) => (
-            <li
-              key={article._id}
-              className="relative cursor-pointer border border-gray-300 p-4 rounded hover:shadow-lg transition-shadow"
-              onClick={() => onArticleClick(article._id)}
-            >
-              <h2 className="text-2xl font-bold mb-2">{article.title}</h2>
-              <p className="text-gray-600 mb-2">
-                <strong>Temps de lecture :</strong> {article.time_lecture}{" "}
-                minutes
-              </p>
-              {article.image && (
-                <img
-                  src={article.image}
-                  alt={article.title}
-                  className="w-full h-auto rounded"
+        isMobile ? (
+          <Slider {...sliderSettings} className="px-4">
+            {articles.map((article) => (
+              <div key={article._id} className="p-2">
+                <ArticleCard
+                  article={article}
+                  isFavorite={favorites[article._id]}
+                  actionLoading={actionLoading}
+                  onClick={onArticleClick}
+                  onFavorisClick={handleFavorisClick}
                 />
-              )}
-              <p className="mt-2 text-sm text-gray-500">{article.mediaType}</p>
-              {/* Bouton pour ajouter/retirer des favoris avec icône de signet */}
-              <button
-                className="absolute top-2 right-2 text-xl text-orange-500 hover:text-orange-600 focus:outline-none"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleFavorisClick(article._id);
-                }}
-                disabled={actionLoading}
-                title={
-                  favorites[article._id]
-                    ? "Retirer des favoris"
-                    : "Ajouter aux favoris"
-                }
-              >
-                {favorites[article._id] ? <FaBookmark /> : <FaRegBookmark />}
-              </button>
-            </li>
-          ))}
-        </ul>
+              </div>
+            ))}
+          </Slider>
+        ) : (
+          <ul className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {articles.map((article) => (
+              <li key={article._id}>
+                <ArticleCard
+                  article={article}
+                  isFavorite={favorites[article._id]}
+                  actionLoading={actionLoading}
+                  onClick={onArticleClick}
+                  onFavorisClick={handleFavorisClick}
+                />
+              </li>
+            ))}
+          </ul>
+        )
       ) : (
         <p className="text-center">
           Aucune {selectedMediaType === "Fiche" ? "fiche" : "vidéo"} trouvée.

@@ -20,6 +20,7 @@ import ComptePage from "./pages/compte/comptePage";
 import AllFavoritesSubjectPage from "./pages/compte/allFavoritesSubjectPage";
 import AllSubjectByMePage from "./pages/compte/allSubjectByMePage";
 import SearchResultsPage from "./pages/article/searchResultPage";
+import SearchResultsPageForum from "./pages/forum/searchResultPage";
 
 function App() {
   return (
@@ -135,6 +136,14 @@ function App() {
               element={
                 <PrivateRoute>
                   <SearchResultsPage />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/forum/search"
+              element={
+                <PrivateRoute>
+                  <SearchResultsPageForum />
                 </PrivateRoute>
               }
             />

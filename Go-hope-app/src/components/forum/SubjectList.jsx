@@ -1,10 +1,5 @@
 import React from "react";
-import {
-  FaThumbsUp,
-  FaComment,
-  FaBookmark,
-  FaRegBookmark,
-} from "react-icons/fa";
+import SubjectCard from "./SubjectCard";
 
 const SubjectList = ({
   subjects,
@@ -14,7 +9,7 @@ const SubjectList = ({
   handleSubjectClick,
   actionLoading,
   handleFavorisClick,
-  favorites = {}, // Valeur par défaut pour éviter undefined
+  favorites = {},
 }) => {
   return (
     <div className="p-6">
@@ -54,43 +49,15 @@ const SubjectList = ({
             <li
               key={subject._id}
               onClick={() => handleSubjectClick(subject._id)}
-              className="cursor-pointer p-4 border border-gray-200 rounded-lg shadow-sm hover:bg-gray-50 transition-colors"
+              className="cursor-pointer"
             >
-              <div className="flex justify-between items-center">
-                <h2 className="text-xl font-semibold text-gray-700">
-                  {subject.title}
-                </h2>
-                <button
-                  className="text-xl text-orange-500 hover:text-orange-600 focus:outline-none"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleFavorisClick(subject._id);
-                  }}
-                  disabled={actionLoading}
-                  title={
-                    favorites?.[subject._id]
-                      ? "Retirer des favoris"
-                      : "Ajouter aux favoris"
-                  }
-                >
-                  {favorites?.[subject._id] ? (
-                    <FaBookmark />
-                  ) : (
-                    <FaRegBookmark />
-                  )}
-                </button>
-              </div>
-              <p className="mt-2 text-gray-600">{subject.content}</p>
-              <div className="flex gap-6 mt-2">
-                <div className="flex items-center">
-                  <FaThumbsUp className="mr-1" />
-                  <span>{subject.favoris?.length || 0}</span>
-                </div>
-                <div className="flex items-center">
-                  <FaComment className="mr-1" />
-                  <span>{subject.commentCount || 0}</span>
-                </div>
-              </div>
+              <SubjectCard
+                subject={subject}
+                isFavorite={favorites?.[subject._id]}
+                actionLoading={actionLoading}
+                onClick={handleSubjectClick}
+                onFavorisClick={handleFavorisClick}
+              />
             </li>
           ))}
         </ul>

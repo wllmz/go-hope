@@ -1,88 +1,78 @@
-// import React, { useState, useEffect } from "react";
-// import { useNavigate } from "react-router-dom";
-// import { FaSearch } from "react-icons/fa";
-// import useSubjectsForum from "../../hooks/forum/useSubject";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 
-// const SearchBar = () => {
-//   const navigate = useNavigate();
-//   const { subjects, fetchSubjects } = useSubjectsForum();
-//   const [searchTerm, setSearchTerm] = useState("");
-//   const [suggestions, setSuggestions] = useState([]);
+const SearchBar = () => {
+  const [query, setQuery] = useState("");
+  const navigate = useNavigate();
+  const location = useLocation();
 
-//   // Charger tous les sujets au montage
-//   useEffect(() => {
-//     fetchSubjects();
-//   }, [fetchSubjects]);
+  // Lorsqu'on arrive sur la page de résultats, on récupère le terme dans l'URL
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const q = params.get("query") || "";
+    setQuery(q);
+  }, [location.search]);
 
-//   // Extraire et filtrer les suggestions à partir des catégories des sujets
-//   useEffect(() => {
-//     if (searchTerm.trim() === "") {
-//       setSuggestions([]);
-//     } else {
-//       // Extraire toutes les catégories depuis les sujets
-//       let allCategories = [];
-//       subjects.forEach((subject) => {
-//         if (subject.categories && subject.categories.length > 0) {
-//           subject.categories.forEach((cat) => {
-//             if (cat.categorie) {
-//               allCategories.push(cat.categorie);
-//             }
-//           });
-//         }
-//       });
-//       // Supprimer les doublons
-//       const uniqueCategories = [...new Set(allCategories)];
-//       // Filtrer les catégories correspondant au terme recherché
-//       const filteredSuggestions = uniqueCategories.filter((cat) =>
-//         cat.toLowerCase().includes(searchTerm.toLowerCase())
-//       );
-//       setSuggestions(filteredSuggestions);
-//     }
-//   }, [searchTerm, subjects]);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (query.trim() !== "") {
+      // Redirige vers "/search?query=leTerme"
+      navigate(`/forum/search?query=${encodeURIComponent(query)}`);
+    }
+  };
 
-//   // Soumission du formulaire lors de l'appui sur "Entrée"
-//   const handleSubmit = (e) => {
-//     e.preventDefault();
-//     if (searchTerm.trim()) {
-//       navigate(`/search?q=${encodeURIComponent(searchTerm)}`);
-//     }
-//   };
+  const handleBackClick = () => {
+    // Revient à la page précédente
+    navigate(-1);
+  };
 
-//   // Lorsqu'une suggestion est cliquée, on met à jour le champ et on navigue vers la recherche
-//   const handleSuggestionClick = (suggestion) => {
-//     setSearchTerm(suggestion);
-//     setSuggestions([]);
-//     navigate(`/search?q=${encodeURIComponent(suggestion)}`);
-//   };
+  // On affiche le chevron si un paramètre "query" est présent
+  const params = new URLSearchParams(location.search);
+  const showBackArrow =
+    params.get("query") && params.get("query").trim() !== "";
 
-//   return (
-//     <div className="p-6 max-w-8xl mx-auto">
-//       <form onSubmit={handleSubmit} className="relative bg-white rounded-xl">
-//         {/* Icône de recherche positionnée à gauche */}
-//         <FaSearch className="absolute top-1/2 left-3 transform -translate-y-1/2 text-gray-400" />
-//         <input
-//           type="text"
-//           value={searchTerm}
-//           onChange={(e) => setSearchTerm(e.target.value)}
-//           placeholder="Rechercher par catégorie..."
-//           className="w-full p-3 pl-10 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500"
-//         />
-//         {suggestions.length > 0 && (
-//           <ul className="absolute top-full left-0 right-0 z-20 bg-white border border-gray-300 rounded-lg mt-2 shadow-lg max-h-60 overflow-y-auto">
-//             {suggestions.map((suggestion, index) => (
-//               <li
-//                 key={index}
-//                 onClick={() => handleSuggestionClick(suggestion)}
-//                 className="cursor-pointer p-3 hover:bg-orange-100 transition-colors"
-//               >
-//                 {suggestion}
-//               </li>
-//             ))}
-//           </ul>
-//         )}
-//       </form>
-//     </div>
-//   );
-// };
+  return (
+    <div className="p-4 ">
+      {/* Conteneur arrondi, style "pill" */}
+      <div className="flex items-center bg-white rounded-full px-4 py-2 shadow-sm m-auto w-11/12 sm:w-96 md:w-[400px] lg:w-[500px]">
+        {/* Chevron de retour, affiché uniquement si on a déjà une recherche */}
+        {showBackArrow && (
+          <button
+            onClick={handleBackClick}
+            className="text-gray-500 hover:text-gray-700 transition-colors mr-2"
+            title="Retour"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              style={{ transform: "scaleX(-1)" }}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 5l7 7-7 7"
+              />
+            </svg>
+          </button>
+        )}
 
-// export default SearchBar;
+        {/* Formulaire avec champ de saisie (pas de bouton "Rechercher") */}
+        <form onSubmit={handleSubmit} className="flex items-center flex-grow">
+          <input
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Rechercher..."
+            className="bg-transparent flex-grow focus:outline-none text-gray-700"
+          />
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default SearchBar;

@@ -52,3 +52,14 @@ export const getSubjectByIdForum = async (subjectId) => {
     throw error.response?.data || error.message;
   }
 };
+
+export const searchForumSubject = async (query) => {
+  try {
+    const response = await axiosInstance.get("/forum/subjects/search", {
+      params: { q: query },
+    });
+    return response.data;
+  } catch (error) {
+    return error.response.data;
+  }
+};

@@ -218,3 +218,42 @@ export const getFavorisSubjectsByUser = async (req, res) => {
     });
   }
 };
+
+export const searchForum = async (req, res) => {
+  try {
+    const { q } = req.query;
+
+    // Vérifier qu'on a bien un terme de recherche
+    if (!q || q.trim() === "") {
+      return res
+        .status(400)
+        .json({ message: "Veuillez fournir un terme de recherche." });
+    }
+
+    // 1) Trouver les catégories qui matchent le terme de recherche
+    const foundCategories = await categoryModel.find({
+      categorie: { $regex: q, $options: "i" },
+    });
+
+    // 2) En extraire les IDs
+    const categoryIds = foundCategories.map((cat) => cat._id);
+
+    // 3) Rechercher dans Article :
+    const subjects = await Subject.find({
+      $or: [
+        { title: { $regex: q, $options: "i" } },
+        { categories: { $in: categoryIds } },
+      ],
+    }).populate("categories");
+
+    // 4) Vérifier si on a trouvé des résultats
+    if (!subjects || subjects.length === 0) {
+      return res.status(404).json({ message: "Aucun article trouvé." });
+    }
+
+    // 5) Renvoyer les articles trouvés
+    res.status(200).json({ subjects });
+  } catch (error) {
+    handleError(res, "Erreur lors de la recherche d'articles.", error);
+  }
+};
