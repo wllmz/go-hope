@@ -9,7 +9,7 @@ const Header = ({ selectedMediaType, setSelectedMediaType }) => {
         <h1 className="text-2xl sm:text-3xl text-gray-800 mb-6 pl-2 sm:pl-32">
           La Sclérose en Plaques
         </h1>
-        <div className="mb-12 flex justify-center px-5">
+        <div className="mb-1 flex justify-center">
           <SearchBar />
         </div>
         <MediaTabs
