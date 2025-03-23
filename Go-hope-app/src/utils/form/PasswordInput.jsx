@@ -9,6 +9,7 @@ const PasswordInput = ({
   onChange,
   showPassword,
   setShowPassword,
+  required,
 }) => {
   return (
     <div className="relative mb-6">
@@ -17,6 +18,7 @@ const PasswordInput = ({
         placeholder={placeholder}
         value={value}
         onChange={onChange}
+        required={required}
         className="w-full px-3 py-2 border border-[#F5943A] bg-[white] rounded-xl shadow-sm focus:outline-none focus:ring focus:ring-[rgba(134,191,206,0.16)]"
       />
       <button

@@ -4,7 +4,7 @@ import arrow from "../../../../assets/arrow.png";
 
 const FirstComponent = () => {
   return (
-    <div className="flex flex-col mb-15 items-center mt-15 ">
+    <div className="flex flex-col mb-15 items-center mt-4 sm:mt-15 ">
       <div className="w-full text-center items-center bg-[#FDFDFD] mt-5 mb-5">
         {/* Conteneur en deux colonnes pour desktop */}
         <div className="flex flex-col xl:flex-row items-center justify-center md:gap-x-10 ">

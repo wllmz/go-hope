@@ -14,7 +14,7 @@ const SubjectList = ({
   handleSubjectClick,
   actionLoading,
   handleFavorisClick,
-  favorites,
+  favorites = {}, // Valeur par défaut pour éviter undefined
 }) => {
   return (
     <div className="p-6">
@@ -68,16 +68,19 @@ const SubjectList = ({
                   }}
                   disabled={actionLoading}
                   title={
-                    favorites[subject._id]
+                    favorites?.[subject._id]
                       ? "Retirer des favoris"
                       : "Ajouter aux favoris"
                   }
                 >
-                  {favorites[subject._id] ? <FaBookmark /> : <FaRegBookmark />}
+                  {favorites?.[subject._id] ? (
+                    <FaBookmark />
+                  ) : (
+                    <FaRegBookmark />
+                  )}
                 </button>
               </div>
               <p className="mt-2 text-gray-600">{subject.content}</p>
-              {/* Affichage côte à côte des icônes et chiffres */}
               <div className="flex gap-6 mt-2">
                 <div className="flex items-center">
                   <FaThumbsUp className="mr-1" />
