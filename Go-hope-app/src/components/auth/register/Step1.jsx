@@ -67,8 +67,8 @@ const Step1 = ({
   };
 
   return (
-    <div className="flex flex-col min-h-screen items-center relative px-4">
-      <div className="w-full max-w-3xl sm:shadow rounded-lg sm:mt-25 mt-5 sm:p-10 bg-white">
+    <div className="flex min-h-screen justify-center items-center">
+      <div className="w-full max-w-3xl sm:shadow rounded-lg sm:p-10 bg-white ">
         <div className="flex justify-between items-center mb-6">
           <button
             onClick={goBackToStepOne}

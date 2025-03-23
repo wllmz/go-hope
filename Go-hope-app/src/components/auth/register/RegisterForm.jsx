@@ -42,7 +42,7 @@ const RegisterForm = () => {
   };
 
   return (
-    <div className="step-container-1 flex min-h-screen items-stretch justify-center">
+    <div className="step-container-1 flex min-h-screen items-center justify-center">
       <div className="w-full md:w-1/2 rounded-md custom-form-width-1">
         {step === 0 && (
           <Step0

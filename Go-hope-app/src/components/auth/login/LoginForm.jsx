@@ -46,10 +46,10 @@ const LoginForm = () => {
   };
 
   return (
-    <div className="step-container-1 flex min-h-screen items-stretch justify-center">
-      <div className="w-full md:w-1/2 rounded-md custom-form-width-1">
-        <div className="flex flex-col min-h-screen items-center relative px-4">
-          <div className="w-full max-w-3xl sm:shadow rounded-lg sm:mt-25 mt-5 sm:p-10 bg-white">
+    <div className="step-container-1 flex min-h-screen justify-center items-center">
+      <div className="w-full md:w-1/2 rounded-md">
+        <div className="flex min-h-screen justify-center items-center">
+          <div className="w-full max-w-3xl sm:shadow rounded-lg  sm:p-10 bg-white">
             {/* Header avec bouton de retour et image */}
             <div className="flex justify-between items-center mb-6">
               <button

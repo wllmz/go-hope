@@ -64,7 +64,7 @@ const MobileCarousel = () => {
 
   return (
     // Visible uniquement sur mobile et tablettes (hidden on large screens)
-    <div className="w-full max-w-screen-xl mx-auto mt-4 lg:hidden">
+    <div className="w-full max-w-screen-xl mx-auto mt-4 lg:hidden ">
       {/* Conteneur du slider avec scroll snap et masquage de la scrollbar */}
       <div
         ref={containerRef}
@@ -77,9 +77,9 @@ const MobileCarousel = () => {
             className="flex-shrink-0 w-full snap-start px-2 flex justify-center"
           >
             {/* La carte aura une largeur maximale définie */}
-            <div className="border border-orange-500 p-6 rounded-xl shadow-md flex flex-col h-[500px] w-full max-w-md">
+            <div className="border border-orange-500 p-3 rounded-xl shadow-md flex flex-col h-[400px] w-full max-w-md bg-[#FFF6ED]">
               {/* Conteneur pour l'image */}
-              <div className="flex justify-center mt-13">
+              <div className="flex justify-center mt-2">
                 <img
                   className="mx-auto mb-4 w-full max-w-xs h-32 object-contain"
                   src={slide.image}

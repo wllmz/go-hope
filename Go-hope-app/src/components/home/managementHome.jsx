@@ -15,17 +15,22 @@ const Home = () => {
       <Menu />
       {/* Contenu principal */}
       <main className="flex-grow flex items-center justify-center">
-        <div className="w-full p-8">
+        <div className="w-full">
           <FirstComponent />
           {/* Afficher le carrousel pour mobile/tablettes */}
-          <MobileCarousel />
+
           {/* Afficher le layout classique pour desktop */}
-          <DesktopLayout />
-          <ThirdComponent />
-          {/* Afficher le carrousel pour mobile/tablettes */}
-          <MobileCarouselF />
-          {/* Afficher le layout classique pour desktop */}
-          <DesktopLayoutF />
+          <div className="p-4">
+            <MobileCarousel />
+
+            <DesktopLayout />
+
+            <ThirdComponent />
+            {/* Afficher le carrousel pour mobile/tablettes */}
+            <MobileCarouselF />
+            {/* Afficher le layout classique pour desktop */}
+            <DesktopLayoutF />
+          </div>
         </div>
       </main>
     </div>
