@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useSubjectFavorites } from "../../../hooks/forum/useActionSubject";
-import UserFavorites from "./allUserFavorites";
+import SubjectCard from "../../forum/SubjectCard";
 import { useNavigate } from "react-router-dom";
 
 const InfoUser = () => {
@@ -26,7 +26,7 @@ const InfoUser = () => {
 
   return (
     <div className="w-full min-h-scree mt-10">
-      <UserFavorites
+      <SubjectCard
         favorites={favorites}
         loading={favoritesLoading}
         error={favoritesError}

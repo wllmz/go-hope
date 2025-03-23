@@ -9,7 +9,7 @@ export const getReadArticleUser = async () => {
   }
 };
 
-export const getReadbyUser = async () => {
+export const getFavByUser = async () => {
   try {
     const response = await axiosInstance.get("/action/fav/");
     return response.data;

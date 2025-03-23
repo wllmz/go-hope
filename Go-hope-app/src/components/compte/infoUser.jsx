@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import useSubjectsForum from "../../hooks/forum/useSubject";
 import UserProfile from "./UserProfile";
 import UserFavorites from "./UserFavorites";
-import UserSubjects from "./SubjectList";
+import UserSubjects from "../forum/SubjectList";
 import ThirdComponent from "../home/detail/third/thirdComponent";
 
 const InfoUser = () => {
@@ -102,7 +102,6 @@ const InfoUser = () => {
         error={favoritesError}
         onNavigateToAllFavorites={onNavigateToAllFavorites}
         handleSubjectClick={handleSubjectClick}
-        handleFavorisClick={handleFavorisClick}
       />
       <ThirdComponent />
     </div>

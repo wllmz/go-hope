@@ -16,7 +16,7 @@ const SubjectCard = ({
   return (
     <div
       onClick={() => onClick(subject._id)}
-      className="relative bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow cursor-pointer overflow-hidden p-4"
+      className="relative bg-white border border-gray-200 rounded-lg shadow-sm cursor-pointer overflow-hidden p-4"
     >
       {/* Ligne du haut : Avatar + Nom + Rôle + Étoile Favori */}
       <div className="flex items-center justify-between mb-2">
