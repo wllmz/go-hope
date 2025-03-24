@@ -43,9 +43,6 @@ const ArticleList = ({
       await addToFavoris(articleId);
       setFavorites((prev) => ({ ...prev, [articleId]: true }));
     }
-    if (onFavoritesUpdate) {
-      await onFavoritesUpdate();
-    }
   };
 
   // Détecter si l'affichage est en mode mobile

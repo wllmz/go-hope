@@ -30,9 +30,6 @@ const SubjectListLong = ({ subjects, onSubjectClick, onFavoritesUpdate }) => {
       await addToFavorites(subjectId);
       setFavorites((prev) => ({ ...prev, [subjectId]: true }));
     }
-    if (onFavoritesUpdate) {
-      await onFavoritesUpdate();
-    }
   };
 
   const handleBackClick = () => {
