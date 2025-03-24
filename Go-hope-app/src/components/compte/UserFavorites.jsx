@@ -1,11 +1,14 @@
 import React from "react";
+import ArticleCard from "../articles/ArticleCard"; // Adaptez le chemin selon votre structure
 
 const UserFavorites = ({
   favorites,
   loading,
   error,
   onNavigateToAllFavorites,
-  handleSubjectClick,
+  onArticleClick, // Handler pour naviguer vers le détail d'un article
+  onFavorisClick, // Handler pour basculer le statut favori d'un article
+  actionLoading, // Pour désactiver le bouton pendant le chargement d'une action
 }) => {
   return (
     <div className="p-6">
@@ -16,7 +19,7 @@ const UserFavorites = ({
         <button
           onClick={onNavigateToAllFavorites}
           className="flex items-center text-orange-500 hover:text-orange-600 transition-colors"
-          title="Voir tous les sujets"
+          title="Voir tous les articles"
         >
           <span className="mr-2 text-lg">Voir tout</span>
           <svg
@@ -44,18 +47,18 @@ const UserFavorites = ({
       ) : favorites.length === 0 ? (
         <p className="mt-4">Aucun favori.</p>
       ) : (
-        <ul className="mt-4 space-y-2">
-          {favorites.map((subject) => (
-            <li
-              key={subject._id}
-              onClick={() => handleSubjectClick(subject._id)}
-              className="cursor-pointer p-4 border border-gray-200 rounded-lg shadow-sm hover:bg-gray-50 transition-colors"
-            >
-              <h2 className="text-lg font-semibold">{subject.title}</h2>
-              <p className="text-gray-600">{subject.content}</p>
-            </li>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+          {favorites.map((article) => (
+            <ArticleCard
+              key={article._id}
+              article={article}
+              isFavorite={true} // Comme il s'agit de la liste des favoris, on peut forcer true
+              actionLoading={actionLoading}
+              onClick={() => onArticleClick(article._id)}
+              onFavorisClick={() => onFavorisClick(article._id)}
+            />
           ))}
-        </ul>
+        </div>
       )}
     </div>
   );

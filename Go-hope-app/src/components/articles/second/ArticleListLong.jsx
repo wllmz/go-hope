@@ -33,9 +33,6 @@ const ArticleListLong = ({ articles, onArticleClick, onFavoritesUpdate }) => {
       await addToFavoris(articleId);
       setFavorites((prev) => ({ ...prev, [articleId]: true }));
     }
-    if (onFavoritesUpdate) {
-      await onFavoritesUpdate();
-    }
   };
 
   const handleBackClick = () => {

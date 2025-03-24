@@ -92,8 +92,6 @@ const AllSubject = () => {
       await addToFavorites(subjectId);
       setFavorites((prev) => ({ ...prev, [subjectId]: true }));
     }
-    // Mise à jour des sujets pour refléter la modification (optionnel)
-    await fetchSubjects();
   };
 
   // Préparation des données à afficher
