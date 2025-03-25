@@ -45,12 +45,12 @@ const DesktopLayout = () => {
 
   return (
     // Ce conteneur s'affiche uniquement sur desktop (lg et plus)
-    <div className="hidden lg:block w-full mt-4 px-4 ">
+    <div className="hidden lg:block w-full p-4 mt-4  overflow-hidden">
       <div className="flex flex-col md:flex-row gap-10 items-stretch">
         {slideData.map((slide, index) => (
           <div
             key={index}
-            className={` p-10 flex-1 rounded-xl shadow-md flex flex-col ${slide.cardColor}`}
+            className={`p-2 pt-4 pb-4 flex-1 rounded-xl shadow-md flex flex-col ${slide.cardColor}`}
           >
             <img
               className="block mx-auto mb-4 max-w-xs object-contain w-[250px]"

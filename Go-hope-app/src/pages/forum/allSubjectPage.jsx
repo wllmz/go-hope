@@ -1,5 +1,5 @@
 import React from "react";
-import Allsubject from "../../components/forum/second/allSubject2";
+import Allsubject from "../../components/forum/second/allSubject";
 import Menu from "../../components/layout/menu";
 const allSubject = () => {
   return (

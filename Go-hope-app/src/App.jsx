@@ -21,6 +21,8 @@ import AllFavoritesSubjectPage from "./pages/compte/allFavoritesSubjectPage";
 import AllSubjectByMePage from "./pages/compte/allSubjectByMePage";
 import SearchResultsPage from "./pages/article/searchResultPage";
 import SearchResultsPageForum from "./pages/forum/searchResultPage";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 function App() {
   return (
@@ -116,7 +118,7 @@ function App() {
               }
             />
             <Route
-              path="/forum/mes-favoris"
+              path="/mes-favoris"
               element={
                 <PrivateRoute>
                   <AllFavoritesSubjectPage />

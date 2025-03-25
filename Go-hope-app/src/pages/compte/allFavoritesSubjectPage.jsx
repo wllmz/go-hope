@@ -1,12 +1,12 @@
 import React from "react";
-import SubjectAllFavorites from "../../components/compte/second/subjectAllFavorites";
+import ArticleAllFavorites from "../../components/compte/second/articleAllFavorites";
 import Menu from "../../components/layout/menu";
 
 const allFavoritesSubjectPage = () => {
   return (
     <div>
       <Menu />
-      <SubjectAllFavorites />
+      <ArticleAllFavorites />
     </div>
   );
 };
