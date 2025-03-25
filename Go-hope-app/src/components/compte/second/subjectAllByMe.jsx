@@ -1,14 +1,36 @@
-import React from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useUserInfo } from "../../../hooks/user/useUserInfo";
-import { useNavigate } from "react-router-dom";
 import useSubjectsForum from "../../../hooks/forum/useSubject";
-import SubjectList from "../../forum/SubjectList";
+import { useSubjectFavorites } from "../../../hooks/forum/useActionSubject";
+import UserWrittenSubjects from "./WrittenSubjects";
+import UserFavoriteSubjects from "./FavoriteSubjects";
+import { useNavigate } from "react-router-dom";
 
-const InfoUser = () => {
+const InfoUserSubjects = () => {
   const { user } = useUserInfo();
   const navigate = useNavigate();
-  const { loading, error, getUserSubjects } = useSubjectsForum();
+  const { loading, error, getUserSubjects, subjects } = useSubjectsForum();
+  const { addToFavorites, removeFromFavorites } = useSubjectFavorites();
 
+  // Récupérer les sujets écrits par l'utilisateur
+  const userWrittenSubjects = useMemo(() => {
+    return user ? getUserSubjects(user._id) : [];
+  }, [user, getUserSubjects]);
+
+  // Récupérer les sujets favorisés par l'utilisateur
+  // Ici, on suppose que chaque sujet a une propriété "favoris" contenant une liste d'IDs d'utilisateurs
+  const userFavoriteSubjects = useMemo(() => {
+    if (!user || subjects.length === 0) return [];
+    const userId = user._id.toString();
+    // On peut par exemple filtrer tous les sujets pour lesquels l'ID de l'utilisateur est présent dans favoris
+    return subjects.filter(
+      (subject) =>
+        subject.favoris &&
+        subject.favoris.some((fav) => fav.toString() === userId)
+    );
+  }, [user, subjects]);
+
+  // Handlers de navigation et d'action
   const handleBackClick = () => {
     navigate(-1);
   };
@@ -17,45 +39,56 @@ const InfoUser = () => {
     navigate(`/forum/subjects/${subjectId}`);
   };
 
-  // Obtenir les sujets filtrés pour l'utilisateur connecté
-  const userSubjects = user ? getUserSubjects(user._id) : [];
+  const handleFavorisClick = async (subjectId, isCurrentlyFavorite) => {
+    try {
+      if (isCurrentlyFavorite) {
+        await removeFromFavorites(subjectId);
+      } else {
+        await addToFavorites(subjectId);
+      }
+      // Optionnel : ici, tu pourrais déclencher un re-fetch pour synchroniser
+    } catch (err) {
+      console.error(
+        "Erreur lors de la mise à jour des favoris du sujet :",
+        err
+      );
+    }
+  };
 
   return (
-    <div className="w-full min-h-screen mt-10">
+    <div className="w-full min-h-screen mt-10 p-4">
       <button
         onClick={handleBackClick}
         className="mb-4 text-orange-500 hover:text-orange-600 transition-colors"
       >
-        {/* Vous pouvez personnaliser le bouton de retour */}
         Retour
       </button>
 
       {loading && <p className="text-center">Chargement...</p>}
       {error && <p className="text-center text-red-500">{error}</p>}
-      {userSubjects.length === 0 ? (
-        <p className="text-center">Aucun sujet trouvé.</p>
+
+      <h1 className="text-2xl font-bold mb-4">Sujets que j'ai écrits</h1>
+      {userWrittenSubjects.length === 0 ? (
+        <p className="text-center">Vous n'avez écrit aucun sujet.</p>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {userSubjects.map((subject) => (
-            <SubjectCard
-              key={subject._id}
-              subject={subject}
-              // Vous pouvez ajuster isFavorite selon votre logique
-              isFavorite={subject.favoris?.some(
-                (fav) => fav.toString() === user._id.toString()
-              )}
-              actionLoading={false}
-              onClick={handleSubjectClick}
-              onFavorisClick={() => {
-                // Vous pouvez ajouter ici la logique de favoris si nécessaire
-                console.log("Favoris cliqué pour", subject._id);
-              }}
-            />
-          ))}
-        </div>
+        <UserWrittenSubjects
+          subjects={userWrittenSubjects}
+          onSubjectClick={handleSubjectClick}
+        />
+      )}
+
+      <h1 className="text-2xl font-bold mt-10 mb-4">Sujets que j'ai favoris</h1>
+      {userFavoriteSubjects.length === 0 ? (
+        <p className="text-center">Aucun sujet favori trouvé.</p>
+      ) : (
+        <UserFavoriteSubjects
+          subjects={userFavoriteSubjects}
+          onSubjectClick={handleSubjectClick}
+          onFavorisClick={handleFavorisClick}
+        />
       )}
     </div>
   );
 };
 
-export default InfoUser;
+export default InfoUserSubjects;

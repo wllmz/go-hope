@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import Slider from "react-slick";
 import ArticleCard from "../articles/ArticleCard"; // Adaptez le chemin selon votre structure
 
 const UserFavorites = ({
@@ -10,10 +11,31 @@ const UserFavorites = ({
   onFavorisClick, // Handler pour basculer le statut favori d'un article
   actionLoading, // Pour désactiver le bouton pendant le chargement d'une action
 }) => {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    handleResize(); // Vérification initiale
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // Paramètres du slider pour mobile
+  const sliderSettings = {
+    dots: true,
+    infinite: false,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+  };
+
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-gray-800">
+        <h1 className="text-xl font-semibold text-gray-800">
           Mes enregistrements
         </h1>
         <button
@@ -46,13 +68,29 @@ const UserFavorites = ({
         </p>
       ) : favorites.length === 0 ? (
         <p className="mt-4">Aucun favori.</p>
+      ) : isMobile ? (
+        // Affichage en slider pour mobile
+        <Slider {...sliderSettings}>
+          {favorites.map((article) => (
+            <div key={article._id} className="px-2">
+              <ArticleCard
+                article={article}
+                isFavorite={true} // Comme il s'agit de la liste des favoris, on peut forcer true
+                actionLoading={actionLoading}
+                onClick={() => onArticleClick(article._id)}
+                onFavorisClick={() => onFavorisClick(article._id)}
+              />
+            </div>
+          ))}
+        </Slider>
       ) : (
+        // Affichage en grille pour les écrans plus larges
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
           {favorites.map((article) => (
             <ArticleCard
               key={article._id}
               article={article}
-              isFavorite={true} // Comme il s'agit de la liste des favoris, on peut forcer true
+              isFavorite={true}
               actionLoading={actionLoading}
               onClick={() => onArticleClick(article._id)}
               onFavorisClick={() => onFavorisClick(article._id)}

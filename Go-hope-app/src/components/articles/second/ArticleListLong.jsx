@@ -1,4 +1,3 @@
-// ArticleListLong.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useArticleActions } from "../../../hooks/article/useArticleActions";
@@ -10,10 +9,9 @@ const ArticleListLong = ({ articles, onArticleClick, onFavoritesUpdate }) => {
   const { addToFavoris, removeFromFavoris, actionLoading, error } =
     useArticleActions();
   const { user } = useUserInfo();
-
   const [favorites, setFavorites] = useState({});
 
-  // Initialiser l'état "favoris"
+  // Initialisation de l'état local des favoris
   useEffect(() => {
     if (!user) return;
     const userId = user._id.toString();
@@ -26,12 +24,20 @@ const ArticleListLong = ({ articles, onArticleClick, onFavoritesUpdate }) => {
   }, [articles, user]);
 
   const handleFavorisClick = async (articleId) => {
-    if (favorites[articleId]) {
-      await removeFromFavoris(articleId);
-      setFavorites((prev) => ({ ...prev, [articleId]: false }));
-    } else {
-      await addToFavoris(articleId);
-      setFavorites((prev) => ({ ...prev, [articleId]: true }));
+    try {
+      if (favorites[articleId]) {
+        await removeFromFavoris(articleId);
+        setFavorites((prev) => ({ ...prev, [articleId]: false }));
+        // Notifie le parent que cet article n'est plus favori
+        onFavoritesUpdate(articleId, false);
+      } else {
+        await addToFavoris(articleId);
+        setFavorites((prev) => ({ ...prev, [articleId]: true }));
+        // Si besoin, notifie pour l'ajout
+        onFavoritesUpdate(articleId, true);
+      }
+    } catch (err) {
+      console.error("Erreur lors de la mise à jour des favoris :", err);
     }
   };
 
@@ -39,7 +45,6 @@ const ArticleListLong = ({ articles, onArticleClick, onFavoritesUpdate }) => {
     navigate(-1);
   };
 
-  // Appelé au clic global sur la carte ou sur "Lire la suite"
   const handleCardClick = (articleId) => {
     onArticleClick(articleId);
   };
@@ -75,7 +80,6 @@ const ArticleListLong = ({ articles, onArticleClick, onFavoritesUpdate }) => {
           {articles.length} {articles.length > 1 ? "résultats" : "résultat"}
         </div>
 
-        {/* Liste de cartes */}
         <div className="space-y-6">
           {articles.map((article) => (
             <ArticleCard

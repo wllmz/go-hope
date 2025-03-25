@@ -32,7 +32,7 @@ const InfoUser = () => {
     articles,
     loading: loadingArticle,
     error: errorArticle,
-    fetchReadbyUser,
+    fetchFavbyUser,
   } = useFavByUser();
 
   const {
@@ -81,12 +81,12 @@ const InfoUser = () => {
 
   // Appel initial pour charger les articles favoris depuis le backend
   useEffect(() => {
-    fetchReadbyUser();
-    console.log("fetchReadbyUser appelé");
-  }, [fetchReadbyUser]);
+    fetchFavbyUser();
+    console.log("fetchFavbyUser appelé");
+  }, [fetchFavbyUser]);
 
   const onNavigateToAllFavorites = () => {
-    navigate("/forum/mes-favoris");
+    navigate("/mes-favoris");
   };
 
   const onNavigateToMySubjects = () => {
@@ -164,8 +164,8 @@ const InfoUser = () => {
         loading={loading}
         error={error}
         onNavigateToAllSubjects={onNavigateToMySubjects}
-        handleSubjectClick={handleSubjectClick}
-        handleFavorisClick={handleFavorisClickSubject}
+        onSubjectClick={handleSubjectClick}
+        onFavorisClick={handleFavorisClickSubject}
         favorites={subjectFavorites}
       />
 

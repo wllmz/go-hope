@@ -6,7 +6,7 @@ export const useFavByUser = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const fetchReadbyUser = useCallback(async () => {
+  const fetchFavbyUser = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -28,7 +28,7 @@ export const useFavByUser = () => {
     }
   }, []);
 
-  return { articles, loading, error, fetchReadbyUser };
+  return { articles, loading, error, fetchFavbyUser };
 };
 
 export default useFavByUser;
