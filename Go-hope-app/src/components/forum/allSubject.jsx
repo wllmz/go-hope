@@ -104,11 +104,11 @@ const AllSubject = () => {
   };
 
   const handleSubjectClick = (subjectId) => {
-    navigate(`/forum/subjects/${subjectId}`);
+    navigate(`/forum/sujet/${subjectId}`);
   };
 
   const handleNavigateToAllSubjects = () => {
-    navigate("/all-subjects");
+    navigate("/forum/tous-les-articles");
   };
 
   return (

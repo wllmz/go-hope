@@ -11,12 +11,12 @@ const Menu = () => {
         <li>
           <NavLink
             end
-            to="/home"
+            to="/accueil"
             className={({ isActive }) =>
               isActive ? "text-[#F5943A] font-bold" : "text-white font-medium"
             }
           >
-            Home
+            Accueil
           </NavLink>
         </li>
         <li>

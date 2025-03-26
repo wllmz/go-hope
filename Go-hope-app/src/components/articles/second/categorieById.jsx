@@ -26,7 +26,7 @@ const CategorieById = () => {
 
   // Fonction pour naviguer vers la page d'un article
   const handleArticleClick = (articleId) => {
-    navigate(`/articles/${articleId}`);
+    navigate(`/la-sep/${articleId}`);
   };
 
   // Fonction pour revenir à la page précédente

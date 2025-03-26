@@ -24,7 +24,7 @@ const Step1 = ({ handleNextStep }) => {
           Créer un compte
         </button>
         <button
-          onClick={() => navigate("/login")}
+          onClick={() => navigate("/connexion ")}
           className="w-full sm:w-[300px] bg-[#F5943A] hover:bg-[#F1731F] text-white py-2 px-2 rounded-lg font-semibold text-lg"
         >
           Connexion

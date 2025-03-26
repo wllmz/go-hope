@@ -37,7 +37,7 @@ const AllSubject = () => {
 
   // Fonction de navigation pour accéder à un sujet
   const handleSubjectClick = (subjectId) => {
-    navigate(`/forum/subjects/${subjectId}`);
+    navigate(`/forum/sujet/${subjectId}`);
   };
 
   return (

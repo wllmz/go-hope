@@ -21,7 +21,7 @@ const InfoUser = () => {
   };
 
   const handleSubjectClick = (subjectId) => {
-    navigate(`/forum/subjects/${subjectId}`);
+    navigate(`/forum/sujet//${subjectId}`);
   };
 
   return (

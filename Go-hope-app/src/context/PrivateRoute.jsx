@@ -14,7 +14,7 @@ const PrivateRoute = ({ children, role }) => {
 
     if (!isAuthenticated()) {
       console.log("Utilisateur non authentifié, redirection vers /login...");
-      navigate("/login");
+      navigate("/connexion ");
     } else if (role && !hasRole(role)) {
       console.log(
         `Utilisateur authentifié, mais sans le rôle "${role}". Redirection vers /unauthorized...`

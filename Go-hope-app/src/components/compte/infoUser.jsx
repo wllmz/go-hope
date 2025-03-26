@@ -90,11 +90,11 @@ const InfoUser = () => {
   };
 
   const onNavigateToMySubjects = () => {
-    navigate("/forum/mes-articles");
+    navigate("/mes-articles");
   };
 
   const handleSubjectClick = (subjectId) => {
-    navigate(`/forum/subjects/${subjectId}`);
+    navigate(`/forum/sujet/${subjectId}`);
   };
 
   // Handler pour naviguer vers le détail d'un article

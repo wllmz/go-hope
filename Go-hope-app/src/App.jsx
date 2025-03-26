@@ -32,13 +32,13 @@ function App() {
           <Routes>
             {/* Routes publiques */}
             <Route path="/" element={<WelcomePage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="/login" element={<Login />} />
+            <Route path="/inscription" element={<RegisterPage />} />
+            <Route path="/connexion" element={<Login />} />
             <Route path="/verification" element={<VerificationPage />} />
 
             {/* Routes protégées */}
             <Route
-              path="/home"
+              path="/accueil"
               element={
                 <PrivateRoute>
                   <Home />
@@ -54,7 +54,7 @@ function App() {
               }
             />
             <Route
-              path="/categories/:categoryId"
+              path="/la-sep/categories/:categoryId"
               element={
                 <PrivateRoute>
                   <CategoriesPage />
@@ -62,7 +62,7 @@ function App() {
               }
             />
             <Route
-              path="/articles/:articleId"
+              path="/la-sep/:articleId"
               element={
                 <PrivateRoute>
                   <ArticleByidPage />
@@ -70,7 +70,7 @@ function App() {
               }
             />
             <Route
-              path="/all-articles"
+              path="/la-sep/tous-les-articles"
               element={
                 <PrivateRoute>
                   <AllArticle />
@@ -94,7 +94,7 @@ function App() {
               }
             />
             <Route
-              path="/forum/subjects/:subjectId"
+              path="/forum/sujet/:subjectId"
               element={
                 <PrivateRoute>
                   <SubjectByid />
@@ -102,7 +102,7 @@ function App() {
               }
             />
             <Route
-              path="/all-subjects"
+              path="/forum/tous-les-articles"
               element={
                 <PrivateRoute>
                   <AllSubject />
@@ -126,7 +126,7 @@ function App() {
               }
             />
             <Route
-              path="/forum/mes-articles"
+              path="/mes-articles"
               element={
                 <PrivateRoute>
                   <AllSubjectByMePage />
