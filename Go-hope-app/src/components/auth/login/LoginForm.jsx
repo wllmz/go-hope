@@ -37,7 +37,7 @@ const LoginForm = () => {
       setShowSuccessMessage(true);
       // Redirige vers /home après 2 secondes
       setTimeout(() => {
-        navigate("/home");
+        navigate("/accueil");
       }, 2000);
     } catch (err) {
       console.error("Erreur de connexion :", err);

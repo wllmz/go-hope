@@ -161,7 +161,7 @@ const Step1 = ({
 
             <button
               type="button"
-              onClick={() => navigate("/login")}
+              onClick={() => navigate("/connexion ")}
               className="text-[#f9a825] text-sm  mt-4 block text-center bg-transparent mb-5"
             >
               Déjà un compte ?

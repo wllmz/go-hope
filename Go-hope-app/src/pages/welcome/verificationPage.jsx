@@ -19,7 +19,7 @@ const verificationPage = () => {
       {/* Zone des boutons */}
       <div className="flex flex-col sm:flex-row gap-4 justify-center mt-10 w-full p-5">
         <button
-          onClick={() => navigate("/home")}
+          onClick={() => navigate("/accueil")}
           className="w-full sm:w-[300px] bg-[#F5943A] hover:bg-[#F1731F] text-white font-semibold py-2 px-2 rounded-lg shadow-md transition duration-300 text-lg"
         >
           Suivant

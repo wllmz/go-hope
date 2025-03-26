@@ -22,7 +22,7 @@ const SearchResultsPage = () => {
   const handleSubjectClick = (subjectId) => {
     console.log("Subject clicked:", subjectId);
     // Redirigez vers la page de détails, par exemple
-    navigate(`/forum/subjects/${subjectId}`);
+    navigate(`/forum/sujet/${subjectId}`);
   };
 
   const handleBackClick = () => {
@@ -42,7 +42,7 @@ const SearchResultsPage = () => {
       {subjects && subjects.length > 0 ? (
         <SearchResults
           subjects={subjects}
-          handleSubjectClick={handleSubjectClick}
+          onSubjectClick={handleSubjectClick}
         />
       ) : (
         !loading && (

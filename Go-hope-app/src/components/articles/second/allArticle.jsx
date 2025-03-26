@@ -39,7 +39,7 @@ const AllArticle = () => {
 
   // Fonctions de navigation
   const handleArticleClick = (articleId) => {
-    navigate(`/articles/${articleId}`);
+    navigate(`/la-sep/${articleId}`);
   };
 
   return (

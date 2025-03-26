@@ -23,7 +23,7 @@ const SearchResultsPage = () => {
   const handleSubjectClick = (articleId) => {
     console.log("Article cliqué :", articleId);
     // Redirigez vers la page de détails ou effectuez autre action
-    navigate(`/articles/${articleId}`);
+    navigate(`/la-sep/${articleId}`);
   };
 
   return (
@@ -42,7 +42,7 @@ const SearchResultsPage = () => {
         {articles && articles.length > 0 ? (
           <SearchResults
             articles={articles}
-            handleSubjectClick={handleSubjectClick}
+            onArticleClick={handleSubjectClick}
           />
         ) : (
           !loading && (

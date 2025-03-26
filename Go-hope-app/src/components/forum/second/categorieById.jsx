@@ -38,7 +38,7 @@ const CategorieById = () => {
   console.log("Subjects filtrés :", filteredSubjects);
 
   const handleSubjectClick = (subjectId) => {
-    navigate(`/forum/subjects/${subjectId}`);
+    navigate(`/forum/sujet/${subjectId}`);
   };
 
   const handleBackClick = () => {

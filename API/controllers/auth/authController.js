@@ -277,7 +277,7 @@ export const verifyEmail = async (req, res) => {
     // Si l'email a déjà été vérifié
     if (user.verifyEmail) {
       // Redirection vers la page de connexion si l'email est déjà vérifié
-      return res.redirect(`${FRONTEND_URL}/login`);
+      return res.redirect(`${FRONTEND_URL}/connexion `);
     }
 
     // Marquer l'email comme vérifié

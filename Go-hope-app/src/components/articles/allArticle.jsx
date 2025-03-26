@@ -81,13 +81,13 @@ const AllArticle = () => {
 
   // Fonctions de navigation
   const handleCategoryClick = (categoryId) => {
-    navigate(`/categories/${categoryId}`);
+    navigate(`/la-sep/categories/${categoryId}`);
   };
   const handleArticleClick = (articleId) => {
-    navigate(`/articles/${articleId}`);
+    navigate(`/la-sep/${articleId}`);
   };
   const handleNavigateToAllArticles = () => {
-    navigate("/all-articles");
+    navigate("/la-sep/tous-les-articles");
   };
 
   return (

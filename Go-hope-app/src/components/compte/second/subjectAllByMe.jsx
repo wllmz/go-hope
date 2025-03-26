@@ -1,10 +1,11 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useMemo } from "react";
 import { useUserInfo } from "../../../hooks/user/useUserInfo";
 import useSubjectsForum from "../../../hooks/forum/useSubject";
 import { useSubjectFavorites } from "../../../hooks/forum/useActionSubject";
 import UserWrittenSubjects from "./WrittenSubjects";
 import UserFavoriteSubjects from "./FavoriteSubjects";
 import { useNavigate } from "react-router-dom";
+import Header from "../../forum/Header";
 
 const InfoUserSubjects = () => {
   const { user } = useUserInfo();
@@ -36,7 +37,7 @@ const InfoUserSubjects = () => {
   };
 
   const handleSubjectClick = (subjectId) => {
-    navigate(`/forum/subjects/${subjectId}`);
+    navigate(`/forum/sujet/${subjectId}`);
   };
 
   const handleFavorisClick = async (subjectId, isCurrentlyFavorite) => {
@@ -56,37 +57,56 @@ const InfoUserSubjects = () => {
   };
 
   return (
-    <div className="w-full min-h-screen mt-10 p-4">
-      <button
-        onClick={handleBackClick}
-        className="mb-4 text-orange-500 hover:text-orange-600 transition-colors"
-      >
-        Retour
-      </button>
+    <div className="w-full min-h-screen">
+      <Header />
 
       {loading && <p className="text-center">Chargement...</p>}
       {error && <p className="text-center text-red-500">{error}</p>}
+      <div className="max-w-6xl mx-auto p-5 bg-white">
+        <button
+          onClick={handleBackClick}
+          className="flex items-center text-orange-500 hover:text-orange-600 transition-colors mt-4 mb-4"
+          title="Retour"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            style={{ transform: "scaleX(-1)" }}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M9 5l7 7-7 7"
+            />
+          </svg>
+          <span className="ml-2">Profil</span>
+        </button>
+        {userWrittenSubjects.length === 0 ? (
+          <p className="text-center">Vous n'avez écrit aucun sujet.</p>
+        ) : (
+          <UserWrittenSubjects
+            subjects={userWrittenSubjects}
+            onSubjectClick={handleSubjectClick}
+          />
+        )}
 
-      <h1 className="text-2xl font-bold mb-4">Sujets que j'ai écrits</h1>
-      {userWrittenSubjects.length === 0 ? (
-        <p className="text-center">Vous n'avez écrit aucun sujet.</p>
-      ) : (
-        <UserWrittenSubjects
-          subjects={userWrittenSubjects}
-          onSubjectClick={handleSubjectClick}
-        />
-      )}
-
-      <h1 className="text-2xl font-bold mt-10 mb-4">Sujets que j'ai favoris</h1>
-      {userFavoriteSubjects.length === 0 ? (
-        <p className="text-center">Aucun sujet favori trouvé.</p>
-      ) : (
-        <UserFavoriteSubjects
-          subjects={userFavoriteSubjects}
-          onSubjectClick={handleSubjectClick}
-          onFavorisClick={handleFavorisClick}
-        />
-      )}
+        <h1 className="text-2xl font-bold mt-10 mb-4">
+          Sujets que j'ai favoris
+        </h1>
+        {userFavoriteSubjects.length === 0 ? (
+          <p className="text-center">Aucun sujet favori trouvé.</p>
+        ) : (
+          <UserFavoriteSubjects
+            subjects={userFavoriteSubjects}
+            onSubjectClick={handleSubjectClick}
+            onFavorisClick={handleFavorisClick}
+          />
+        )}
+      </div>
     </div>
   );
 };

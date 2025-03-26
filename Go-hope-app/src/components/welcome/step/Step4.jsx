@@ -35,7 +35,7 @@ const Step4 = ({ handlePreviousStep }) => {
       {/* Zone du bouton */}
       <div className="flex flex-col sm:flex-row gap-4 justify-center mt-10 w-full p-5">
         <button
-          onClick={() => navigate("/register")}
+          onClick={() => navigate("/inscription")}
           className="w-full sm:w-lg bg-[#F5943A] hover:bg-[#F1731F] text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-300"
         >
           S'inscrire
