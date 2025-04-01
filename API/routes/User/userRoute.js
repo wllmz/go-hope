@@ -1,7 +1,6 @@
 import express from "express";
 import {
-  createUser,
-  updateUserField,
+  upsertUser,
   updatePassword,
   getUserById,
   deleteMyAccount,
@@ -11,10 +10,7 @@ import { verifyToken } from "../../middleware/jwtMiddleware.js";
 const router = express.Router();
 
 // Route pour créer ou mettre à jour un utilisateur
-router.post("/", verifyToken, createUser);
-
-// Route générique pour mettre à jour un champ utilisateur (email, prénom, nom, genre, téléphone, etc.)
-router.put("/update-field", verifyToken, updateUserField);
+router.post("/", verifyToken, upsertUser);
 
 // Route pour mettre à jour le mot de passe de l'utilisateur
 router.put("/update-password", verifyToken, updatePassword);

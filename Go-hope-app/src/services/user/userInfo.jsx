@@ -23,22 +23,35 @@ export const getUserInfo = async () => {
   }
 };
 
-export const updateEmail = async (updatedData) => {
-  try {
-    const response = await axiosInstance.put("/user/email", updatedData);
-    return response.data;
-  } catch (error) {
-    console.error("Erreur lors de la mise à jour de l'email", error);
-    throw error;
-  }
-};
-
+// Fonction pour mettre à jour le mot de passe de l'utilisateur
 export const updatePassword = async (updatedData) => {
   try {
-    const response = await axiosInstance.put("/user/password", updatedData);
+    // Envoi de la requête PUT pour mettre à jour le mot de passe
+    const response = await axiosInstance.put(
+      "/user/update-password",
+      updatedData
+    );
+
+    // Renvoi des données de la réponse
     return response.data;
   } catch (error) {
     console.error("Erreur lors de la mise à jour du mot de passe", error);
-    throw error;
+    throw error; // Propagation de l'erreur
+  }
+};
+
+export const upsertUser = async (userData) => {
+  try {
+    // Envoi de la requête POST pour créer ou mettre à jour un utilisateur
+    const response = await axiosInstance.post("/user", userData);
+
+    // Renvoi des données de la réponse
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Erreur lors de la création ou mise à jour de l'utilisateur",
+      error
+    );
+    throw error; // Propagation de l'erreur
   }
 };

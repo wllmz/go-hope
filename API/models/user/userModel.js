@@ -23,13 +23,21 @@ const authSchema = new mongoose.Schema({
   },
   phone: {
     type: String,
-    match: /^(\+33[1-9]\d{8}|0[1-9]\d{8})$/,
+    match: /^\+?[0-9]{7,15}$/,
     trim: true,
   },
   username: {
     type: String,
     required: true,
     unique: true,
+  },
+  dateBirth: {
+    type: Date,
+    validate: (value) => {
+      const currentDate = new Date();
+      return value <= currentDate;
+    },
+    message: "Date de naissance incorrecte ou dépassée.",
   },
   gender: {
     type: String,
@@ -40,6 +48,23 @@ const authSchema = new mongoose.Schema({
     type: [String],
     enum: ["admin", "patient", "patient-aidant", "proche-aidant"],
     default: "patient",
+  },
+  image: {
+    type: String,
+    default: null,
+  },
+  termsAccepted: {
+    type: Boolean,
+    required: true,
+  },
+  termsEmailAccepted: {
+    type: Boolean,
+    default: false,
+  },
+
+  verifyEmail: {
+    type: Boolean,
+    default: false,
   },
   createdAt: {
     type: Date,

@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
 import Slider from "react-slick";
-import SubjectCard from "../forum/SubjectCard"; // Vérifiez que le chemin est correct
+import SubjectCard from "../forum/SubjectCard";
 
 const UserSubjects = ({
-  subjects, // Tableau des sujets à afficher
-  loading, // Indique si le chargement est en cours
-  error, // Éventuelle erreur de chargement
-  onNavigateToAllSubjects, // Handler pour naviguer vers la liste complète des sujets
-  onSubjectClick, // Handler pour naviguer vers le détail d'un sujet
-  onFavorisClick, // Handler pour basculer le statut favori d'un sujet
-  favorites, // Objet { [subjectId]: boolean } indiquant si chaque sujet est favorisé
+  subjects,
+  loading,
+  error,
+  onNavigateToAllSubjects,
+  onSubjectClick,
+  onFavorisClick,
+  favorites,
 }) => {
   const [isMobile, setIsMobile] = useState(false);
 

@@ -13,9 +13,7 @@ const UserProfile = ({ user }) => {
           className="w-12 h-12 rounded-full object-cover"
         />
       ) : (
-        <div className="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center">
-          {/* Vous pouvez ajouter ici une icône ou une initiale */}
-        </div>
+        <div className="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center"></div>
       )}
       <p className="font-medium mt-2 text-lg sm:text-xl">
         {user ? user.username : "Aucun utilisateur connecté"}
