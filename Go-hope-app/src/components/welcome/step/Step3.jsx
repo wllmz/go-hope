@@ -5,7 +5,7 @@ import ProgressBar from "../../../utils/form/ProgressBar";
 
 const Step3 = ({ handleNextStep, handlePreviousStep }) => {
   return (
-    <div className="flex flex-col min-h-screen items-center justify-center relative p-9">
+    <div className="flex flex-col min-h-screen items-center justify-center relative p-9 ">
       {/* Flèche de retour en haut à gauche */}
       <div className="absolute top-4 left-0">
         <button
@@ -17,7 +17,7 @@ const Step3 = ({ handleNextStep, handlePreviousStep }) => {
       </div>
       {/* Contenu de la Step3 */}
       <div className="mb-8">
-        <img src={welcome} alt="Bienvenue" className="w-54 sm:w-full" />
+        <img src={welcome} alt="Bienvenue" className="w-full max-w-55 h-auto" />
       </div>
       <h1 className="text-2xl sm:text-3xl font-bold text-[#0E3043] text-center mb-4">
         Accédez à des informations sur la SEP

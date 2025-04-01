@@ -8,7 +8,7 @@ const Step4 = ({ handlePreviousStep }) => {
   const navigate = useNavigate();
 
   return (
-    <div className="flex flex-col min-h-screen items-center justify-center px-4 relative p-9">
+    <div className="flex flex-col min-h-screen items-center justify-center px-4 relative p-9 ">
       <div className="absolute top-4 left-0">
         <button
           onClick={handlePreviousStep}
@@ -19,7 +19,7 @@ const Step4 = ({ handlePreviousStep }) => {
       </div>
       {/* Zone de l'image */}
       <div className="mb-8">
-        <img src={welcome} alt="Bienvenue" className="w-54 sm:w-full" />
+        <img src={welcome} alt="Bienvenue" className="w-full max-w-55 h-auto" />
       </div>
       <h1 className="text-2xl sm:text-3xl font-bold text-[#0E3043] text-center mb-4">
         Participez à des échanges

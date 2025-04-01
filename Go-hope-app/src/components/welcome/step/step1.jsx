@@ -6,15 +6,16 @@ const Step1 = ({ handleNextStep }) => {
   const navigate = useNavigate();
 
   return (
-    <div className="step-container flex flex-col w-full min-h-screen items-center justify-center">
+    <div className="step-container flex flex-col w-full min-h-screen items-center justify-center ">
       {/* Zone du logo avec marge supérieure */}
       <div className="step-bg-mobile mt-20 mb-8 p-14">
-        <img className="h-auto w-xl sm:w-xl" src={logo} alt="Logo" />
+        <img className="w-full max-w-lg h-auto" src={logo} alt="Logo" />
       </div>
       {/* Zone d'information */}
-      <h1 className="text-2xl sm:text-3xl font-medium text-[#0E3043] text-center mb-4">
+      <h1 className="text-[25px] sm:text-[30px] font-medium text-[#0E3043] text-center mb-4">
         Application d’aide aux personnes souffrantes de la Sclérose en plaques
       </h1>
+
       {/* Zone des boutons */}
       <div className="flex flex-col sm:flex-row gap-4 justify-center mt-10 w-full p-5">
         <button
