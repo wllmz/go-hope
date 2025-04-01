@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
 import Slider from "react-slick";
-import ArticleCard from "../articles/ArticleCard"; // Adaptez le chemin selon votre structure
+import ArticleCard from "../articles/ArticleCard";
 
 const UserFavorites = ({
   favorites,
   loading,
   error,
   onNavigateToAllFavorites,
-  onArticleClick, // Handler pour naviguer vers le détail d'un article
-  onFavorisClick, // Handler pour basculer le statut favori d'un article
-  actionLoading, // Pour désactiver le bouton pendant le chargement d'une action
+  onArticleClick,
+  onFavorisClick,
+  actionLoading,
 }) => {
   const [isMobile, setIsMobile] = useState(false);
 

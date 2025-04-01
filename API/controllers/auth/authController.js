@@ -60,7 +60,8 @@ const setTokenCookies = (res, accessToken, refreshToken) => {
 
 export const registerUser = async (req, res) => {
   try {
-    const { email, password, termsAccepted, username } = req.body;
+    const { email, password, termsAccepted, username, termsEmailAccepted } =
+      req.body;
 
     // Vérification des champs nécessaires
     if (!email || !password || !termsAccepted || !username) {
@@ -97,6 +98,7 @@ export const registerUser = async (req, res) => {
       password: hashedPassword,
       termsAccepted,
       username,
+      termsEmailAccepted,
     });
 
     await newUser.save();
