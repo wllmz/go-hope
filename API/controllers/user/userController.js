@@ -123,7 +123,6 @@ export const updatePassword = async (req, res) => {
   }
 };
 
-// Route pour récupérer les informations de l'utilisateur par ID
 export const getUserById = async (req, res) => {
   try {
     const authId = req.user.id;
@@ -132,6 +131,9 @@ export const getUserById = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "Utilisateur non trouvé." });
     }
+
+    // Déchiffrer les champs sensibles avant de les retourner
+    user.decryptFieldsSync();
 
     res.status(200).json({ user });
   } catch (error) {

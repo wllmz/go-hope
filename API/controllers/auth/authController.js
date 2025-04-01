@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import { sendVerificationEmail } from "../../utils/emailUtils.js";
+import crypto from "crypto";
 
 dotenv.config();
 
@@ -56,20 +57,27 @@ const setTokenCookies = (res, accessToken, refreshToken) => {
 };
 
 // 3. Fonction pour l'inscription d'un utilisateur
+
 export const registerUser = async (req, res) => {
   try {
-    const { email, password, termsAccepted } = req.body;
+    const { email, password, termsAccepted, username } = req.body;
 
     // Vérification des champs nécessaires
-    if (!email || !password || !termsAccepted) {
-      return res
-        .status(400)
-        .json({ message: "Email, mot de passe et rôles sont requis." });
+    if (!email || !password || !termsAccepted || !username) {
+      return res.status(400).json({
+        message:
+          "Email, mot de passe, username et conditions acceptées sont requis.",
+      });
     }
 
-    // Vérification de l'existence de l'utilisateur
-    const existingUser = await Auth.findOne({ email });
+    // Calculer le hash de l'email pour la recherche
+    const emailHash = crypto.createHash("sha256").update(email).digest("hex");
+
+    // Vérification de l'existence de l'utilisateur via emailHash
+    const existingUser = await Auth.findOne({ emailHash });
     if (existingUser) {
+      // Si l'utilisateur existe, vous pouvez déchiffrer si nécessaire pour récupérer l'email en clair
+      existingUser.decryptFieldsSync();
       if (!existingUser.verifyEmail) {
         await sendVerificationEmail(existingUser.email);
         return res.status(400).json({
@@ -80,30 +88,24 @@ export const registerUser = async (req, res) => {
       return res.status(400).json({ message: "Email déjà utilisé." });
     }
 
-    // // Vérification des rôles
-    // const validRoles = ["admin_company", "employee"];
-    // const assignedRoles = roles.filter((role) => validRoles.includes(role));
-
-    // if (assignedRoles.length === 0) {
-    //   return res
-    //     .status(400)
-    //     .json({ message: "Veuillez sélectionner au moins un rôle valide." });
-    // }
-
     // Hachage du mot de passe
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Création de l'utilisateur
+    // Création de l'utilisateur (le hook pre("save") va calculer le emailHash automatiquement)
     const newUser = new Auth({
       email,
       password: hashedPassword,
       termsAccepted,
+      username,
     });
 
     await newUser.save();
+
+    // Déchiffrer l'email pour l'utiliser dans l'envoi de l'email de vérification
+    newUser.decryptFieldsSync();
     await sendVerificationEmail(newUser.email);
 
-    // Générez les tokens et enregistrez-les dans les cookies
+    // Générer les tokens et les enregistrer dans les cookies
     const { accessToken, refreshToken } = generateTokens(newUser);
     setTokenCookies(res, accessToken, refreshToken);
 
@@ -119,17 +121,21 @@ export const registerUser = async (req, res) => {
   }
 };
 
-// 4. Fonction pour la connexion d'un utilisateur
 export const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
-    const user = await Auth.findOne({ email });
+    const emailHash = crypto.createHash("sha256").update(email).digest("hex");
 
+    // Recherche par emailHash
+    const user = await Auth.findOne({ emailHash });
     if (!user) {
       return res
         .status(401)
         .json({ message: "Identifiant ou mot de passe incorrect." });
     }
+
+    // Déchiffrer les champs sensibles
+    user.decryptFieldsSync();
 
     if (!user.verifyEmail) {
       await sendVerificationEmail(user.email);
@@ -145,16 +151,12 @@ export const loginUser = async (req, res) => {
         .json({ message: "Identifiant ou mot de passe incorrect." });
     }
 
-    // Générez les tokens et enregistrez-les dans les cookies
     const { accessToken, refreshToken } = generateTokens(user);
     setTokenCookies(res, accessToken, refreshToken);
 
-    // Retournez également les tokens dans la réponse JSON pour Postman
-    res.status(200).json({
-      message: "Connexion réussie.",
-      accessToken,
-      refreshToken,
-    });
+    res
+      .status(200)
+      .json({ message: "Connexion réussie.", accessToken, refreshToken });
   } catch (error) {
     console.error("Erreur lors de la connexion :", error.message);
     res.status(500).json({ message: "Erreur serveur lors de la connexion." });
@@ -267,17 +269,20 @@ export const verifyEmail = async (req, res) => {
   }
 
   try {
-    // Recherche de l'utilisateur par email
-    const user = await Auth.findOne({ email });
-
+    // Calculer le hash de l'email en clair
+    const emailHash = crypto.createHash("sha256").update(email).digest("hex");
+    // Recherche de l'utilisateur par emailHash
+    const user = await Auth.findOne({ emailHash });
     if (!user) {
       return res.status(404).json({ message: "Utilisateur non trouvé." });
     }
 
-    // Si l'email a déjà été vérifié
+    // Déchiffrer pour obtenir l'email en clair
+    user.decryptFieldsSync();
+
+    // Si l'email a déjà été vérifié, rediriger vers la page de connexion
     if (user.verifyEmail) {
-      // Redirection vers la page de connexion si l'email est déjà vérifié
-      return res.redirect(`${FRONTEND_URL}/connexion `);
+      return res.redirect(`${FRONTEND_URL}/connexion`);
     }
 
     // Marquer l'email comme vérifié
@@ -286,8 +291,6 @@ export const verifyEmail = async (req, res) => {
 
     // Génération des tokens
     const { accessToken, refreshToken } = generateTokens(user);
-
-    // Sauvegarde des tokens dans les cookies
     setTokenCookies(res, accessToken, refreshToken);
 
     // Redirection vers la page d'accueil après la vérification de l'email
@@ -313,10 +316,15 @@ export const resetPassword = async (req, res) => {
     const decoded = jwt.verify(token, JWT_RESET_PASSWORD_SECRET);
     const { email } = decoded;
 
-    const user = await Auth.findOne({ email });
+    // Calculer le hash de l'email à partir de la valeur décodée
+    const emailHash = crypto.createHash("sha256").update(email).digest("hex");
+    const user = await Auth.findOne({ emailHash });
     if (!user) {
       return res.status(404).json({ message: "Utilisateur non trouvé." });
     }
+
+    // Déchiffrer l'email pour confirmer que l'on travaille avec la valeur en clair
+    user.decryptFieldsSync();
 
     user.password = await bcrypt.hash(newPassword, 10);
     await user.save();
@@ -335,7 +343,10 @@ export const checkEmail = async (req, res) => {
   const { email } = req.body;
 
   try {
-    const existingUser = await Auth.findOne({ email });
+    // Calculer le hash de l'email en clair
+    const emailHash = crypto.createHash("sha256").update(email).digest("hex");
+    // Rechercher l'utilisateur par emailHash
+    const existingUser = await Auth.findOne({ emailHash });
 
     if (existingUser) {
       return res.status(400).json({ message: "L'email est déjà utilisé." });
@@ -349,7 +360,7 @@ export const checkEmail = async (req, res) => {
       .json({ message: "Erreur lors de la vérification de l'email." });
   }
 };
-
+// 10. Vérification de la disponibilité du username
 export const checkUsername = async (req, res) => {
   const { username } = req.body;
 
@@ -357,36 +368,41 @@ export const checkUsername = async (req, res) => {
     const existingUser = await Auth.findOne({ username });
 
     if (existingUser) {
-      return res.status(400).json({ message: "username est déjà utilisé." });
+      return res.status(400).json({ message: "Username est déjà utilisé." });
     }
 
-    return res.status(200).json({ message: "username disponible." });
+    return res.status(200).json({ message: "Username disponible." });
   } catch (error) {
-    console.error("Erreur lors de la vérification de l'email:", error);
+    console.error("Erreur lors de la vérification du username:", error);
     return res
       .status(500)
-      .json({ message: "Erreur lors de la vérification de l'email." });
+      .json({ message: "Erreur lors de la vérification du username." });
   }
 };
 
-// Controller pour renvoyer l'email de vérification
+// 11. Controller pour renvoyer l'email de vérification
 export const resendVerificationEmail = async (req, res) => {
   const { email } = req.body;
 
   try {
-    // Vérifier si l'utilisateur existe dans la base de données
-    const user = await Auth.findOne({ email }); // Utilisation du bon modèle Auth
+    // Calculer le hash de l'email en clair
+    const emailHash = crypto.createHash("sha256").update(email).digest("hex");
+    // Vérifier si l'utilisateur existe dans la base de données via emailHash
+    const user = await Auth.findOne({ emailHash });
     if (!user) {
       return res.status(404).json({ message: "Utilisateur non trouvé." });
     }
+
+    // Déchiffrer l'email pour s'assurer qu'il est en clair
+    user.decryptFieldsSync();
 
     // Vérifier si l'email n'est pas déjà vérifié
     if (user.verifyEmail) {
       return res.status(400).json({ message: "Email déjà vérifié." });
     }
 
-    // Envoyer l'email de vérification
-    await sendVerificationEmail(email); // Utilisation de la fonction existante pour envoyer l'email
+    // Envoyer l'email de vérification avec l'email en clair
+    await sendVerificationEmail(user.email);
 
     return res.status(200).json({ message: "Email de vérification renvoyé." });
   } catch (error) {
