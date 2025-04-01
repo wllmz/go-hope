@@ -12,7 +12,6 @@ const Step0 = ({ email, setEmail, handleNextStep }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Réinitialisation des erreurs
     setLocalError({ email: null });
     setEmailError(null);
 
@@ -25,7 +24,7 @@ const Step0 = ({ email, setEmail, handleNextStep }) => {
     try {
       const emailExists = await validateEmail(email);
       if (emailExists) {
-        setEmailError("L'email est invalide.");
+        setEmailError("L'email est déjà utilisé.");
         return;
       }
       handleNextStep(e);
@@ -96,7 +95,7 @@ const Step0 = ({ email, setEmail, handleNextStep }) => {
 
             <button
               type="button"
-              onClick={() => navigate("/connexion ")}
+              onClick={() => navigate("/connexion")}
               className="text-[#f9a825] text-sm mt-4 block text-center bg-transparent"
             >
               Déjà un compte ?

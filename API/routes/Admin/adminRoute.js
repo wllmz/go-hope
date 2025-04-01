@@ -1,8 +1,6 @@
 import express from "express";
 import {
   getAllUsers,
-  getAllParents,
-  getAllPros,
   changeRoles,
   deleteUser,
 } from "../../controllers/admin/adminUserController.js";
@@ -12,10 +10,6 @@ import { AdminRole } from "../../middleware/authMiddleware.js";
 const router = express.Router();
 
 router.get("/allusers", verifyToken, AdminRole, getAllUsers);
-
-router.get("/allparents", verifyToken, AdminRole, getAllParents);
-
-router.get("/allpros", verifyToken, AdminRole, getAllPros);
 
 router.put("/change-roles", verifyToken, AdminRole, changeRoles);
 

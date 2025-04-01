@@ -8,7 +8,10 @@ const handleError = (res, message, error) => {
 // Utilitaire pour récupérer les utilisateurs avec un filtre
 const fetchUsers = async (filter, res) => {
   try {
+    // Récupérer les documents sans .lean() pour disposer de la méthode decryptFieldsSync()
     const users = await Auth.find(filter).select("-password");
+    // Déchiffrer les champs sensibles pour chaque utilisateur
+    users.forEach((user) => user.decryptFieldsSync());
     return res.status(200).json(users);
   } catch (error) {
     handleError(res, "Erreur lors de la récupération des utilisateurs.", error);
@@ -18,16 +21,6 @@ const fetchUsers = async (filter, res) => {
 // Récupérer tous les utilisateurs
 export const getAllUsers = async (req, res) => {
   return fetchUsers({}, res);
-};
-
-// Récupérer tous les utilisateurs avec le rôle parent
-export const getAllParents = async (req, res) => {
-  return fetchUsers({ roles: "parent" }, res);
-};
-
-// Récupérer tous les utilisateurs avec le rôle pro
-export const getAllPros = async (req, res) => {
-  return fetchUsers({ roles: "pro" }, res);
 };
 
 // Changer les rôles d'un utilisateur
@@ -43,7 +36,7 @@ export const changeRoles = async (req, res) => {
     }
 
     // Vérifiez que le mot de passe de l'administrateur est valide
-    const admin = await Auth.findById(req.user.id); // Trouver l'admin connecté
+    const admin = await Auth.findById(req.user.id);
     if (!admin) {
       return res.status(403).json({ message: "Administrateur non trouvé." });
     }
@@ -53,6 +46,9 @@ export const changeRoles = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "Utilisateur non trouvé." });
     }
+
+    // Déchiffrer le document pour obtenir l'email en clair si nécessaire
+    user.decryptFieldsSync();
 
     // Mettre à jour le rôle de l'utilisateur
     user.roles = newRole; // newRole doit être un tableau de rôles
@@ -66,6 +62,7 @@ export const changeRoles = async (req, res) => {
   }
 };
 
+// Supprimer un utilisateur
 export const deleteUser = async (req, res) => {
   try {
     const { userEmail } = req.body;
@@ -78,7 +75,7 @@ export const deleteUser = async (req, res) => {
     }
 
     // Vérifiez que le mot de passe de l'administrateur est valide
-    const admin = await Auth.findById(req.user.id); // Trouver l'admin connecté
+    const admin = await Auth.findById(req.user.id);
     if (!admin) {
       return res.status(403).json({ message: "Administrateur non trouvé." });
     }
@@ -88,6 +85,9 @@ export const deleteUser = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "Utilisateur non trouvé." });
     }
+
+    // Déchiffrer pour vérifier que l'email en clair correspond
+    user.decryptFieldsSync();
 
     // Supprimer l'utilisateur
     await Auth.deleteOne({ email: userEmail });
