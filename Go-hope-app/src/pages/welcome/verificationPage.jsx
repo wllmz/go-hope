@@ -10,7 +10,7 @@ const verificationPage = () => {
     <div className="step-container flex flex-col w-full min-h-screen items-center justify-center">
       {/* Zone du logo avec marge supérieure */}
       <div className="step-bg-mobile mt-20 mb-8 p-10">
-        <img className="h-auto  sm:w-xl" src={logo} alt="Logo" />
+        <img className="h-auto w-lg" src={logo} alt="Logo" />
       </div>
       <img className="h-auto w-[50px]" src={check} alt="check" />
       <p className="text-lg sm:text-xl text-[#0E3043] text-center mb-10 mt-4">

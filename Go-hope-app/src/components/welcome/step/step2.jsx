@@ -16,7 +16,7 @@ const Step2 = ({ handleNextStep, handlePreviousStep }) => {
       </div>
       {/* Zone de l'image */}
       <div className="mb-8">
-        <img src={welcome} alt="Bienvenue" className="w-54 sm:w-full" />
+        <img src={welcome} alt="Bienvenue" className="w-full max-w-55 h-auto" />
       </div>
       <h1 className="text-2xl sm:text-3xl font-bold text-[#0E3043] text-center mb-4">
         Accédez au forum gratuitement

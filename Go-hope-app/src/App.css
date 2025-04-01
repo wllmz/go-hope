@@ -77,3 +77,10 @@ ol {
     display: none !important;
   }
 }
+
+@layer base {
+  /* Désactive la sélection pour tous les éléments */
+  * {
+    @apply select-none;
+  }
+}
