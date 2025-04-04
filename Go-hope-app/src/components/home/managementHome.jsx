@@ -5,7 +5,7 @@ import DesktopLayout from "./detail/second/DesktopLayout";
 import MobileCarouselF from "./detail/fourth/MobileCarouselF";
 import DesktopLayoutF from "./detail/fourth/DesktopLayoutF";
 import ThirdComponent from "./detail/third/thirdComponent";
-import FirstComponentUser from "./detail/first/firstComponentUser";
+import FirstComponentUser from "./detail/calendar/calendar";
 
 import Menu from "../layout/menu";
 
