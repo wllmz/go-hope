@@ -6,7 +6,6 @@ export const useUserInfo = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fonction pour récupérer les informations utilisateur
   const fetchUserInfo = useCallback(async () => {
     setLoading(true);
     try {
@@ -20,7 +19,6 @@ export const useUserInfo = () => {
     }
   }, []);
 
-  // Appel initial au montage du composant
   useEffect(() => {
     fetchUserInfo();
   }, [fetchUserInfo]);
