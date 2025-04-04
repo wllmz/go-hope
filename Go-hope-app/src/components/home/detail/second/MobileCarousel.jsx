@@ -36,7 +36,7 @@ const MobileLayout = () => {
 
   return (
     // Ce conteneur s'affiche uniquement sur mobile (lg:hidden)
-    <div className="w-full max-w-screen-xl mx-auto mt-4 lg:hidden overflow-hidden">
+    <div className="w-full max-w-screen-xl mx-auto lg:hidden overflow-hidden mb-6">
       {/* Conteneur du slider avec scroll-snap */}
       <div
         ref={containerRef}
@@ -79,7 +79,7 @@ const MobileLayout = () => {
             key={index}
             onClick={() => scrollToSlide(index)}
             className={`w-3 h-3 rounded-full focus:outline-none ${
-              index === currentIndex ? "bg-orange-500" : "bg-gray-300"
+              index === currentIndex ? "bg-[#1D5F84]" : "bg-gray-300"
             }`}
           ></button>
         ))}

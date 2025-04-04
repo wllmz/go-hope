@@ -53,7 +53,13 @@ const UserProfileForm = ({ user, onProfileChange, onEditImage }) => {
     onProfileChange?.(updatedProfile);
   };
 
-  const handleEditImage = () => {
+  const handleEditImage = (e) => {
+    // Empêcher tout comportement par défaut
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
     if (onEditImage) {
       onEditImage();
     } else {
@@ -62,12 +68,23 @@ const UserProfileForm = ({ user, onProfileChange, onEditImage }) => {
   };
 
   // Ouvre et ferme la modal de changement de mot de passe
-  const openPasswordModal = () => setShowPasswordModal(true);
+  const openPasswordModal = (e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    setShowPasswordModal(true);
+  };
+
   const closePasswordModal = () => setShowPasswordModal(false);
 
   return (
     <>
-      <div className="max-w-lg w-full mx-auto p-6 space-y-6">
+      {/* Remplacer form par div pour éviter la soumission */}
+      <div
+        className="max-w-lg w-full mx-auto p-6 space-y-6"
+        onSubmit={(e) => e.preventDefault()}
+      >
         {/* Image de profil avec icône d'édition */}
         <div className="relative flex flex-col items-center space-y-2">
           <div className="relative">

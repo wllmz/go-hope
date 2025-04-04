@@ -90,10 +90,57 @@ export const deleteMyAccount = async (req, res) => {
   }
 };
 
+// Classe d'erreur personnalisée pour la validation
+class ValidationError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = "ValidationError";
+    this.status = 400;
+  }
+}
+
+// Classe d'erreur personnalisée pour les ressources existantes
+class ResourceExistsError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = "ResourceExistsError";
+    this.status = 409; // Conflict
+  }
+}
+
+// Classe d'erreur personnalisée pour les ressources non trouvées
+class NotFoundError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = "NotFoundError";
+    this.status = 404;
+  }
+}
+
 const checkIfEmailExists = async (email) => {
   const emailHash = crypto.createHash("sha256").update(email).digest("hex");
   const existingUser = await Auth.findOne({ emailHash });
   return existingUser;
+};
+
+// Ajout des fonctions manquantes
+const checkIfUsernameExists = async (username) => {
+  const existingUser = await Auth.findOne({ username });
+  return existingUser;
+};
+
+const checkIfPhoneExists = async (phone) => {
+  // Comme le téléphone est chiffré, cette recherche directe pourrait ne pas fonctionner
+  // Dans ce cas, vous devrez peut-être chercher différemment ou implémenter une logique spécifique
+  const users = await Auth.find();
+  // Déchiffrer et comparer manuellement
+  for (const user of users) {
+    user.decryptFieldsSync();
+    if (user.phone === phone) {
+      return user;
+    }
+  }
+  return null;
 };
 
 export const upsertUser = async (req, res) => {
@@ -104,14 +151,14 @@ export const upsertUser = async (req, res) => {
     let user = await findUserById(authId);
 
     if (!user) {
-      return res.status(404).json({ message: "Utilisateur non trouvé." });
+      throw new NotFoundError("Utilisateur non trouvé.");
     }
 
     // --- Vérification et mise à jour de l'email ---
     if (email && email !== user.email) {
       const emailPattern = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
       if (!emailPattern.test(email)) {
-        return res.status(400).json({ message: "Email invalide." });
+        throw new ValidationError("Format d'email invalide.");
       }
 
       const existingEmailUser = await checkIfEmailExists(email);
@@ -119,18 +166,13 @@ export const upsertUser = async (req, res) => {
         existingEmailUser &&
         existingEmailUser._id.toString() !== user._id.toString()
       ) {
-        return res
-          .status(400)
-          .json({ message: "Cet email est déjà utilisé par un autre compte." });
+        throw new ResourceExistsError(
+          "Cet email est déjà utilisé par un autre compte."
+        );
       }
 
-      const newEmailHash = crypto
-        .createHash("sha256")
-        .update(email)
-        .digest("hex");
-
+      // Simplification - laissez le hook pre-save gérer le hash
       user.email = email;
-      user.emailHash = newEmailHash;
     }
 
     // --- Vérification et mise à jour du nom d'utilisateur ---
@@ -140,9 +182,7 @@ export const upsertUser = async (req, res) => {
         existingUsername &&
         existingUsername._id.toString() !== user._id.toString()
       ) {
-        return res
-          .status(400)
-          .json({ message: "Ce nom d'utilisateur est déjà pris." });
+        throw new ResourceExistsError("Ce nom d'utilisateur est déjà pris.");
       }
       user.username = username;
     }
@@ -154,9 +194,9 @@ export const upsertUser = async (req, res) => {
         existingPhoneUser &&
         existingPhoneUser._id.toString() !== user._id.toString()
       ) {
-        return res
-          .status(400)
-          .json({ message: "Ce numéro de téléphone est déjà utilisé." });
+        throw new ResourceExistsError(
+          "Ce numéro de téléphone est déjà utilisé."
+        );
       }
       user.phone = phone;
     }
@@ -168,7 +208,7 @@ export const upsertUser = async (req, res) => {
 
     await user.save();
 
-    res.status(201).json({
+    res.status(200).json({
       message: "Utilisateur mis à jour avec succès !",
       user,
     });
@@ -179,22 +219,41 @@ export const upsertUser = async (req, res) => {
     let status = 500;
     let errorMessage = "Erreur lors de la mise à jour du profil.";
 
-    // Si l'erreur est une erreur de validation ou si le message contient "validation", renvoyer un 400
-    if (
-      error.name === "ValidationError" ||
-      (error.message && error.message.toLowerCase().includes("validation"))
-    ) {
-      status = 400;
-      errorMessage = "Erreur de validation des données fournies.";
-    }
-    // Si l'erreur possède une propriété "status" (créée par vos fonctions de vérification par exemple), utilisez-la
-    else if (error.status) {
+    // Gestion des erreurs personnalisées
+    if (error.status) {
       status = error.status;
       errorMessage = error.message;
-    } else if (error.message) {
-      errorMessage = error.message;
+    }
+    // Gestion des erreurs de validation Mongoose
+    else if (error.name === "ValidationError") {
+      status = 400;
+      // Extraire les messages d'erreur de validation de Mongoose
+      const validationErrors = Object.values(error.errors).map(
+        (err) => err.message
+      );
+      errorMessage = validationErrors.join(", ");
+    }
+    // Gestion des erreurs de duplication MongoDB (E11000)
+    else if (error.name === "MongoError" && error.code === 11000) {
+      status = 409;
+      // Déterminer quel champ est en conflit
+      const field = Object.keys(error.keyPattern)[0];
+      switch (field) {
+        case "email":
+        case "emailHash":
+          errorMessage = "Cet email est déjà utilisé.";
+          break;
+        case "username":
+          errorMessage = "Ce nom d'utilisateur est déjà pris.";
+          break;
+        case "phone":
+          errorMessage = "Ce numéro de téléphone est déjà utilisé.";
+          break;
+        default:
+          errorMessage = `Une valeur en conflit a été détectée: ${field}`;
+      }
     }
 
-    res.status(status).json({ message: errorMessage });
+    res.status(status).json({ message: errorMessage, success: false });
   }
 };

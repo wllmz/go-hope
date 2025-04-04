@@ -12,15 +12,6 @@ const useSlider = () => {
       const scrollLeft = container.scrollLeft;
       const slideWidth = container.clientWidth;
       const index = Math.round(scrollLeft / slideWidth);
-      // Debug: vérification des valeurs
-      console.log(
-        "scrollLeft:",
-        scrollLeft,
-        "slideWidth:",
-        slideWidth,
-        "calculated index:",
-        index
-      );
       setCurrentIndex(index);
     };
 

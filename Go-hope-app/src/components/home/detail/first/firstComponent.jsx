@@ -11,7 +11,7 @@ const FirstComponent = () => {
       <p className="text-xl p-4 pt-6 text-[#0E3043]  ">
         Bonjour {user?.username} !{" "}
       </p>
-      <div className="flex flex-col mb-5 items-center relative">
+      <div className="flex flex-col mb-6 items-center relative">
         <div className="w-full p-4 text-center rounded-xl">
           {/* Image de fond */}
 

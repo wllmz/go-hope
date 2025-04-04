@@ -13,11 +13,11 @@ const verificationPage = () => {
         <img className="h-auto w-lg" src={logo} alt="Logo" />
       </div>
       <img className="h-auto w-[50px]" src={check} alt="check" />
-      <p className="text-lg sm:text-xl text-[#0E3043] text-center mb-10 mt-4">
+      <p className="text-lg sm:text-xl text-[#0E3043] text-center mb-5 mt-4">
         Votre compte a bien été créé !
       </p>
       {/* Zone des boutons */}
-      <div className="flex flex-col sm:flex-row gap-4 justify-center mt-10 w-full p-5">
+      <div className="flex flex-col sm:flex-row gap-4 justify-center mt-5 w-full p-5">
         <button
           onClick={() => navigate("/accueil")}
           className="w-full sm:w-[300px] bg-[#F5943A] hover:bg-[#F1731F] text-white font-semibold py-2 px-2 rounded-lg shadow-md transition duration-300 text-lg"

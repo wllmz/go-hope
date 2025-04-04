@@ -56,7 +56,7 @@ const SearchResult = ({ articles, onArticleClick, onFavoritesUpdate }) => {
   };
 
   return (
-    <div className="bg-gradient-to-b from-[#B3D7EC] to-[#FDFDFD]">
+    <div className="">
       <div className="max-w-6xl mx-auto p-5">
         {/* Barre de recherche */}
         <div className="p-4">
