@@ -6,6 +6,9 @@ import {
   updateSubject,
   getSubjectById,
   searchForum,
+  updateSubjectValidation,
+  listAllSubjectsAdmin,
+  listAllSubjectsByUser,
 } from "../../controllers/forum/Subjects/subjectController.js";
 import { verifyToken } from "../../middleware/jwtMiddleware.js";
 import { AdminRole } from "../../middleware/authMiddleware.js";
@@ -14,19 +17,21 @@ const router = express.Router();
 
 router.get("/search", verifyToken, searchForum);
 
-// Lister tous les sujets
+// Routes spécifiques : admin et utilisateur (doivent être déclarées avant la route générique)
+router.get("/admin", verifyToken, AdminRole, listAllSubjectsAdmin);
+router.get("/user", verifyToken, listAllSubjectsByUser);
+
+// Routes génériques
 router.get("/", verifyToken, listAllSubjects);
-
-// Créer un nouveau sujet pour une catégorie spécifique
 router.post("/", verifyToken, createSubject);
-
-// Supprimer un sujet par ID
 router.delete("/:subjectId", verifyToken, deleteSubject);
-
-// Mettre à jour un sujet par ID
 router.put("/:subjectId", verifyToken, AdminRole, updateSubject);
-
-// Obtenir un sujet par ID
+router.put(
+  "/:subjectId/validate",
+  verifyToken,
+  AdminRole,
+  updateSubjectValidation
+);
 router.get("/:subjectId", verifyToken, getSubjectById);
 
 /**
@@ -112,6 +117,207 @@ router.get("/:subjectId", verifyToken, getSubjectById);
  *                   type: string
  *                   example: "Aucun article trouvé."
  *       500:
+ *         description: Erreur serveur.
+ */
+
+/**
+ * @swagger
+ * /api/forum/subjects/:
+ *   get:
+ *     summary: Lister tous les sujets
+ *     tags:
+ *       - forum-Subjects
+ *     security:
+ *       - cookieAuth: []
+ *     responses:
+ *       "200":
+ *         description: Liste de tous les sujets.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Subject'
+ *       "401":
+ *         description: Non autorisé.
+ *       "500":
+ *         description: Erreur serveur.
+ */
+
+/**
+ * @swagger
+ * /api/forum/subjects/{subjectId}/validate:
+ *   put:
+ *     summary: Mettre à jour la validation d'un sujet
+ *     tags: [forum-Subjects]
+ *     security:
+ *       - cookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: subjectId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID du sujet à mettre à jour.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               validated:
+ *                 type: boolean
+ *                 example: true
+ *     responses:
+ *       200:
+ *         description: Validation du sujet mise à jour avec succès.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Validation du sujet mise à jour avec succès."
+ *                 subject:
+ *                   $ref: '#/components/schemas/Subject'
+ *       400:
+ *         description: Requête invalide, par exemple si le champ 'validated' n'est pas un booléen.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Le champ 'validated' doit être un booléen."
+ *       404:
+ *         description: Sujet non trouvé.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Sujet non trouvé."
+ *       500:
+ *         description: Erreur interne du serveur.
+ */
+
+/**
+ * @swagger
+ * /api/forum/subjects/{subjectId}/validate:
+ *   put:
+ *     summary: Mettre à jour la validation d'un sujet
+ *     tags:
+ *       - forum-Subjects
+ *     security:
+ *       - cookieAuth: []
+ *       - AdminRole: []
+ *     parameters:
+ *       - in: path
+ *         name: subjectId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID du sujet à mettre à jour.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               validated:
+ *                 type: string
+ *                 enum:
+ *                   - valider
+ *                   - en attente
+ *                   - Invalide
+ *                 example: valider
+ *     responses:
+ *       "200":
+ *         description: Validation du sujet mise à jour avec succès.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Subject'
+ *       "400":
+ *         description: Requête invalide.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Le champ 'validated' doit être l'une des valeurs suivantes : 'valider', 'en attente', 'Invalide'."
+ *       "404":
+ *         description: Sujet non trouvé.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Sujet non trouvé."
+ *       "500":
+ *         description: Erreur interne du serveur.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Erreur lors de la mise à jour de la validation du sujet."
+ *
+ * @swagger
+ * /api/forum/subjects/admin:
+ *   get:
+ *     summary: Lister tous les sujets pour l'administrateur
+ *     tags:
+ *       - forum-Subjects
+ *     security:
+ *       - cookieAuth: []
+ *       - AdminRole: []
+ *     responses:
+ *       "200":
+ *         description: Liste des sujets pour l'administrateur.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Subject'
+ *       "401":
+ *         description: Non autorisé.
+ *       "500":
+ *         description: Erreur serveur.
+ *
+ * @swagger
+ * /api/forum/subjects/user:
+ *   get:
+ *     summary: Lister tous les sujets créés par l'utilisateur
+ *     tags:
+ *       - forum-Subjects
+ *     security:
+ *       - cookieAuth: []
+ *     responses:
+ *       "200":
+ *         description: Liste des sujets créés par l'utilisateur.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Subject'
+ *       "401":
+ *         description: Non autorisé.
+ *       "500":
  *         description: Erreur serveur.
  */
 

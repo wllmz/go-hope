@@ -1,7 +1,7 @@
 import categoryModel from "../../../models/forum/categorie/categorieModel.js";
 import Subject from "../../../models/forum/Subjects/subjectModel.js";
 import Comment from "../../../models/forum/Comments/commentModel.js";
-import mongoose from "mongoose";
+import { sendNewSubjectNotificationEmail } from "../../../utils/emailAtelier.js";
 
 const handleError = (res, message, error) => {
   console.error(message, error);
@@ -12,6 +12,24 @@ const handleError = (res, message, error) => {
  * Lister tous les sujets avec le nombre de commentaires
  */
 export const listAllSubjects = async (req, res) => {
+  try {
+    // On ne retourne que les sujets validés, c'est-à-dire ceux dont validated vaut "valider"
+    const subjects = await Subject.find({ validated: "valider" })
+      .select("+favoris") // Inclut le champ favoris
+      .populate("categories", "categorie")
+      .populate("author", "username");
+
+    res.status(200).json(subjects);
+  } catch (error) {
+    res.status(500).json({
+      message: "Erreur lors de la récupération des sujets.",
+      error: error.message,
+    });
+    console.error(error);
+  }
+};
+
+export const listAllSubjectsAdmin = async (req, res) => {
   try {
     const subjects = await Subject.find({})
       .select("+favoris") // Inclut le champ favoris
@@ -32,34 +50,36 @@ export const listAllSubjects = async (req, res) => {
  * Créer un nouveau sujet en enregistrant également l'auteur
  */
 export const createSubject = async (req, res) => {
-  // const user = req.user.id; // Récupération de l'utilisateur depuis le token
   const { title, image, content, category } = req.body;
 
-  // Validation des champs obligatoires
+  // 1. Vérification des champs obligatoires
   if (!title || !content || !category) {
-    return res
-      .status(400)
-      .json({ message: "Tous les champs obligatoires doivent être fournis." });
+    return res.status(400).json({
+      message: "Tous les champs obligatoires doivent être fournis.",
+    });
   }
 
-  // Vérifier si toutes les catégories existent dans la base de données par leur _id
+  // 2. S'assurer que "category" est un tableau
+  const categoriesArray = Array.isArray(category) ? category : [category];
+
+  // 3. Vérifier que toutes les catégories existent dans la base de données
   const foundCategories = await categoryModel.find({
-    _id: { $in: category },
+    _id: { $in: categoriesArray },
   });
-  if (foundCategories.length !== category.length) {
-    return res
-      .status(404)
-      .json({ message: "Certaines catégories n'ont pas été trouvées." });
+  if (foundCategories.length !== categoriesArray.length) {
+    return res.status(404).json({
+      message: "Certaines catégories n'ont pas été trouvées.",
+    });
   }
 
   try {
-    // Créer un nouveau sujet avec les données reçues et enregistrer l'auteur
+    // 4. Création du nouveau sujet
     const newSubject = new Subject({
       title,
-      image,
       content,
+      // image, // Décommentez cette ligne si vous souhaitez gérer l'image
       categories: foundCategories.map((cat) => cat._id),
-      author: req.user.id, // Enregistrement de l'auteur
+      author: req.user.id,
     });
 
     // Sauvegarder le sujet dans la base de données
@@ -68,12 +88,42 @@ export const createSubject = async (req, res) => {
     // Populer le champ author pour renvoyer les détails de l'auteur
     await newSubject.populate("author", "firstName email");
 
-    res.status(201).json({
+    // 5. Envoyer un e-mail aux administrateurs pour les prévenir d'un nouveau sujet
+    // On suppose que sendNewSubjectNotificationEmail prend le titre du sujet et l'email de l'auteur.
+    sendNewSubjectNotificationEmail(
+      newSubject.title,
+      newSubject.author.username
+    )
+      .then(() => {
+        console.log("Notification e-mail envoyée aux administrateurs.");
+      })
+      .catch((emailError) => {
+        console.error(
+          "Erreur lors de l'envoi de la notification e-mail :",
+          emailError
+        );
+      });
+
+    return res.status(201).json({
       message: "Sujet créé avec succès.",
       subject: newSubject,
     });
   } catch (error) {
-    handleError(res, "Erreur lors de la création du sujet.", error);
+    // 6a. Gestion de l'erreur de duplication (titre déjà utilisé)
+    if (error.code === 11000) {
+      return res.status(409).json({
+        message: "Le titre est déjà utilisé. Veuillez en choisir un autre.",
+      });
+    }
+    // 6b. Gestion d'une erreur de validation Mongoose
+    if (error.name === "ValidationError") {
+      const messages = Object.values(error.errors).map((val) => val.message);
+      return res.status(400).json({ message: messages.join(". ") });
+    }
+    // 6c. Autres erreurs
+    return res.status(500).json({
+      message: "Erreur lors de la création du sujet. Veuillez réessayer.",
+    });
   }
 };
 
@@ -155,7 +205,11 @@ export const updateSubject = async (req, res) => {
  */
 export const getSubjectById = async (req, res) => {
   try {
-    const subject = await Subject.findById(req.params.subjectId)
+    // On recherche le sujet en s'assurant qu'il est validé
+    const subject = await Subject.findOne({
+      _id: req.params.subjectId,
+      validated: true,
+    })
       .select("+favoris") // Forcer l'inclusion du champ favoris
       .populate("categories", "categorie") // Populate les catégories
       .populate("author", "firstName");
@@ -255,5 +309,72 @@ export const searchForum = async (req, res) => {
     res.status(200).json({ subjects });
   } catch (error) {
     handleError(res, "Erreur lors de la recherche d'articles.", error);
+  }
+};
+
+export const updateSubjectValidation = async (req, res) => {
+  try {
+    const { subjectId } = req.params;
+    const { validated } = req.body;
+
+    // Les valeurs autorisées pour validated
+    const allowedValues = ["valider", "en attente", "Invalide"];
+
+    // Vérifier que validated est une chaîne et fait partie des valeurs autorisées
+    if (typeof validated !== "string" || !allowedValues.includes(validated)) {
+      return res.status(400).json({
+        message:
+          "Le champ 'validated' doit être l'une des valeurs suivantes : 'valider', 'en attente', 'Invalide'.",
+      });
+    }
+
+    // Si la valeur est "Invalide", on supprime le sujet (selon votre logique métier)
+    if (validated === "Invalide") {
+      const deletedSubject = await Subject.findByIdAndDelete(subjectId);
+      if (!deletedSubject) {
+        return res.status(404).json({ message: "Sujet non trouvé." });
+      }
+      return res.status(200).json({
+        message: "Le sujet a été supprimé car il est marqué comme 'Invalide'.",
+      });
+    } else {
+      // Sinon, on met à jour le sujet avec la nouvelle valeur de validated
+      const updatedSubject = await Subject.findByIdAndUpdate(
+        subjectId,
+        { validated },
+        { new: true, runValidators: true }
+      );
+
+      if (!updatedSubject) {
+        return res.status(404).json({ message: "Sujet non trouvé." });
+      }
+
+      return res.status(200).json({
+        message: "Validation du sujet mise à jour avec succès.",
+        subject: updatedSubject,
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      message: "Erreur lors de la mise à jour de la validation du sujet.",
+      error: error.message,
+    });
+  }
+};
+
+export const listAllSubjectsByUser = async (req, res) => {
+  try {
+    const subjects = await Subject.find({ author: req.user.id })
+      .select("+validated")
+      .populate("categories", "categorie")
+      .populate("author", "username");
+
+    res.status(200).json(subjects);
+  } catch (error) {
+    res.status(500).json({
+      message: "Erreur lors de la récupération des sujets de l'utilisateur.",
+      error: error.message,
+    });
+    console.error(error);
   }
 };

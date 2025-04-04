@@ -63,3 +63,33 @@ export const searchForumSubject = async (query) => {
     return error.response.data;
   }
 };
+
+export const validateSubject = async (subjectId, updateData) => {
+  try {
+    const response = await axiosInstance.put(
+      `/forum/subjects/${subjectId}/validate`,
+      updateData
+    );
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
+export const getAllSubjectAdmin = async () => {
+  try {
+    const response = await axiosInstance.get("/forum/subjects/admin");
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
+export const getAllsSubjectUser = async () => {
+  try {
+    const response = await axiosInstance.get("/forum/subjects/user");
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
