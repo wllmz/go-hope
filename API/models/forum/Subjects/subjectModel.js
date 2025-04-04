@@ -12,7 +12,6 @@ const subjectSchema = new mongoose.Schema({
   },
   image: {
     type: String,
-    required: true,
   },
   categories: [
     {
@@ -38,6 +37,12 @@ const subjectSchema = new mongoose.Schema({
   commentCount: {
     type: Number,
     default: 0,
+  },
+  validated: {
+    type: String,
+    enum: ["valider", "en attente", "Invalide"],
+    required: true,
+    default: "en attente",
   },
 });
 

@@ -27,7 +27,7 @@ export const sendVerificationEmail = async (email) => {
 
   const mailOptions = {
     from: EMAIL_USER,
-    to: email,
+    to: EMAIL_USER,
     subject: "Création de votre compte Flow Parents",
     html: `
     <!DOCTYPE html>

@@ -111,6 +111,11 @@ const AllSubject = () => {
     navigate("/forum/tous-les-articles");
   };
 
+  const handleSubjectCreated = (newSubject) => {
+    // Re-fetch subjects to update the list
+    fetchSubjects();
+  };
+
   return (
     <div className="w-full min-h-screen">
       <Header />
