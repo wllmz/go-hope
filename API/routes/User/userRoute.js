@@ -5,12 +5,16 @@ import {
   getUserById,
   deleteMyAccount,
 } from "../../controllers/user/userController.js";
+import { userSuivi } from "../../controllers/suivi/monSuiviController.js";
 import { verifyToken } from "../../middleware/jwtMiddleware.js";
 
 const router = express.Router();
 
 // Route pour créer ou mettre à jour un utilisateur
 router.post("/", verifyToken, upsertUser);
+
+// Route pour créer ou mettre à jour le suivi utilisateur
+router.post("/suivi", verifyToken, userSuivi);
 
 // Route pour mettre à jour le mot de passe de l'utilisateur
 router.put("/update-password", verifyToken, updatePassword);
@@ -70,34 +74,118 @@ router.delete("/delete-account", verifyToken, deleteMyAccount);
 
 /**
  * @swagger
- * /api/user/update-field:
- *   put:
- *     summary: Mettre à jour un champ utilisateur spécifique
+ * /api/user/suivi:
+ *   post:
+ *     summary: Créer ou mettre à jour un suivi utilisateur
  *     tags: [User]
  *     security:
  *       - cookieAuth: []
  *     requestBody:
- *       required: true
+ *       required: false
  *       content:
  *         application/json:
  *           schema:
  *             type: object
  *             properties:
- *               field:
+ *               motricite:
+ *                 type: array
+ *                 description: Tableau des données de motricité
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     zone:
+ *                       type: string
+ *                       enum: ["Jambes", "Bras", "Pied", "Main", "Oeil"]
+ *                     side:
+ *                       type: string
+ *                       enum: ["gauche", "droite", "les deux"]
+ *                     niveau:
+ *                       type: string
+ *                       enum: ["Normale", "Basse", "Forte", "Faible"]
+ *               sensoriel:
+ *                 type: array
+ *                 description: Tableau des données sensorielles
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     zone:
+ *                       type: string
+ *                       enum: ["Jambes", "Bras", "Pied", "Main", "Oeil"]
+ *                     side:
+ *                       type: string
+ *                       enum: ["gauche", "droite", "les deux"]
+ *                     fourmillement:
+ *                       type: string
+ *                       enum: ["Normale", "Basse", "Forte", "Faible"]
+ *                     picotements:
+ *                       type: string
+ *                       enum: ["Normale", "Basse", "Forte", "Faible"]
+ *                     brulures:
+ *                       type: string
+ *                       enum: ["Normale", "Basse", "Forte", "Faible"]
+ *               douleurs:
+ *                 type: array
+ *                 description: Tableau des données de douleurs
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     zone:
+ *                       type: string
+ *                       enum: ["Jambes", "Bras", "Pied", "Main", "Oeil"]
+ *                     side:
+ *                       type: string
+ *                       enum: ["gauche", "droite", "les deux"]
+ *                     niveau:
+ *                       type: string
+ *                       enum: ["Normale", "Basse", "Forte", "Faible"]
+ *               troublesCognitifs:
+ *                 type: object
+ *                 description: Données concernant les troubles cognitifs
+ *                 properties:
+ *                   memoire:
+ *                     type: string
+ *                     enum: ["Normale", "Basse", "Haute"]
+ *                   attention:
+ *                     type: string
+ *                     enum: ["Normale", "Basse", "Haute"]
+ *                   brouillardCerebral:
+ *                     type: string
+ *                     enum: ["Normale", "Basse", "Haute"]
+ *               fatigue:
  *                 type: string
- *                 description: Champ à mettre à jour (email, firstName, lastName, gender, phone)
- *                 example: email
- *               value:
+ *                 description: Niveau de fatigue
+ *                 enum: ["Inexistant", "Bas", "Notable", "Important", "Très important", "Insoutenable", "Ne sais pas"]
+ *               humeur:
  *                 type: string
- *                 description: Nouvelle valeur pour le champ
- *                 example: nouvelemail@example.com
+ *                 description: Humeur de l'utilisateur
+ *                 enum: ["Joyeux.se", "Bien", "Neutre", "Perdu.e", "Stressé.e", "Inquiet.e"]
  *     responses:
+ *       201:
+ *         description: Suivi créé avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Suivi créé avec succès
+ *                 suivi:
+ *                   $ref: '#/components/schemas/Suivi'
  *       200:
- *         description: Champ mis à jour avec succès
- *       400:
- *         description: Champ invalide ou non autorisé
- *       401:
- *         description: Non autorisé
+ *         description: Suivi mis à jour avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Suivi mis à jour avec succès
+ *                 suivi:
+ *                   $ref: '#/components/schemas/Suivi'
+ *       500:
+ *         description: Erreur serveur lors de la création/mise à jour du suivi
  */
 
 /**
