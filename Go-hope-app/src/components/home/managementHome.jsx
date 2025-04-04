@@ -18,7 +18,7 @@ const Home = () => {
       <main className="flex-grow flex items-center justify-center">
         <div className="w-full">
           <FirstComponent />
-          <FirstComponentUser />
+          {/* <FirstComponentUser /> */}
           {/* Afficher le carrousel pour mobile/tablettes */}
 
           {/* Afficher le layout classique pour desktop */}

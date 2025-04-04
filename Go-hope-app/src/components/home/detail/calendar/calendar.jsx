@@ -1,11 +1,8 @@
 import React from "react";
 import TrackingCard from "./TrackingCard/TrackingCard";
-export const Calendar = () => {
-  return (
-    <>
-      <TrackingCard />;
-    </>
-  );
+
+const FirstComponentUser = () => {
+  return <TrackingCard />;
 };
 
-export default Calendar;
+export default FirstComponentUser;
