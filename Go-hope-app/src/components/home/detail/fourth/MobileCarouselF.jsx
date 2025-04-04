@@ -28,7 +28,7 @@ const MobileCarousel = () => {
             key={index}
             onClick={() => scrollToSlide(index)}
             className={`w-3 h-3 rounded-full focus:outline-none ${
-              index === currentIndex ? "bg-orange-500" : "bg-gray-300"
+              index === currentIndex ? "bg-[#1D5F84]" : "bg-gray-300"
             }`}
           ></button>
         ))}

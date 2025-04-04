@@ -49,27 +49,6 @@ const SearchResult = ({ subjects, onSubjectClick, onFavoritesUpdate }) => {
 
   return (
     <div className="space-y-6">
-      <button
-        onClick={handleBackClick}
-        className="text-orange-500 hover:text-orange-600 transition-colors"
-        title="Retour"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-6 w-6"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          style={{ transform: "scaleX(-1)" }}
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M9 5l7 7-7 7"
-          />
-        </svg>
-      </button>
       <SearchBar />
 
       {error && <p className="text-red-500 px-4">{error}</p>}

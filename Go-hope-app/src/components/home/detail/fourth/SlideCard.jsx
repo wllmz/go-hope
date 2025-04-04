@@ -6,7 +6,7 @@ const SlideCard = ({ slide }) => {
 
   return (
     // Sur mobile (en dessous de lg), on fixe la hauteur à 400px ; sur desktop, la hauteur est auto
-    <div className="w-full mt-4 overflow-hidden h-[400px] lg:h-auto">
+    <div className="w-full mt-4 overflow-hidden h-[400px] lg:h-auto bg-white">
       <div
         className={`flex flex-col items-center justify-between h-full p-4 rounded-xl shadow-md ${slide.cardColor}`}
       >

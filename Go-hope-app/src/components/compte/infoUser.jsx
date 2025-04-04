@@ -155,32 +155,36 @@ const InfoUser = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-5 bg-white">
-      <UserProfile user={user} />
+    <div className="max-w-full mx-auto  bg-white">
+      <div className="bg-gradient-to-b from-[#B3D7EC] to-white p-5">
+        <UserProfile user={user} />
+      </div>
 
       {/* Affichage des sujets créés par l'utilisateur avec possibilité de basculer leur statut de favori */}
-      <UserSubjects
-        subjects={displayedSubjects}
-        loading={loading}
-        error={error}
-        onNavigateToAllSubjects={onNavigateToMySubjects}
-        onSubjectClick={handleSubjectClick}
-        onFavorisClick={handleFavorisClickSubject}
-        favorites={subjectFavorites}
-      />
+      <div className="max-w-6xl mx-auto  bg-white p-5">
+        <UserSubjects
+          subjects={displayedSubjects}
+          loading={loading}
+          error={error}
+          onNavigateToAllSubjects={onNavigateToMySubjects}
+          onSubjectClick={handleSubjectClick}
+          onFavorisClick={handleFavorisClickSubject}
+          favorites={subjectFavorites}
+        />
 
-      {/* Affichage des articles favoris */}
-      <UserFavorites
-        favorites={displayedFavoritesArticle}
-        loading={loadingArticle}
-        error={errorArticle}
-        onNavigateToAllFavorites={onNavigateToAllFavorites}
-        onArticleClick={handleArticleClick}
-        onFavorisClick={handleFavorisClickArticle}
-        actionLoading={actionLoading}
-      />
+        {/* Affichage des articles favoris */}
+        <UserFavorites
+          favorites={displayedFavoritesArticle}
+          loading={loadingArticle}
+          error={errorArticle}
+          onNavigateToAllFavorites={onNavigateToAllFavorites}
+          onArticleClick={handleArticleClick}
+          onFavorisClick={handleFavorisClickArticle}
+          actionLoading={actionLoading}
+        />
 
-      <ThirdComponent />
+        <ThirdComponent />
+      </div>
     </div>
   );
 };

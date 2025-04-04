@@ -20,7 +20,7 @@ const Home = () => {
           {/* Afficher le carrousel pour mobile/tablettes */}
 
           {/* Afficher le layout classique pour desktop */}
-          <div className="p-4">
+          <div className="p-5">
             <MobileCarousel />
 
             <DesktopLayout />

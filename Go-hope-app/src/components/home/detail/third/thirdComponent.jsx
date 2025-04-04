@@ -4,13 +4,13 @@ import arrow from "../../../../assets/arrow.png";
 
 const FirstComponent = () => {
   return (
-    <div className="flex flex-col mb-15 items-center mt-4 sm:mt-15 ">
-      <div className="w-full text-center items-center bg-[#FDFDFD] mt-5 mb-5">
+    <div className="flex flex-col  items-center mb-6 mt-4 sm:mt-15 ">
+      <div className="w-full text-center items-center mt-5 mb-5">
         {/* Conteneur en deux colonnes pour desktop */}
         <div className="flex flex-col xl:flex-row items-center justify-center md:gap-x-10 ">
           {/* Première colonne : titre, centré verticalement */}
           <div className="min-w-fit flex items-center justify-center xl:ml-50">
-            <h2 className="text-2xl md:text-4xl text-[#F5943A] mt-2 mb-6">
+            <h2 className="text-[23px] md:text-4xl text-[#F5943A] font-semibold mt-2 mb-6">
               Vous êtes patient-aidant ?
             </h2>
           </div>

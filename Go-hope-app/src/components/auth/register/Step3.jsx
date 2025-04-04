@@ -14,7 +14,7 @@ const Step3 = ({ email }) => {
 
   return (
     <div className="flex min-h-screen justify-center items-center text-center">
-      <div className="w-full max-w-3xl sm:shadow rounded-lg sm:p-10 bg-white ">
+      <div className="w-full max-w-3xl sm:shadow rounded-lg sm:p-10 bg-white p-5 ">
         {/* Header identique à Step0 */}
         <div className="mb-6 flex justify-end">
           <img src={bg} alt="Background Papillon" />
