@@ -5,7 +5,11 @@ import {
   getUserById,
   deleteMyAccount,
 } from "../../controllers/user/userController.js";
-import { userSuivi } from "../../controllers/suivi/monSuiviController.js";
+import {
+  userSuivi,
+  getSuivi,
+  getSuiviById,
+} from "../../controllers/suivi/monSuiviController.js";
 import { verifyToken } from "../../middleware/jwtMiddleware.js";
 
 const router = express.Router();
@@ -15,6 +19,12 @@ router.post("/", verifyToken, upsertUser);
 
 // Route pour créer ou mettre à jour le suivi utilisateur
 router.post("/suivi", verifyToken, userSuivi);
+
+// Route pour récupérer le suivi de l'utilisateur connecté
+router.get("/suivi", verifyToken, getSuivi);
+
+// Route pour récupérer un suivi par son ID
+router.get("/suivi/:suiviId", verifyToken, getSuiviById);
 
 // Route pour mettre à jour le mot de passe de l'utilisateur
 router.put("/update-password", verifyToken, updatePassword);
@@ -28,8 +38,8 @@ router.delete("/delete-account", verifyToken, deleteMyAccount);
 /**
  * @swagger
  * tags:
- *   name: User
- *   description: Gestion des utilisateurs
+ *   - name: User
+ *     description: Gestion des utilisateurs et de leur suivi
  */
 
 /**
@@ -76,7 +86,7 @@ router.delete("/delete-account", verifyToken, deleteMyAccount);
  * @swagger
  * /api/user/suivi:
  *   post:
- *     summary: Créer ou mettre à jour un suivi utilisateur
+ *     summary: Créer ou mettre à jour le suivi de l'utilisateur
  *     tags: [User]
  *     security:
  *       - cookieAuth: []
@@ -186,6 +196,61 @@ router.delete("/delete-account", verifyToken, deleteMyAccount);
  *                   $ref: '#/components/schemas/Suivi'
  *       500:
  *         description: Erreur serveur lors de la création/mise à jour du suivi
+ */
+
+/**
+ * @swagger
+ * /api/user/suivi:
+ *   get:
+ *     summary: Récupérer le suivi de l'utilisateur connecté
+ *     tags: [User]
+ *     security:
+ *       - cookieAuth: []
+ *     responses:
+ *       200:
+ *         description: Suivi récupéré avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 suivi:
+ *                   $ref: '#/components/schemas/Suivi'
+ *       404:
+ *         description: Suivi non trouvé
+ *       500:
+ *         description: Erreur serveur lors de la récupération du suivi
+ */
+
+/**
+ * @swagger
+ * /api/user/suivi/{suiviId}:
+ *   get:
+ *     summary: Récupérer un suivi par son ID
+ *     tags: [User]
+ *     security:
+ *       - cookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: suiviId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: ID du suivi
+ *     responses:
+ *       200:
+ *         description: Suivi récupéré avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 suivi:
+ *                   $ref: '#/components/schemas/Suivi'
+ *       404:
+ *         description: Suivi non trouvé
+ *       500:
+ *         description: Erreur serveur lors de la récupération du suivi
  */
 
 /**

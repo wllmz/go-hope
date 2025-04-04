@@ -50,3 +50,38 @@ export const userSuivi = async (req, res) => {
     });
   }
 };
+
+// Récupérer le suivi de l'utilisateur connecté
+export const getSuivi = async (req, res) => {
+  try {
+    const authId = req.user.id;
+    const suivi = await suiviModel.findOne({ user: authId });
+    if (!suivi) {
+      return res.status(404).json({ message: "Suivi non trouvé" });
+    }
+    res.status(200).json({ suivi });
+  } catch (error) {
+    console.error("Erreur lors de la récupération du suivi :", error);
+    res.status(500).json({
+      message: "Erreur lors de la récupération du suivi",
+      error: error.message,
+    });
+  }
+};
+
+export const getSuiviById = async (req, res) => {
+  try {
+    const { suiviId } = req.params;
+    const suivi = await suiviModel.findById(suiviId);
+    if (!suivi) {
+      return res.status(404).json({ message: "Suivi non trouvé" });
+    }
+    res.status(200).json({ suivi });
+  } catch (error) {
+    console.error("Erreur lors de la récupération du suivi par ID :", error);
+    res.status(500).json({
+      message: "Erreur lors de la récupération du suivi par ID",
+      error: error.message,
+    });
+  }
+};
