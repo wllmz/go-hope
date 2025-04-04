@@ -228,14 +228,6 @@ const CreateSubjectButton = ({ onSubjectCreated }) => {
               />
             </div>
 
-            <div className="text-xs text-gray-500 mb-4">
-              Notre équipe va vérifier l'éligibilité de votre post, il sera
-              disponible sur la plateforme dans les plus brefs délais.
-              <br />
-              N'oubliez pas d'activer les notifications pour que nous puissions
-              vous informer lorsqu'il sera en ligne !
-            </div>
-
             <button
               type="submit"
               disabled={isSubmitting}
