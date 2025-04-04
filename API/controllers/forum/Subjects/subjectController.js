@@ -2,6 +2,7 @@ import categoryModel from "../../../models/forum/categorie/categorieModel.js";
 import Subject from "../../../models/forum/Subjects/subjectModel.js";
 import Comment from "../../../models/forum/Comments/commentModel.js";
 import { sendNewSubjectNotificationEmail } from "../../../utils/emailAtelier.js";
+import mongoose from "mongoose";
 
 const handleError = (res, message, error) => {
   console.error(message, error);
@@ -328,32 +329,21 @@ export const updateSubjectValidation = async (req, res) => {
       });
     }
 
-    // Si la valeur est "Invalide", on supprime le sujet (selon votre logique métier)
-    if (validated === "Invalide") {
-      const deletedSubject = await Subject.findByIdAndDelete(subjectId);
-      if (!deletedSubject) {
-        return res.status(404).json({ message: "Sujet non trouvé." });
-      }
-      return res.status(200).json({
-        message: "Le sujet a été supprimé car il est marqué comme 'Invalide'.",
-      });
-    } else {
-      // Sinon, on met à jour le sujet avec la nouvelle valeur de validated
-      const updatedSubject = await Subject.findByIdAndUpdate(
-        subjectId,
-        { validated },
-        { new: true, runValidators: true }
-      );
+    // Mise à jour du sujet sans suppression, même si "Invalide"
+    const updatedSubject = await Subject.findByIdAndUpdate(
+      subjectId,
+      { validated },
+      { new: true, runValidators: true }
+    );
 
-      if (!updatedSubject) {
-        return res.status(404).json({ message: "Sujet non trouvé." });
-      }
-
-      return res.status(200).json({
-        message: "Validation du sujet mise à jour avec succès.",
-        subject: updatedSubject,
-      });
+    if (!updatedSubject) {
+      return res.status(404).json({ message: "Sujet non trouvé." });
     }
+
+    return res.status(200).json({
+      message: "Validation du sujet mise à jour avec succès.",
+      subject: updatedSubject,
+    });
   } catch (error) {
     res.status(500).json({
       message: "Erreur lors de la mise à jour de la validation du sujet.",
