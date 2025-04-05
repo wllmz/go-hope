@@ -30,6 +30,8 @@ const articles = new mongoose.Schema({
     enum: ["Fiche", "Vidéo"],
     default: "Fiche", // vous pouvez changer la valeur par défaut selon vos besoins
   },
+  videoUrl: { type: String },
+  videoDuration: { type: Number },
   category: [
     {
       type: mongoose.Schema.Types.ObjectId,

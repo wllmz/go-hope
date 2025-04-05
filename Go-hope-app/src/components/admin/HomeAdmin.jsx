@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 // Import des deux composants que vous possédez
 import HomeAdminWelcome from "./HomeAdminWelcome";
 import AdminUserManagement from "./Subject/SubjectMangement";
+import ArticleManagement from "./articles/ArticleManagement";
 
 const HomeAdmin = () => {
   const [activeTab, setActiveTab] = useState("Bienvenue");
@@ -62,12 +63,22 @@ const HomeAdmin = () => {
           >
             Gestion des Sujets
           </li>
+          <li
+            className={`py-4 px-6 text-lg font-semibold cursor-pointer transition-all duration-300 ${
+              activeTab === "Gestion des Articles"
+                ? "bg-blue-700 rounded text-white"
+                : "hover:bg-blue-600"
+            }`}
+            onClick={() => setActiveTab("Gestion des Articles")}
+          >
+            Gestion des Articles
+          </li>
         </ul>
       </nav>
 
       {/* Contenu des Sections avec Animations */}
       <div className="p-6 w-4/5">
-        <AnimatePresence exitBeforeEnter>
+        <AnimatePresence mode="wait">
           {activeTab === "Bienvenue" && (
             <motion.div
               key="Bienvenue"
@@ -88,6 +99,17 @@ const HomeAdmin = () => {
               transition={{ duration: 0.3 }}
             >
               <AdminUserManagement />
+            </motion.div>
+          )}
+          {activeTab === "Gestion des Articles" && (
+            <motion.div
+              key="Gestion des Articles"
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -50 }}
+              transition={{ duration: 0.3 }}
+            >
+              <ArticleManagement />
             </motion.div>
           )}
         </AnimatePresence>

@@ -5,6 +5,7 @@ import {
   getArticleById,
   updateArticle,
   deleteArticle,
+  getAllArticlesAdmin,
 } from "../../services/article/articles";
 
 const useArticles = () => {
@@ -19,6 +20,20 @@ const useArticles = () => {
     setError(null);
     try {
       const data = await getAllArticles();
+      // Si l'API renvoie un objet avec une propriété "articles", utilisez-la, sinon utilisez directement data
+      setArticles(data.articles);
+    } catch (err) {
+      setError(err.message || "Erreur lors de la récupération des articles.");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const fetchAllArticlesAdmin = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await getAllArticlesAdmin();
       // Si l'API renvoie un objet avec une propriété "articles", utilisez-la, sinon utilisez directement data
       setArticles(data.articles);
     } catch (err) {
@@ -102,6 +117,7 @@ const useArticles = () => {
     loading,
     error,
     fetchAllArticles,
+    fetchAllArticlesAdmin,
     fetchArticleById,
     createArticleHandler,
     updateArticleHandler,
