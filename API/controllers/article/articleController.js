@@ -18,14 +18,25 @@ export const createArticle = async (req, res) => {
     category, // Peut être un tableau ou une chaîne
     status,
     saisonier, // Le mois à activer
-    mediaType, // Nouveau champ : "Fiche" ou "Vidéo"
+    mediaType, // "Fiche" ou "Vidéo"
+    videoUrl, // Nouveau champ pour les vidéos
+    videoDuration, // Nouveau champ pour les vidéos (en secondes par exemple)
   } = req.body;
 
-  // Validation des champs obligatoires
+  // Validation des champs obligatoires pour tous les articles
   if (!title || !image || !content || !time_lecture || !type || !category) {
-    return res
-      .status(400)
-      .json({ message: "Tous les champs obligatoires doivent être fournis." });
+    return res.status(400).json({
+      message: "Tous les champs obligatoires doivent être fournis.",
+    });
+  }
+
+  // Si mediaType est "Vidéo", vérifier que les champs vidéo sont présents
+  if (mediaType === "Vidéo") {
+    if (!videoUrl || !videoDuration) {
+      return res.status(400).json({
+        message: "Les vidéos doivent avoir une URL et une durée.",
+      });
+    }
   }
 
   // Si category n'est pas un tableau, le convertir en tableau
@@ -57,9 +68,9 @@ export const createArticle = async (req, res) => {
     saisonier &&
     saisonier.some((month) => !/^(0[1-9]|1[0-2])$/.test(month.month))
   ) {
-    return res
-      .status(400)
-      .json({ message: "Le mois doit être un format valide entre 01 et 12." });
+    return res.status(400).json({
+      message: "Le mois doit être un format valide entre 01 et 12.",
+    });
   }
 
   // Initialiser tous les mois comme actifs par défaut
@@ -85,17 +96,25 @@ export const createArticle = async (req, res) => {
 
   try {
     // Créer un nouvel article avec les données reçues, y compris mediaType
-    const newArticle = new articleModel({
+    // Si c'est une vidéo, inclure également videoUrl et videoDuration
+    const articleData = {
       title,
       image,
       content,
       time_lecture,
       type,
-      mediaType, // ajout du champ mediaType
+      mediaType,
       category: foundCategories.map((cat) => cat._id),
       status: status || "En cours",
       saisonier: allMonths,
-    });
+    };
+
+    if (mediaType === "Vidéo") {
+      articleData.videoUrl = videoUrl;
+      articleData.videoDuration = videoDuration;
+    }
+
+    const newArticle = new articleModel(articleData);
 
     // Sauvegarder l'article dans la base de données
     await newArticle.save();
@@ -113,7 +132,7 @@ export const createArticle = async (req, res) => {
 export const getArticles = async (req, res) => {
   try {
     const articles = await articleModel
-      .find()
+      .find({ status: "Publié" }) // Filtrer par status "Publié"
       .select("+favoris")
       .populate("category");
 
@@ -127,12 +146,31 @@ export const getArticles = async (req, res) => {
   }
 };
 
-// Récupérer un article par son ID et 3 articles similaires
+export const getArticlesAdmin = async (req, res) => {
+  try {
+    const articles = await articleModel
+      .find({}) // Filtrer par status "Publié"
+      .select("+favoris")
+      .populate("category");
+
+    if (!articles) {
+      return res.status(404).json({ message: "Aucun article trouvé." });
+    }
+
+    res.status(200).json({ articles });
+  } catch (error) {
+    handleError(res, "Erreur lors de la récupération des articles.", error);
+  }
+};
+
 export const getArticleById = async (req, res) => {
   const { articleId } = req.params;
 
   try {
-    const article = await articleModel.findById(articleId).populate("category");
+    // Récupère l'article uniquement si son status est "Publié"
+    const article = await articleModel
+      .findOne({ _id: articleId, status: "Publié" })
+      .populate("category");
 
     if (!article) {
       return res.status(404).json({ message: "Article non trouvé." });
@@ -140,10 +178,12 @@ export const getArticleById = async (req, res) => {
 
     const categories = article.category.map((cat) => cat._id);
 
+    // Récupère 3 articles similaires qui ont aussi le status "Publié"
     const relatedArticles = await articleModel
       .find({
         _id: { $ne: article._id },
         category: { $in: categories },
+        status: "Publié",
       })
       .limit(3)
       .populate("category");

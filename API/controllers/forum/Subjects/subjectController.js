@@ -206,14 +206,14 @@ export const updateSubject = async (req, res) => {
  */
 export const getSubjectById = async (req, res) => {
   try {
-    // On recherche le sujet en s'assurant qu'il est validé
+    // On recherche le sujet en s'assurant qu'il est validé (la valeur "valider" est utilisée)
     const subject = await Subject.findOne({
       _id: req.params.subjectId,
-      validated: true,
+      validated: "valider",
     })
-      .select("+favoris") // Forcer l'inclusion du champ favoris
-      .populate("categories", "categorie") // Populate les catégories
-      .populate("author", "firstName");
+      .select("+favoris") // Inclusion forcée du champ favoris
+      .populate("categories", "categorie") // Populate des catégories
+      .populate("author", "firstName"); // Populate de l'auteur
 
     if (!subject) {
       return res.status(404).json({ message: "Sujet non trouvé." });

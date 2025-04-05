@@ -6,6 +6,7 @@ import {
   updateArticle,
   deleteArticle,
   searchArticles,
+  getArticlesAdmin,
 } from "../../controllers/article/articleController.js";
 import { verifyToken } from "../../middleware/jwtMiddleware.js";
 import { AdminRole } from "../../middleware/authMiddleware.js";
@@ -16,6 +17,9 @@ router.get("/search", searchArticles);
 
 // Route pour créer un article
 router.post("/", verifyToken, AdminRole, createArticle);
+
+// Route pour récupérer tous les articles admin
+router.get("/admin", verifyToken, AdminRole, getArticlesAdmin);
 
 // Route pour récupérer tous les articles
 router.get("/", verifyToken, getArticles);

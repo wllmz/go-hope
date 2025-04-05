@@ -4,6 +4,7 @@ import useArticles from "../../../hooks/article/useArticles";
 import { useUserInfo } from "../../../hooks/user/useUserInfo";
 import { useArticleActions } from "../../../hooks/article/useArticleActions";
 import { FaBookmark, FaRegBookmark, FaBookOpen, FaCheck } from "react-icons/fa";
+import DOMPurify from "dompurify";
 
 const ArticleById = () => {
   const { articleId } = useParams();
@@ -22,6 +23,7 @@ const ArticleById = () => {
   const [isRead, setIsRead] = useState(false);
   const [showSuccessAnimation, setShowSuccessAnimation] = useState(false);
 
+  // Debug
   console.log("ID de l'article depuis l'URL :", articleId);
 
   // Fonction pour récupérer l'article
@@ -80,9 +82,8 @@ const ArticleById = () => {
       } else {
         await markArticleAsRead(currentArticle._id);
         setIsRead(true);
-        // Afficher l'animation de succès
         setShowSuccessAnimation(true);
-        setTimeout(() => setShowSuccessAnimation(false), 1000); // 1 seconde d'animation
+        setTimeout(() => setShowSuccessAnimation(false), 1000);
       }
       await fetchArticle();
     } catch (err) {
@@ -110,6 +111,50 @@ const ArticleById = () => {
     return <div className="text-center py-4">Aucun article trouvé.</div>;
   }
 
+  // Fonction pour déterminer si l'URL est une URL YouTube
+  const isYouTubeUrl = (url) => {
+    return url.includes("youtube.com") || url.includes("youtu.be");
+  };
+
+  // Si c'est une vidéo, on gère l'affichage
+  const renderVideo = () => {
+    if (!currentArticle.videoUrl) {
+      return <p className="mb-4 text-red-500">Aucun URL vidéo disponible.</p>;
+    }
+    // Si l'URL est une URL YouTube, on crée un embed via iframe
+    if (isYouTubeUrl(currentArticle.videoUrl)) {
+      // Extraire l'ID de la vidéo depuis l'URL (exemple simple)
+      const videoIdMatch = currentArticle.videoUrl.match(
+        /(?:youtu\.be\/|v=)([^&]+)/
+      );
+      const videoId = videoIdMatch ? videoIdMatch[1] : null;
+      if (videoId) {
+        const embedUrl = `https://www.youtube.com/embed/${videoId}`;
+        return (
+          <div className="mb-4 aspect-w-16 aspect-h-9">
+            <iframe
+              src={embedUrl}
+              title="Vidéo YouTube"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              className="w-full h-full rounded"
+            ></iframe>
+          </div>
+        );
+      }
+    }
+    // Sinon, on suppose que c'est une URL directe vers une vidéo mp4
+    return (
+      <div className="mb-4">
+        <video controls className="w-full h-auto rounded">
+          <source src={currentArticle.videoUrl} type="video/mp4" />
+          Votre navigateur ne supporte pas la balise vidéo.
+        </video>
+      </div>
+    );
+  };
+
   return (
     <div className="flex min-h-screen items-stretch justify-center bg-[#f1f4f4]">
       <div className="w-9/12 mx-auto p-6 bg-white shadow-lg rounded-lg">
@@ -136,7 +181,7 @@ const ArticleById = () => {
           <span className="text-lg">{currentArticle.title}</span>
         </button>
 
-        {/* Bouton de favori (icône signet) */}
+        {/* Bouton de favori */}
         <div className="flex justify-end mb-4">
           <button
             onClick={(e) => {
@@ -165,7 +210,27 @@ const ArticleById = () => {
           />
         )}
         <h1 className="text-3xl font-bold mb-4">{currentArticle.title}</h1>
-        <p className="mb-4">{currentArticle.content}</p>
+
+        {/* Rendu conditionnel du contenu selon le mediaType */}
+        {currentArticle.mediaType === "Vidéo" ? (
+          <>
+            {renderVideo()}
+            {currentArticle.videoDuration && (
+              <p className="text-gray-700 mb-2">
+                <strong>Durée de la vidéo :</strong>{" "}
+                {currentArticle.videoDuration} secondes
+              </p>
+            )}
+          </>
+        ) : (
+          <div
+            className="mb-4"
+            dangerouslySetInnerHTML={{
+              __html: DOMPurify.sanitize(currentArticle.content),
+            }}
+          />
+        )}
+
         <p className="text-gray-700 mb-2">
           <strong>Temps de lecture :</strong> {currentArticle.time_lecture}{" "}
           minutes
