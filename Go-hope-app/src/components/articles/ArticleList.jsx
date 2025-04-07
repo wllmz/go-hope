@@ -70,8 +70,8 @@ const ArticleList = ({
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-3xl font-bold">
           {selectedMediaType === "Fiche"
-            ? "Liste des Fiches"
-            : "Liste des Vidéos"}
+            ? "Fiches à la une "
+            : "Vidéos à la une "}
         </h1>
         <button
           onClick={onNavigateToAllArticles}

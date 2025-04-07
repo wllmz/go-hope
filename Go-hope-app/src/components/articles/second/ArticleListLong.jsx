@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useArticleActions } from "../../../hooks/article/useArticleActions";
 import { useUserInfo } from "../../../hooks/user/useUserInfo";
-import ArticleCard from "../ArticleCard";
+import ArticleCard from "./ArticleCard";
 
 const ArticleListLong = ({ articles, onArticleClick, onFavoritesUpdate }) => {
   const navigate = useNavigate();

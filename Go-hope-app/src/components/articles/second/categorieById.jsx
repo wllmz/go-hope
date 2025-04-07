@@ -1,11 +1,17 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import useArticles from "../../../hooks/article/useArticles";
+import { useArticleActions } from "../../../hooks/article/useArticleActions";
+import ArticleCard from "./ArticleCard";
+import Header from "../Header";
 
 const CategorieById = () => {
   const { categoryId } = useParams();
   const navigate = useNavigate();
   const { articles, loading, error, fetchAllArticles } = useArticles();
+  const { addToFavoris, removeFromFavoris, actionLoading } =
+    useArticleActions();
+  const [selectedMediaType, setSelectedMediaType] = useState("Fiche");
 
   useEffect(() => {
     fetchAllArticles();
@@ -17,16 +23,28 @@ const CategorieById = () => {
       <div className="text-center py-4 text-red-500">Erreur : {error}</div>
     );
 
-  // Filtrer les articles dont la propriété "category" contient l'ID de la catégorie
+  // Filtrer les articles par catégorie et type de média
   const filteredArticles = articles.filter(
     (article) =>
       Array.isArray(article.category) &&
-      article.category.some((cat) => String(cat._id) === String(categoryId))
+      article.category.some((cat) => String(cat._id) === String(categoryId)) &&
+      (selectedMediaType === "Tous" || article.mediaType === selectedMediaType)
   );
 
   // Fonction pour naviguer vers la page d'un article
   const handleArticleClick = (articleId) => {
     navigate(`/la-sep/${articleId}`);
+  };
+
+  // Fonction pour gérer les favoris
+  const handleFavorisClick = async (articleId) => {
+    const article = articles.find((a) => a._id === articleId);
+    if (article.favoris?.includes(articleId)) {
+      await removeFromFavoris(articleId);
+    } else {
+      await addToFavoris(articleId);
+    }
+    await fetchAllArticles();
   };
 
   // Fonction pour revenir à la page précédente
@@ -35,42 +53,49 @@ const CategorieById = () => {
   };
 
   return (
-    <div className="flex min-h-screen items-stretch justify-center">
-      <div className="w-full rounded-md custom-form-width-1 sm:px-20 mt-5">
-        <button
-          onClick={handleBackClick}
-          className="bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 px-4 rounded mb-6"
-        >
-          Retour
-        </button>
-        <h2 className="text-2xl font-bold mb-6">
-          Articles pour la catégorie {categoryId}
-        </h2>
+    <div className="min-h-screen">
+      <Header
+        selectedMediaType={selectedMediaType}
+        setSelectedMediaType={setSelectedMediaType}
+      />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="flex items-center mb-8">
+          <button
+            onClick={handleBackClick}
+            className="text-blue-600 hover:text-blue-700 flex items-center gap-2"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fillRule="evenodd"
+                d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
+                clipRule="evenodd"
+              />
+            </svg>
+            Retour
+          </button>
+        </div>
+
         {filteredArticles.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {filteredArticles.map((article) => (
-              <div
+              <ArticleCard
                 key={article._id}
-                className="cursor-pointer border border-gray-300 p-4 rounded hover:shadow-lg transition-shadow flex flex-col"
-                onClick={() => handleArticleClick(article._id)}
-              >
-                {article.image && (
-                  <img
-                    src={article.image}
-                    alt={article.title}
-                    className="w-full h-48 object-cover rounded mb-4"
-                  />
-                )}
-                <h3 className="text-xl font-semibold mb-2">{article.title}</h3>
-                <p className="text-gray-600">
-                  <strong>Temps de lecture :</strong> {article.time_lecture}{" "}
-                  minutes
-                </p>
-              </div>
+                article={article}
+                isFavorite={article.favoris?.includes(article._id)}
+                actionLoading={actionLoading}
+                onClick={handleArticleClick}
+                onFavorisClick={handleFavorisClick}
+              />
             ))}
           </div>
         ) : (
-          <p className="text-center text-gray-600">
+          <p className="text-center text-gray-600 mt-8">
             Aucun article trouvé pour cette catégorie.
           </p>
         )}
