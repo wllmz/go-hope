@@ -24,7 +24,7 @@ export const createArticle = async (req, res) => {
   } = req.body;
 
   // Validation des champs obligatoires pour tous les articles
-  if (!title || !image || !content || !time_lecture || !type || !category) {
+  if (!title || !content || !type || !category) {
     return res.status(400).json({
       message: "Tous les champs obligatoires doivent être fournis.",
     });
@@ -206,63 +206,93 @@ export const updateArticle = async (req, res) => {
     content,
     time_lecture,
     type,
-    category,
+    category, // Doit être un tableau d'IDs
     status,
     saisonier,
-    mediaType, // nouveau champ
+    mediaType,
+    videoUrl, // Ajout pour les vidéos
+    videoDuration, // Ajout pour les vidéos
   } = req.body;
 
-  if (!title || !image || !content || !time_lecture || !type || !category) {
+  // Validation des champs obligatoires
+  if (!title || !content || !type || !category) {
     return res
       .status(400)
       .json({ message: "Tous les champs obligatoires doivent être fournis." });
   }
 
-  try {
-    const categoryObjects = await categoryModel.find({
-      category_tittle: { $in: category },
+  // Pour les vidéos, vérifier la présence de videoUrl et videoDuration
+  if (mediaType === "Vidéo" && (!videoUrl || !videoDuration)) {
+    return res.status(400).json({
+      message: "Les vidéos doivent avoir une URL et une durée.",
     });
+  }
 
-    if (categoryObjects.length !== category.length) {
-      return res
-        .status(404)
-        .json({ message: "Certaines catégories n'ont pas été trouvées." });
-    }
+  // S'assurer que 'category' est un tableau
+  const categoriesArray = Array.isArray(category) ? category : [category];
 
-    const categoryIds = categoryObjects.map((cat) => cat._id);
+  // Vérifier que chaque élément est un ObjectId valide
+  const invalidIds = categoriesArray.filter(
+    (id) => !/^[0-9a-fA-F]{24}$/.test(id)
+  );
+  if (invalidIds.length > 0) {
+    return res.status(400).json({
+      message: "Certaines catégories ne sont pas des IDs valides.",
+      invalidIds,
+    });
+  }
 
-    const allMonths = Array.from({ length: 12 }, (_, index) => ({
-      month: (index + 1).toString().padStart(2, "0"),
-      isActive: false,
-    }));
+  // Rechercher les catégories par leur _id
+  const foundCategories = await categoryModel.find({
+    _id: { $in: categoriesArray },
+  });
+  if (foundCategories.length !== categoriesArray.length) {
+    return res
+      .status(404)
+      .json({ message: "Certaines catégories n'ont pas été trouvées." });
+  }
+  const categoryIds = foundCategories.map((cat) => cat._id);
 
-    if (saisonier && saisonier.length > 0) {
-      allMonths.forEach((month) => {
-        month.isActive = false;
-      });
-      saisonier.forEach((month) => {
-        const monthIndex = allMonths.findIndex(
-          (item) => item.month === month.month
-        );
-        if (monthIndex !== -1) {
-          allMonths[monthIndex].isActive = true;
-        }
-      });
-    }
+  // Gérer le champ saisonier comme dans createArticle
+  const allMonths = Array.from({ length: 12 }, (_, index) => ({
+    month: (index + 1).toString().padStart(2, "0"),
+    isActive: false,
+  }));
 
+  if (saisonier && saisonier.length > 0) {
+    saisonier.forEach((month) => {
+      const monthIndex = allMonths.findIndex(
+        (item) => item.month === month.month
+      );
+      if (monthIndex !== -1) {
+        allMonths[monthIndex].isActive = true;
+      }
+    });
+  }
+
+  // Préparer les données mises à jour
+  const updatedArticleData = {
+    title,
+    image,
+    content,
+    time_lecture,
+    type,
+    mediaType, // Mettre à jour mediaType
+    category: categoryIds,
+    status: status || "En cours",
+    saisonier: allMonths,
+  };
+
+  // Si l'article est une vidéo, ajouter les champs vidéo
+  if (mediaType === "Vidéo") {
+    updatedArticleData.videoUrl = videoUrl;
+    updatedArticleData.videoDuration = videoDuration;
+  }
+
+  try {
     const updatedArticle = await articleModel.findByIdAndUpdate(
       articleId,
-      {
-        title,
-        image,
-        content,
-        time_lecture,
-        type,
-        mediaType, // mettre à jour mediaType
-        category: categoryIds,
-        status: status || "En cours",
-        saisonier: allMonths,
-      },
+      updatedArticleData,
       { new: true }
     );
 

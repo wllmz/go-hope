@@ -31,7 +31,12 @@ const articles = new mongoose.Schema({
     default: "Fiche", // vous pouvez changer la valeur par défaut selon vos besoins
   },
   videoUrl: { type: String },
-  videoDuration: { type: Number },
+  videoDuration: {
+    type: Number,
+    required: true,
+    min: 0,
+    max: 3600,
+  },
   category: [
     {
       type: mongoose.Schema.Types.ObjectId,

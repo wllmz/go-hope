@@ -8,12 +8,12 @@ import "react-quill-new/dist/quill.snow.css";
 const ArticleModal = ({ isOpen, onClose, onSubmit, article, mode }) => {
   const initialState = {
     title: "",
-    content: "", // Nous utilisons ReactQuill pour ce champ
+    content: "",
     image: "",
     time_lecture: 0,
     type: "",
     mediaType: "Fiche",
-    category: "", // Valeur de l'ID de catégorie
+    category: "",
     status: "En cours",
     videoUrl: "",
     videoDuration: 0,
@@ -22,51 +22,44 @@ const ArticleModal = ({ isOpen, onClose, onSubmit, article, mode }) => {
   const [formData, setFormData] = useState(initialState);
   const [errors, setErrors] = useState({});
 
-  // Utilisation du hook pour récupérer les catégories
+  // Récupération des catégories
   const { categories, fetchAllCategories } = useCategories();
 
-  // Log pour surveiller les mises à jour de "categories"
-  useEffect(() => {
-    console.log("Liste des catégories mises à jour :", categories);
-  }, [categories]);
-
-  // Appel à fetchAllCategories chaque fois que le modal s'ouvre
+  // Appel de fetchAllCategories à chaque ouverture de la modal
   useEffect(() => {
     if (isOpen) {
-      console.log("Modal ouvert, appel de fetchAllCategories");
-      fetchAllCategories()
-        .then(() => {
-          console.log("fetchAllCategories terminé");
-        })
-        .catch((err) =>
-          console.error("Erreur lors de fetchAllCategories :", err)
-        );
+      console.log("Modal ouverte, appel de fetchAllCategories");
+      fetchAllCategories().catch((err) =>
+        console.error("Erreur lors de fetchAllCategories :", err)
+      );
     }
   }, [isOpen, fetchAllCategories]);
 
-  // Mise à jour de l'état du formulaire lorsque l'article est modifié
+  // Mise à jour du formulaire à chaque ouverture de la modal ou changement d'article
   useEffect(() => {
-    if (article && mode === "edit") {
-      console.log(
-        "Mise à jour du formulaire pour l'édition de l'article :",
-        article
-      );
-      setFormData({
-        title: article.title || "",
-        content: article.content || "",
-        image: article.image || "",
-        time_lecture: article.time_lecture || 0,
-        type: article.type || "",
-        mediaType: article.mediaType || "Fiche",
-        category: article.category?.[0] || "",
-        status: article.status || "En cours",
-        videoUrl: article.videoUrl || "",
-        videoDuration: article.videoDuration || 0,
-      });
-    } else {
-      setFormData(initialState);
+    if (isOpen) {
+      if (article && mode === "edit") {
+        console.log(
+          "Mise à jour du formulaire pour l'édition de l'article :",
+          article
+        );
+        setFormData({
+          title: article.title || "",
+          content: article.content || "",
+          image: article.image || "",
+          time_lecture: article.time_lecture || 0,
+          type: article.type || "",
+          mediaType: article.mediaType || "Fiche",
+          category: article.category?.[0] || "",
+          status: article.status || "En cours",
+          videoUrl: article.videoUrl || "",
+          videoDuration: article.videoDuration || 0,
+        });
+      } else {
+        setFormData(initialState);
+      }
     }
-  }, [article, mode]);
+  }, [article, mode, isOpen]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -84,7 +77,7 @@ const ArticleModal = ({ isOpen, onClose, onSubmit, article, mode }) => {
     }
   };
 
-  // Gestion spécifique pour ReactQuill (le champ content)
+  // Gestion spécifique pour ReactQuill (champ content)
   const handleContentChange = (value) => {
     console.log("Changement de contenu :", value);
     setFormData((prev) => ({
@@ -227,9 +220,6 @@ const ArticleModal = ({ isOpen, onClose, onSubmit, article, mode }) => {
                   value={formData.videoUrl}
                   onChange={handleChange}
                 />
-                {errors.videoUrl && (
-                  <p className="text-red-500 text-xs mt-1">{errors.videoUrl}</p>
-                )}
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -243,11 +233,6 @@ const ArticleModal = ({ isOpen, onClose, onSubmit, article, mode }) => {
                   onChange={handleChange}
                   min="1"
                 />
-                {errors.videoDuration && (
-                  <p className="text-red-500 text-xs mt-1">
-                    {errors.videoDuration}
-                  </p>
-                )}
               </div>
             </>
           )}
@@ -288,12 +273,13 @@ const ArticleModal = ({ isOpen, onClose, onSubmit, article, mode }) => {
             </select>
           </div>
 
-          {/* Contenu avec ReactQuill (react-quill-new) */}
+          {/* Contenu avec ReactQuill */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Contenu *
             </label>
             <ReactQuill
+              key={article ? article._id : "new"} // Forcer le remontage lors du changement d'article
               value={formData.content}
               onChange={handleContentChange}
               placeholder="Contenu de l'article..."
