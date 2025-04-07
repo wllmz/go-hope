@@ -133,7 +133,7 @@ const CreateSubjectButton = ({ onSubjectCreated }) => {
       {/* Popup de création de post */}
       <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
         <div>
-          <h2 className="text-xl font-semibold mb-4">Créer un post</h2>
+          <h2 className=" mb-4">Créer un post</h2>
 
           {/* Affichage du message d'erreur de manière bien visible */}
           {errorMessage && (
@@ -245,9 +245,7 @@ const CreateSubjectButton = ({ onSubjectCreated }) => {
         onClose={() => setIsRequestSentModalOpen(false)}
       >
         <div className="p-4">
-          <h2 className="text-xl font-semibold mb-4 text-green-600">
-            Demande envoyée
-          </h2>
+          <h2 className=" mb-4 text-green-600">Demande envoyée</h2>
           <p className="text-gray-700">
             Votre demande a bien été envoyée. Elle sera traitée et validée par
             nos admins dans les plus brefs délais.

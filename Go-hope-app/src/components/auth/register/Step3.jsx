@@ -20,7 +20,7 @@ const Step3 = ({ email }) => {
           <img src={bg} alt="Background Papillon" />
         </div>
 
-        <h1 className="text-3xl text-[#0a3d64] mb-6 font-semibold text-center">
+        <h1 className="text-[#0a3d64] mb-6text-center">
           Votre adresse email doit être confirmée
         </h1>
 

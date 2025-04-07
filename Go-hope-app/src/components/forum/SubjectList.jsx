@@ -14,7 +14,7 @@ const SubjectList = ({
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-gray-800">Forum</h1>
+        <h1 className="">Forum</h1>
         <button
           onClick={onNavigateToAllSubjects}
           className="flex items-center text-orange-500 hover:text-orange-600 transition-colors"

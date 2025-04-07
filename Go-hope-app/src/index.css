@@ -1,1 +1,130 @@
 @import "tailwindcss";
+
+/* Base font sizes */
+:root {
+  --font-size-xs: 0.75rem; /* 12px */
+  --font-size-sm: 0.875rem; /* 14px */
+  --font-size-base: 1rem; /* 16px */
+  --font-size-lg: 1.125rem; /* 18px */
+  --font-size-xl: 1.25rem; /* 20px */
+  --font-size-2xl: 1.5rem; /* 24px */
+  --font-size-3xl: 1.875rem; /* 30px */
+  --font-size-4xl: 2.25rem; /* 36px */
+
+  /* Heading specific sizes */
+  --h1-size: 2rem; /* 32px */
+  --h2-size: 1.5rem; /* 24px */
+  --h4-size: 1rem; /* 16px */
+  --h5-size: 0.75rem; /* 12px */
+}
+
+/* Heading styles */
+h1 {
+  font-size: var(--h1-size) !important;
+  line-height: 1.2 !important;
+}
+
+h2 {
+  font-size: var(--h2-size) !important;
+  line-height: 1.3 !important;
+}
+
+h4 {
+  font-size: var(--h4-size) !important;
+  font-weight: 500 !important;
+  line-height: 1.4 !important;
+}
+
+h5 {
+  font-size: var(--h5-size) !important;
+  font-weight: 500 !important;
+  line-height: 1.4 !important;
+}
+
+/* Responsive typography */
+@media (max-width: 640px) {
+  :root {
+    /* Existing responsive sizes */
+    --font-size-2xl: 1.25rem; /* 20px */
+    --font-size-xl: 1.125rem; /* 18px */
+    --font-size-lg: 1rem; /* 16px */
+    --font-size-base: 0.875rem; /* 14px */
+    --font-size-sm: 0.75rem; /* 12px */
+    --font-size-xs: 0.675rem; /* 11px */
+
+    /* Heading responsive sizes */
+    --h1-size: 1.5rem; /* 24px */
+    --h2-size: 1.25rem; /* 20px */
+    --h4-size: 0.875rem; /* 14px */
+    --h5-size: 0.75rem; /* 12px */
+  }
+}
+
+/* Global typography rules */
+.text-title-1 {
+  font-size: var(--font-size-2xl) !important;
+  font-weight: 700 !important;
+  line-height: 1.2 !important;
+}
+
+.text-title-2 {
+  font-size: var(--font-size-xl) !important;
+  font-weight: 600 !important;
+  line-height: 1.3 !important;
+}
+
+.text-title-3 {
+  font-size: var(--font-size-lg) !important;
+  font-weight: 600 !important;
+  line-height: 1.4 !important;
+}
+
+.text-body {
+  font-size: var(--font-size-base) !important;
+  line-height: 1.5 !important;
+}
+
+.text-body-sm {
+  font-size: var(--font-size-sm) !important;
+  line-height: 1.5 !important;
+}
+
+.text-caption {
+  font-size: var(--font-size-xs) !important;
+  line-height: 1.4 !important;
+}
+
+/* Card specific styles */
+.card-title {
+  font-size: var(--font-size-lg) !important;
+  font-weight: 600 !important;
+  line-height: 1.4 !important;
+}
+
+@media (max-width: 640px) {
+  .card-title {
+    font-size: var(--font-size-base) !important;
+  }
+}
+
+/* Article specific styles */
+.article-title {
+  font-size: var(--font-size-2xl) !important;
+  font-weight: 700 !important;
+  line-height: 1.2 !important;
+}
+
+.article-subtitle {
+  font-size: var(--font-size-lg) !important;
+  font-weight: 600 !important;
+  color: #4b5563 !important;
+}
+
+.article-content {
+  font-size: var(--font-size-base) !important;
+  line-height: 1.6 !important;
+}
+
+svg.h-6.w-6 {
+  color: #1d5f84 !important;
+}
