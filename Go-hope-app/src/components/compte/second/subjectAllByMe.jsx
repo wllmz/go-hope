@@ -94,9 +94,7 @@ const InfoUserSubjects = () => {
           />
         )}
 
-        <h1 className="text-2xl font-bold mt-10 mb-4">
-          Sujets que j'ai favoris
-        </h1>
+        <h1 className="mt-10 mb-4">Sujets que j'ai favoris</h1>
         {userFavoriteSubjects.length === 0 ? (
           <p className="text-center">Aucun sujet favori trouvé.</p>
         ) : (

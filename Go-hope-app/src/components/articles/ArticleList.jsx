@@ -68,11 +68,11 @@ const ArticleList = ({
   return (
     <>
       <div className="flex justify-between items-center mb-4">
-        <h1 className="text-3xl font-bold">
+        <h2 className="">
           {selectedMediaType === "Fiche"
             ? "Fiches à la une "
             : "Vidéos à la une "}
-        </h1>
+        </h2>
         <button
           onClick={onNavigateToAllArticles}
           className="text-orange-500 hover:text-orange-600 transition-colors"
@@ -126,7 +126,7 @@ const ArticleList = ({
           </ul>
         )
       ) : (
-        <p className="text-center">
+        <p className="text-body text-center">
           Aucune {selectedMediaType === "Fiche" ? "fiche" : "vidéo"} trouvée.
         </p>
       )}

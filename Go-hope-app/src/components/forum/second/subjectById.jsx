@@ -152,7 +152,7 @@ const SubjectById = () => {
         )}
 
         {/* Détails du subject */}
-        <h1 className="text-3xl font-bold mb-4">{currentSubject.title}</h1>
+        <h1 className=" mb-4">{currentSubject.title}</h1>
         <p className="mb-4">{currentSubject.content}</p>
 
         {/* Section des commentaires */}

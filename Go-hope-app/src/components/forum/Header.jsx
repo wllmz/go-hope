@@ -6,18 +6,14 @@ const Header = () => {
   return (
     <header className="w-full pt-8 pb-4 bg-gradient-to-b from-[#B3D7EC] to-white">
       <div className="mx-auto max-w-4xl px-4">
-        <h1 className="text-2xl sm:text-3xl text-gray-800 mb-6 pl-2 sm:pl-32">
-          Forum
-        </h1>
+        <h1 className="mb-6 pl-2 sm:pl-32">Forum</h1>
         <div className="p-6">
           <SearchBar />
         </div>
         {/* Section avec deux colonnes : texte à gauche et bouton à droite */}
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-xl font-semibold text-orange-500 mb-2">
-              Une question ?
-            </h2>
+            <h2 className=" text-orange-500 mb-2">Une question ?</h2>
             <p className="text-gray-700 text-sm sm:text-base">
               Posez toutes vos questions sur notre forum !<br />
               La communauté va vous répondre !

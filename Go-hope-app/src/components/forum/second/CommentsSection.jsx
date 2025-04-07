@@ -68,7 +68,7 @@ const CommentsSection = ({ initialComments, subjectId }) => {
 
   return (
     <div className="mt-6">
-      <h2 className="text-2xl font-bold mb-4">Commentaires</h2>
+      <h2 className=" mb-4">Commentaires</h2>
       {validComments.length > 0 ? (
         validComments.map((comment) => (
           <div key={comment._id} className="mb-4 border p-4 rounded">

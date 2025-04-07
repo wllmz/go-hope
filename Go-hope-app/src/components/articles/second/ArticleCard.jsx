@@ -38,9 +38,9 @@ const ArticleCard = ({
       {/* Contenu de la carte */}
       <div className="flex-1 flex flex-col justify-center pl-3 md:pl-5">
         {/* Titre */}
-        <h2 className="text-sm md:text-lg font-medium text-[#0E3043] mb-2 md:mb-3 line-clamp-2">
+        <h3 className="text-sm md:text-lg font-medium text-[#0E3043] mb-2 md:mb-3 line-clamp-2">
           {article.title || "Titre de la fiche"}
-        </h2>
+        </h3>
 
         {/* Ligne du bas : Type (Fiche ou Vidéo) + Durée */}
         <div className="flex items-center gap-2 text-xs md:text-base text-gray-500">
