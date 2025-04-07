@@ -260,7 +260,9 @@ const ArticleManagement = () => {
         }}
         onConfirm={confirmDelete}
         title="Supprimer l'article"
-        message={`Êtes-vous sûr de vouloir supprimer l'article "${selectedArticle?.title}" ? Cette action est irréversible.`}
+        message={`Êtes-vous sûr de vouloir supprimer l'article "${
+          selectedArticle?.title || ""
+        }" ? Cette action est irréversible.`}
       />
     </div>
   );
