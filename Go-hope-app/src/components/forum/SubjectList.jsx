@@ -14,13 +14,12 @@ const SubjectList = ({
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="">Forum</h1>
+        <h2 className="">Posts récents </h2>
         <button
           onClick={onNavigateToAllSubjects}
           className="flex items-center text-orange-500 hover:text-orange-600 transition-colors"
           title="Voir tous les sujets"
         >
-          <span className="mr-2 text-lg">Voir tout</span>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-6 w-6"
