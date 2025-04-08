@@ -105,6 +105,9 @@ const ArticleManagement = () => {
               <th className="px-6 py-3 text-left text-gray-700 font-semibold uppercase">
                 Temps de lecture
               </th>
+              <th className="px-6 py-3 text-left text-gray-700 font-semibold uppercase">
+                Genre
+              </th>
               <th className="px-6 py-3 text-center text-gray-700 font-semibold uppercase">
                 Actions
               </th>

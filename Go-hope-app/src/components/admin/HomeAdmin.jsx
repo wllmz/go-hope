@@ -7,6 +7,7 @@ import HomeAdminWelcome from "./HomeAdminWelcome";
 import AdminUserManagement from "./Subject/SubjectMangement";
 import ArticleManagement from "./articles/ArticleManagement";
 import CategoryManagement from "./Category/CategoryManagement";
+import CategoriesForumManagement from "./CategoriesForum/CategoriesForumManagement";
 
 const HomeAdmin = () => {
   const [activeTab, setActiveTab] = useState("Bienvenue");
@@ -76,13 +77,23 @@ const HomeAdmin = () => {
           </li>
           <li
             className={`py-4 px-6 text-lg font-semibold cursor-pointer transition-all duration-300 ${
-              activeTab === "Gestion des Catégories"
+              activeTab === "Gestion des Catégories articles"
                 ? "bg-blue-700 rounded text-white"
                 : "hover:bg-blue-600"
             }`}
-            onClick={() => setActiveTab("Gestion des Catégories")}
+            onClick={() => setActiveTab("Gestion des Catégories articles")}
           >
-            Gestion des Catégories
+            Gestion des Catégories articles
+          </li>
+          <li
+            className={`py-4 px-6 text-lg font-semibold cursor-pointer transition-all duration-300 ${
+              activeTab === "Gestion des Catégories forum"
+                ? "bg-blue-700 rounded text-white"
+                : "hover:bg-blue-600"
+            }`}
+            onClick={() => setActiveTab("Gestion des Catégories forum")}
+          >
+            Gestion des Catégories forum
           </li>
         </ul>
       </nav>
@@ -123,15 +134,26 @@ const HomeAdmin = () => {
               <ArticleManagement />
             </motion.div>
           )}
-          {activeTab === "Gestion des Catégories" && (
+          {activeTab === "Gestion des Catégories articles" && (
             <motion.div
-              key="Gestion des Catégories"
+              key="Gestion des Catégories articles"
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -50 }}
               transition={{ duration: 0.3 }}
             >
               <CategoryManagement />
+            </motion.div>
+          )}
+          {activeTab === "Gestion des Catégories forum" && (
+            <motion.div
+              key="Gestion des Catégories forum"
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -50 }}
+              transition={{ duration: 0.3 }}
+            >
+              <CategoriesForumManagement />
             </motion.div>
           )}
         </AnimatePresence>

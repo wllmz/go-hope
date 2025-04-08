@@ -4,7 +4,6 @@ const categorieForumSchema = new mongoose.Schema({
   categorie: {
     type: String,
     required: true,
-    unique: true,
   },
   created_at: {
     type: Date,

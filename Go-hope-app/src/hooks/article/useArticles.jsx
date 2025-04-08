@@ -6,6 +6,8 @@ import {
   updateArticle,
   deleteArticle,
   getAllArticlesAdmin,
+  getAllArticlesSante,
+  getAllArticlesPartenaire,
 } from "../../services/article/articles";
 
 const useArticles = () => {
@@ -111,6 +113,36 @@ const useArticles = () => {
     }
   }, []);
 
+  const fetchAllArticlesSante = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await getAllArticlesSante();
+      setArticles(data.articles);
+    } catch (err) {
+      setError(
+        err.message || "Erreur lors de la récupération des articles santé."
+      );
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const fetchAllArticlesPartenaire = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await getAllArticlesPartenaire();
+      setArticles(data.articles);
+    } catch (err) {
+      setError(
+        err.message || "Erreur lors de la récupération des articles partenaire."
+      );
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   return {
     articles,
     currentArticle,
@@ -122,6 +154,8 @@ const useArticles = () => {
     createArticleHandler,
     updateArticleHandler,
     deleteArticleHandler,
+    fetchAllArticlesSante,
+    fetchAllArticlesPartenaire,
   };
 };
 

@@ -187,9 +187,6 @@ const CategoryManagement = () => {
                 <th className="px-6 py-3 text-left text-gray-700 font-semibold uppercase">
                   Image
                 </th>
-                <th className="px-6 py-3 text-left text-gray-700 font-semibold uppercase">
-                  Articles
-                </th>
                 <th className="px-6 py-3 text-center text-gray-700 font-semibold uppercase">
                   Actions
                 </th>
