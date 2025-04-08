@@ -37,7 +37,7 @@ const UserSubjects = ({
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-semibold  text-gray-800">Mes sujets</h2>
+        <h3 className=" text-gray-800">Mes sujets</h3>
         <button
           onClick={onNavigateToAllSubjects}
           className="flex items-center text-orange-500 hover:text-orange-600 transition-colors"
