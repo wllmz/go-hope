@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useArticleActions } from "../../hooks/article/useArticleActions";
 import { useUserInfo } from "../../hooks/user/useUserInfo";
-import SearchBar from "./searchBar";
 import ArticleCard from "./ArticleCard";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import Slider from "react-slick"; // N'oubliez pas d'importer slick-carousel CSS
 
 const ArticleList = ({
@@ -17,6 +16,9 @@ const ArticleList = ({
     useArticleActions();
   const { user } = useUserInfo();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const isPartenairesPage = location.pathname.includes("partenaire");
 
   // État local pour stocker l'état "favoris" de chaque article
   const [favorites, setFavorites] = useState({});
@@ -67,33 +69,35 @@ const ArticleList = ({
 
   return (
     <>
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="">
-          {selectedMediaType === "Fiche"
-            ? "Fiches à la une "
-            : "Vidéos à la une "}
-        </h2>
-        <button
-          onClick={onNavigateToAllArticles}
-          className="text-orange-500 hover:text-orange-600 transition-colors"
-          title="Voir tous les articles"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
+      {!isPartenairesPage && (
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="">
+            {selectedMediaType === "Fiche"
+              ? "Fiches à la une "
+              : "Vidéos à la une "}
+          </h2>
+          <button
+            onClick={onNavigateToAllArticles}
+            className="text-orange-500 hover:text-orange-600 transition-colors"
+            title="Voir tous les articles"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 5l7 7-7 7"
-            />
-          </svg>
-        </button>
-      </div>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 5l7 7-7 7"
+              />
+            </svg>
+          </button>
+        </div>
+      )}
       {error && <p className="text-red-500 mb-4">{error}</p>}
       {articles && articles.length > 0 ? (
         isMobile ? (
