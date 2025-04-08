@@ -35,9 +35,7 @@ const UserFavorites = ({
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-semibold text-gray-800">
-          Mes enregistrements
-        </h2>
+        <h3 className=" text-gray-800">Mes enregistrements</h3>
         <button
           onClick={onNavigateToAllFavorites}
           className="flex items-center text-orange-500 hover:text-orange-600 transition-colors"
