@@ -17,6 +17,7 @@ const ArticleModal = ({ isOpen, onClose, onSubmit, article, mode }) => {
     status: "En cours",
     videoUrl: "",
     videoDuration: 0,
+    genre: "classique",
   };
 
   const [formData, setFormData] = useState(initialState);
@@ -39,10 +40,9 @@ const ArticleModal = ({ isOpen, onClose, onSubmit, article, mode }) => {
   useEffect(() => {
     if (isOpen) {
       if (article && mode === "edit") {
-        console.log(
-          "Mise à jour du formulaire pour l'édition de l'article :",
-          article
-        );
+        console.log("Article reçu dans la modal :", article);
+        console.log("Catégories de l'article :", article.category);
+
         setFormData({
           title: article.title || "",
           content: article.content || "",
@@ -50,10 +50,13 @@ const ArticleModal = ({ isOpen, onClose, onSubmit, article, mode }) => {
           time_lecture: article.time_lecture || 0,
           type: article.type || "",
           mediaType: article.mediaType || "Fiche",
-          category: article.category?.[0] || "",
+          category: Array.isArray(article.category)
+            ? article.category[0]?._id
+            : article.category || "",
           status: article.status || "En cours",
           videoUrl: article.videoUrl || "",
           videoDuration: article.videoDuration || 0,
+          genre: article.genre || "classique",
         });
       } else {
         setFormData(initialState);
@@ -107,8 +110,11 @@ const ArticleModal = ({ isOpen, onClose, onSubmit, article, mode }) => {
     if (!formData.type) {
       newErrors.type = "Le type d'article est requis";
     }
-    if (formData.time_lecture <= 0) {
+    if (formData.mediaType === "Fiche" && formData.time_lecture <= 0) {
       newErrors.time_lecture = "Le temps de lecture doit être supérieur à 0";
+    }
+    if (formData.mediaType === "Vidéo" && formData.videoDuration <= 0) {
+      newErrors.videoDuration = "La durée de la vidéo doit être supérieure à 0";
     }
     if (!formData.category) {
       newErrors.category = "Une catégorie est requise";
@@ -200,7 +206,6 @@ const ArticleModal = ({ isOpen, onClose, onSubmit, article, mode }) => {
               onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-xl"
             >
-              <option value="">Sélectionnez un format</option>
               <option value="Fiche">Fiche</option>
               <option value="Vidéo">Vidéo</option>
             </select>
@@ -220,40 +225,52 @@ const ArticleModal = ({ isOpen, onClose, onSubmit, article, mode }) => {
                   value={formData.videoUrl}
                   onChange={handleChange}
                 />
+                {errors.videoUrl && (
+                  <p className="text-red-500 text-xs mt-1">{errors.videoUrl}</p>
+                )}
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Durée de la vidéo (en sec) *
+                  Durée de la vidéo (en minutes) *
                 </label>
                 <FormInput
                   type="number"
-                  placeholder="Durée de la vidéo"
+                  placeholder="Durée de la vidéo en minutes"
                   name="videoDuration"
                   value={formData.videoDuration}
                   onChange={handleChange}
                   min="1"
                 />
+                {errors.videoDuration && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.videoDuration}
+                  </p>
+                )}
               </div>
             </>
           )}
 
-          {/* Temps de lecture */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Temps de lecture (en minutes) *
-            </label>
-            <FormInput
-              type="number"
-              placeholder="Temps de lecture"
-              name="time_lecture"
-              value={formData.time_lecture}
-              onChange={handleChange}
-              min="1"
-            />
-            {errors.time_lecture && (
-              <p className="text-red-500 text-xs mt-1">{errors.time_lecture}</p>
-            )}
-          </div>
+          {/* Temps de lecture (seulement pour les fiches) */}
+          {formData.mediaType === "Fiche" && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Temps de lecture (en minutes) *
+              </label>
+              <FormInput
+                type="number"
+                placeholder="Temps de lecture"
+                name="time_lecture"
+                value={formData.time_lecture}
+                onChange={handleChange}
+                min="1"
+              />
+              {errors.time_lecture && (
+                <p className="text-red-500 text-xs mt-1">
+                  {errors.time_lecture}
+                </p>
+              )}
+            </div>
+          )}
 
           {/* Statut */}
           <div>
@@ -310,6 +327,23 @@ const ArticleModal = ({ isOpen, onClose, onSubmit, article, mode }) => {
             {errors.category && (
               <p className="text-red-500 text-xs mt-1">{errors.category}</p>
             )}
+          </div>
+
+          {/* Genre */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Genre
+            </label>
+            <select
+              name="genre"
+              value={formData.genre}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-xl"
+            >
+              <option value="classique">Classique</option>
+              <option value="partenaire">Partenaire</option>
+              <option value="sante">Santé</option>
+            </select>
           </div>
         </div>
 

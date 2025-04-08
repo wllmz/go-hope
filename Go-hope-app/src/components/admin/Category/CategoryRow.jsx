@@ -26,11 +26,6 @@ const CategoryRow = ({ category, onEdit, onDelete }) => {
           )}
         </div>
       </td>
-      <td className="px-6 py-4">
-        <span className="inline-block px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold">
-          {category.articles?.length || 0} articles
-        </span>
-      </td>
       <td className="px-6 py-4 text-center space-x-2">
         <button
           onClick={() => onEdit(category)}

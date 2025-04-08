@@ -59,10 +59,29 @@ export const searchArticle = async (query) => {
     return error.response.data;
   }
 };
-
 export const getAllArticlesAdmin = async () => {
   try {
     const response = await axiosInstance.get("/articles/admin");
+    return response.data;
+  } catch (error) {
+    // Vérifie si error.response existe, sinon renvoie error.message
+    throw error.response?.data || error.message;
+  }
+};
+
+export const getAllArticlesSante = async () => {
+  try {
+    const response = await axiosInstance.get("/articles/sante");
+    return response.data;
+  } catch (error) {
+    // Vérifie si error.response existe, sinon renvoie error.message
+    throw error.response?.data || error.message;
+  }
+};
+
+export const getAllArticlesPartenaire = async () => {
+  try {
+    const response = await axiosInstance.get("/articles/partenaire");
     return response.data;
   } catch (error) {
     // Vérifie si error.response existe, sinon renvoie error.message

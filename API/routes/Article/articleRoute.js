@@ -7,6 +7,8 @@ import {
   deleteArticle,
   searchArticles,
   getArticlesAdmin,
+  getArticlesSante,
+  getArticlesPartenaire,
 } from "../../controllers/article/articleController.js";
 import { verifyToken } from "../../middleware/jwtMiddleware.js";
 import { AdminRole } from "../../middleware/authMiddleware.js";
@@ -20,6 +22,12 @@ router.post("/", verifyToken, AdminRole, createArticle);
 
 // Route pour récupérer tous les articles admin
 router.get("/admin", verifyToken, AdminRole, getArticlesAdmin);
+
+// Route pour récupérer tous les articles admin
+router.get("/sante", verifyToken, getArticlesSante);
+
+// Route pour récupérer tous les articles admin
+router.get("/partenaire", verifyToken, getArticlesPartenaire);
 
 // Route pour récupérer tous les articles
 router.get("/", verifyToken, getArticles);

@@ -122,6 +122,20 @@ const ArticleRow = ({ article, onEdit, onDelete }) => {
       <td className="px-6 py-4 text-gray-600">
         {formatReadingTime(article.time_lecture)}
       </td>
+      <td className="px-6 py-4">
+        <span
+          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+          ${
+            article.genre === "partenaire"
+              ? "bg-yellow-100 text-yellow-800"
+              : article.genre === "sante"
+              ? "bg-green-100 text-green-800"
+              : "bg-gray-100 text-gray-800"
+          }`}
+        >
+          {article.genre.charAt(0).toUpperCase() + article.genre.slice(1)}
+        </span>
+      </td>
       <td className="px-6 py-4 text-center space-x-2">
         <button
           onClick={onEdit}

@@ -21,6 +21,7 @@ export const createArticle = async (req, res) => {
     mediaType, // "Fiche" ou "Vidéo"
     videoUrl, // Nouveau champ pour les vidéos
     videoDuration, // Nouveau champ pour les vidéos (en secondes par exemple)
+    genre,
   } = req.body;
 
   // Validation des champs obligatoires pour tous les articles
@@ -107,6 +108,7 @@ export const createArticle = async (req, res) => {
       category: foundCategories.map((cat) => cat._id),
       status: status || "En cours",
       saisonier: allMonths,
+      genre,
     };
 
     if (mediaType === "Vidéo") {
@@ -132,7 +134,8 @@ export const createArticle = async (req, res) => {
 export const getArticles = async (req, res) => {
   try {
     const articles = await articleModel
-      .find({ status: "Publié" }) // Filtrer par status "Publié"
+      .find({ status: "Publié" })
+      .find({ genre: "classique" })
       .select("+favoris")
       .populate("category");
 
@@ -212,6 +215,7 @@ export const updateArticle = async (req, res) => {
     mediaType,
     videoUrl, // Ajout pour les vidéos
     videoDuration, // Ajout pour les vidéos
+    genre,
   } = req.body;
 
   // Validation des champs obligatoires
@@ -281,6 +285,7 @@ export const updateArticle = async (req, res) => {
     category: categoryIds,
     status: status || "En cours",
     saisonier: allMonths,
+    genre,
   };
 
   // Si l'article est une vidéo, ajouter les champs vidéo
@@ -364,5 +369,41 @@ export const searchArticles = async (req, res) => {
     res.status(200).json({ articles });
   } catch (error) {
     handleError(res, "Erreur lors de la recherche d'articles.", error);
+  }
+};
+
+export const getArticlesSante = async (req, res) => {
+  try {
+    const articles = await articleModel
+      .find({ status: "Publié" }) // Filtrer par status "Publié"
+      .find({ genre: "sante" })
+      .select("+favoris")
+      .populate("category");
+
+    if (!articles) {
+      return res.status(404).json({ message: "Aucun article trouvé." });
+    }
+
+    res.status(200).json({ articles });
+  } catch (error) {
+    handleError(res, "Erreur lors de la récupération des articles.", error);
+  }
+};
+
+export const getArticlesPartenaire = async (req, res) => {
+  try {
+    const articles = await articleModel
+      .find({ status: "Publié" }) // Filtrer par status "Publié"
+      .find({ genre: "partenaire" })
+      .select("+favoris")
+      .populate("category");
+
+    if (!articles) {
+      return res.status(404).json({ message: "Aucun article trouvé." });
+    }
+
+    res.status(200).json({ articles });
+  } catch (error) {
+    handleError(res, "Erreur lors de la récupération des articles.", error);
   }
 };

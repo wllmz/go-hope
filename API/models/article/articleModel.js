@@ -80,6 +80,11 @@ const articles = new mongoose.Schema({
       },
     },
   ],
+  genre: {
+    type: String,
+    enum: ["partenaire", "classique", "sante"],
+    default: "classique",
+  },
 });
 
 export default mongoose.model("Article", articles);

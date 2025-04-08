@@ -5,7 +5,7 @@ const SubjectRow = ({ subject, onValidate }) => {
     <tr className="border-b border-gray-200 hover:bg-gray-50 transition-colors">
       <td className="px-6 py-4 text-gray-800">{subject.title}</td>
       <td className="px-6 py-4 text-gray-600">
-        {subject.author?.firstName || "Non défini"}
+        {subject.author?.username || "Non défini"}
       </td>
       <td className="px-6 py-4">
         <span
