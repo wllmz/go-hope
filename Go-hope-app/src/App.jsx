@@ -23,6 +23,12 @@ import SearchResultsPage from "./pages/article/searchResultPage";
 import SearchResultsPageForum from "./pages/forum/searchResultPage";
 import UpdateComptePage from "./pages/compte/updateComptePage";
 import AdminPage from "./pages/admin/adminPage";
+import PartenairesPage from "./pages/partenaire/partenairesPage";
+import NewsPage from "./pages/new/newsPage";
+import SantePage from "./pages/sante/santePage";
+import Entreprise from "./pages/partenaire/entreprise";
+import AllPartenaire from "./pages/partenaire/allPartenaire";
+import LaboratoirePage from "./pages/partenaire/laboratoirePage";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
@@ -164,6 +170,54 @@ function App() {
               element={
                 <PrivateRoute>
                   <AdminPage />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/partenaires"
+              element={
+                <PrivateRoute>
+                  <PartenairesPage />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/news"
+              element={
+                <PrivateRoute>
+                  <NewsPage />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/sante"
+              element={
+                <PrivateRoute>
+                  <SantePage />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/partenaire/entreprise"
+              element={
+                <PrivateRoute>
+                  <Entreprise />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/partenaire/la-sep"
+              element={
+                <PrivateRoute>
+                  <AllPartenaire />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/partenaire/laboratoire"
+              element={
+                <PrivateRoute>
+                  <LaboratoirePage />
                 </PrivateRoute>
               }
             />

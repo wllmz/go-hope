@@ -33,7 +33,6 @@ const articles = new mongoose.Schema({
   videoUrl: { type: String },
   videoDuration: {
     type: Number,
-    required: true,
     min: 0,
     max: 3600,
   },
