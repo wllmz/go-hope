@@ -1,12 +1,12 @@
 import React from "react";
-import PartenaireLayout from "../../components/partenaire/PartenaireLayout";
+import Partenaire from "../../components/fiche/partenaire/partenaire";
 import Menu from "../../components/layout/menu";
 
 const partenairesPage = () => {
   return (
     <div>
       <Menu />
-      <PartenaireLayout />
+      <Partenaire />
     </div>
   );
 };

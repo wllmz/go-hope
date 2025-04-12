@@ -1,5 +1,6 @@
 import React from "react";
 import SubjectCard from "./SubjectCard";
+import { useLocation } from "react-router-dom";
 
 const SubjectList = ({
   subjects,
@@ -11,31 +12,36 @@ const SubjectList = ({
   handleFavorisClick,
   favorites = {},
 }) => {
+  const location = useLocation();
+  const isCategoriesPage = location.pathname.includes("categories");
+
   return (
     <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="">Posts récents </h2>
-        <button
-          onClick={onNavigateToAllSubjects}
-          className="flex items-center text-orange-500 hover:text-orange-600 transition-colors"
-          title="Voir tous les sujets"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
+      {!isCategoriesPage && (
+        <div className="flex justify-between items-center mb-6">
+          <h2>Posts récents</h2>
+          <button
+            onClick={onNavigateToAllSubjects}
+            className="flex items-center text-orange-500 hover:text-orange-600 transition-colors"
+            title="Voir tous les sujets"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 5l7 7-7 7"
-            />
-          </svg>
-        </button>
-      </div>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 5l7 7-7 7"
+              />
+            </svg>
+          </button>
+        </div>
+      )}
       {loading ? (
         <p className="mt-4 text-gray-600">Chargement des sujets...</p>
       ) : error ? (

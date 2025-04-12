@@ -1,11 +1,14 @@
 import React from "react";
+import News from "../../components/fiche/news/news";
+import Menu from "../../components/layout/menu";
 
-const newsPage = () => {
+const NewsPage = () => {
   return (
     <div>
-      <h1>News</h1>
+      <Menu />
+      <News />
     </div>
   );
 };
 
-export default newsPage;
+export default NewsPage;

@@ -407,3 +407,21 @@ export const getArticlesPartenaire = async (req, res) => {
     handleError(res, "Erreur lors de la récupération des articles.", error);
   }
 };
+
+export const getArticlesNews = async (req, res) => {
+  try {
+    const articles = await articleModel
+      .find({ status: "Publié" }) // Filtrer par status "Publié"
+      .find({ genre: "news" })
+      .select("+favoris")
+      .populate("category");
+
+    if (!articles) {
+      return res.status(404).json({ message: "Aucun article trouvé." });
+    }
+
+    res.status(200).json({ articles });
+  } catch (error) {
+    handleError(res, "Erreur lors de la récupération des articles.", error);
+  }
+};

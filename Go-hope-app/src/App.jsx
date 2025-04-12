@@ -26,9 +26,9 @@ import AdminPage from "./pages/admin/adminPage";
 import PartenairesPage from "./pages/partenaire/partenairesPage";
 import NewsPage from "./pages/new/newsPage";
 import SantePage from "./pages/sante/santePage";
-import Entreprise from "./pages/partenaire/entreprise";
-import AllPartenaire from "./pages/partenaire/allPartenaire";
-import LaboratoirePage from "./pages/partenaire/laboratoirePage";
+import PartenaireDetail from "./components/fiche/partenaire/PartenaireDetail";
+import NewsDetail from "./components/fiche/news/NewsDetail";
+import SanteDetail from "./components/fiche/sante/SanteDetail";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
@@ -173,6 +173,7 @@ function App() {
                 </PrivateRoute>
               }
             />
+            {/* Routes pour les partenaires */}
             <Route
               path="/partenaires"
               element={
@@ -182,6 +183,15 @@ function App() {
               }
             />
             <Route
+              path="/partenaires/:id"
+              element={
+                <PrivateRoute>
+                  <PartenaireDetail />
+                </PrivateRoute>
+              }
+            />
+            {/* Routes pour les news */}
+            <Route
               path="/news"
               element={
                 <PrivateRoute>
@@ -189,6 +199,15 @@ function App() {
                 </PrivateRoute>
               }
             />
+            <Route
+              path="/news/:id"
+              element={
+                <PrivateRoute>
+                  <NewsDetail />
+                </PrivateRoute>
+              }
+            />
+            {/* Routes pour la santé */}
             <Route
               path="/sante"
               element={
@@ -198,26 +217,10 @@ function App() {
               }
             />
             <Route
-              path="/partenaire/entreprise"
+              path="/sante/:id"
               element={
                 <PrivateRoute>
-                  <Entreprise />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/partenaire/la-sep"
-              element={
-                <PrivateRoute>
-                  <AllPartenaire />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/partenaire/laboratoire"
-              element={
-                <PrivateRoute>
-                  <LaboratoirePage />
+                  <SanteDetail />
                 </PrivateRoute>
               }
             />

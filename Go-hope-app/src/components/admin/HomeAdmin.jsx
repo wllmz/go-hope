@@ -2,161 +2,224 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 
-// Import des deux composants que vous possédez
+// Import des composants administratifs
 import HomeAdminWelcome from "./HomeAdminWelcome";
 import AdminUserManagement from "./Subject/SubjectMangement";
 import ArticleManagement from "./articles/ArticleManagement";
 import CategoryManagement from "./Category/CategoryManagement";
 import CategoriesForumManagement from "./CategoriesForum/CategoriesForumManagement";
+import FicheAdmin from "./fiche/FicheAdmin";
+
+// Structure des menus administratifs
+const adminMenus = [
+  {
+    id: "welcome",
+    label: "Tableau de bord",
+    component: HomeAdminWelcome,
+    icon: "dashboard",
+  },
+  {
+    id: "subjects",
+    label: "Forum",
+    component: AdminUserManagement,
+    icon: "subject",
+  },
+  {
+    id: "forum-categories",
+    label: "Catégories Forum",
+    component: CategoriesForumManagement,
+    icon: "forum",
+  },
+  {
+    id: "articles",
+    label: "Articles",
+    component: ArticleManagement,
+    icon: "article",
+  },
+  {
+    id: "article-categories",
+    label: "Catégories Articles",
+    component: CategoryManagement,
+    icon: "category",
+  },
+  {
+    id: "fiches",
+    label: "Fiches & Articles Partenaires",
+    component: FicheAdmin,
+    icon: "folder",
+  },
+];
 
 const HomeAdmin = () => {
-  const [activeTab, setActiveTab] = useState("Bienvenue");
+  const [activeTab, setActiveTab] = useState("welcome");
   const navigate = useNavigate();
+
   const handleBackClick = () => {
-    // Revient à la page précédente
     navigate(-1);
   };
 
+  // Fonction pour obtenir l'icône en fonction du type
+  const getIcon = (type) => {
+    switch (type) {
+      case "dashboard":
+        return (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+          >
+            <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+          </svg>
+        );
+      case "subject":
+        return (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+          >
+            <path
+              fillRule="evenodd"
+              d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h6a1 1 0 110 2H4a1 1 0 01-1-1z"
+              clipRule="evenodd"
+            />
+          </svg>
+        );
+      case "article":
+        return (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+          >
+            <path
+              fillRule="evenodd"
+              d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z"
+              clipRule="evenodd"
+            />
+          </svg>
+        );
+      case "folder":
+        return (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+          >
+            <path
+              fillRule="evenodd"
+              d="M2 6a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1H8a3 3 0 00-3 3v1.5a1.5 1.5 0 01-3 0V6z"
+              clipRule="evenodd"
+            />
+            <path d="M6 12a2 2 0 012-2h8a2 2 0 012 2v2a2 2 0 01-2 2H2h2a2 2 0 002-2v-2z" />
+          </svg>
+        );
+      case "category":
+        return (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+          >
+            <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z" />
+          </svg>
+        );
+      case "forum":
+        return (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-5 w-5"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+          >
+            <path
+              fillRule="evenodd"
+              d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zM7 8H5v2h2V8zm2 0h2v2H9V8zm6 0h-2v2h2V8z"
+              clipRule="evenodd"
+            />
+          </svg>
+        );
+      default:
+        return null;
+    }
+  };
+
+  const ActiveComponent =
+    adminMenus.find((menu) => menu.id === activeTab)?.component ||
+    HomeAdminWelcome;
+
   return (
-    <div className="min-h-screen bg-gray-100 flex">
-      {/* Menu Vertical */}
-      <nav className="bg-blue-500 text-white w-1/5 min-h-screen p-6 shadow-lg">
-        <ul>
-          <li>
-            <button
-              onClick={handleBackClick}
-              className="flex items-center gap-2 text-orange-500 hover:text-orange-600 transition-colors"
-              title="Retour"
+    <div className="min-h-screen bg-gray-50 flex">
+      {/* Sidebar */}
+      <nav className="bg-gradient-to-b from-[#1D5F84] to-[#164964] text-white w-64 min-h-screen shadow-xl">
+        <div className="p-5 border-b border-blue-700">
+          <h1 className="text-2xl font-bold">Go Hope Admin</h1>
+          <p className="text-sm text-blue-200">Panneau d'administration</p>
+        </div>
+
+        <div className="pt-4">
+          <button
+            onClick={handleBackClick}
+            className="flex items-center gap-2 text-blue-200 hover:text-white pl-5 pb-4 transition-colors"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                style={{ transform: "scaleX(-1)" }}
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M11 17l-5-5m0 0l5-5m-5 5h12"
+              />
+            </svg>
+            <span>Retour au site</span>
+          </button>
+        </div>
+
+        <ul className="mt-2">
+          {adminMenus.map((menu) => (
+            <li key={menu.id}>
+              <button
+                onClick={() => setActiveTab(menu.id)}
+                className={`w-full text-left flex items-center gap-3 py-3 px-5 transition-all duration-200 ${
+                  activeTab === menu.id
+                    ? "bg-white text-[#1D5F84] font-medium border-r-4 border-[#F1731F]"
+                    : "text-gray-100 hover:bg-blue-700"
+                }`}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
-            </button>
-          </li>
-          <li
-            className={`py-4 px-6 text-lg font-semibold cursor-pointer transition-all duration-300 ${
-              activeTab === "Bienvenue"
-                ? "bg-blue-700 rounded text-white"
-                : "hover:bg-blue-600"
-            }`}
-            onClick={() => setActiveTab("Bienvenue")}
-          >
-            Bienvenue
-          </li>
-          <li
-            className={`py-4 px-6 text-lg font-semibold cursor-pointer transition-all duration-300 ${
-              activeTab === "Gestion des Sujets"
-                ? "bg-blue-700 rounded text-white"
-                : "hover:bg-blue-600"
-            }`}
-            onClick={() => setActiveTab("Gestion des Sujets")}
-          >
-            Gestion des Sujets
-          </li>
-          <li
-            className={`py-4 px-6 text-lg font-semibold cursor-pointer transition-all duration-300 ${
-              activeTab === "Gestion des Articles"
-                ? "bg-blue-700 rounded text-white"
-                : "hover:bg-blue-600"
-            }`}
-            onClick={() => setActiveTab("Gestion des Articles")}
-          >
-            Gestion des Articles
-          </li>
-          <li
-            className={`py-4 px-6 text-lg font-semibold cursor-pointer transition-all duration-300 ${
-              activeTab === "Gestion des Catégories articles"
-                ? "bg-blue-700 rounded text-white"
-                : "hover:bg-blue-600"
-            }`}
-            onClick={() => setActiveTab("Gestion des Catégories articles")}
-          >
-            Gestion des Catégories articles
-          </li>
-          <li
-            className={`py-4 px-6 text-lg font-semibold cursor-pointer transition-all duration-300 ${
-              activeTab === "Gestion des Catégories forum"
-                ? "bg-blue-700 rounded text-white"
-                : "hover:bg-blue-600"
-            }`}
-            onClick={() => setActiveTab("Gestion des Catégories forum")}
-          >
-            Gestion des Catégories forum
-          </li>
+                {getIcon(menu.icon)}
+                <span>{menu.label}</span>
+              </button>
+            </li>
+          ))}
         </ul>
       </nav>
 
-      {/* Contenu des Sections avec Animations */}
-      <div className="p-6 w-4/5">
-        <AnimatePresence mode="wait">
-          {activeTab === "Bienvenue" && (
+      {/* Main Content */}
+      <div className="flex-1 p-8">
+        <div className="bg-white rounded-lg shadow-md p-6 min-h-[calc(100vh-4rem)]">
+          <AnimatePresence mode="wait">
             <motion.div
-              key="Bienvenue"
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 50 }}
+              key={activeTab}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.3 }}
+              className="h-full"
             >
-              <HomeAdminWelcome />
+              <ActiveComponent />
             </motion.div>
-          )}
-          {activeTab === "Gestion des Sujets" && (
-            <motion.div
-              key="Gestion des Sujets"
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -50 }}
-              transition={{ duration: 0.3 }}
-            >
-              <AdminUserManagement />
-            </motion.div>
-          )}
-          {activeTab === "Gestion des Articles" && (
-            <motion.div
-              key="Gestion des Articles"
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -50 }}
-              transition={{ duration: 0.3 }}
-            >
-              <ArticleManagement />
-            </motion.div>
-          )}
-          {activeTab === "Gestion des Catégories articles" && (
-            <motion.div
-              key="Gestion des Catégories articles"
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -50 }}
-              transition={{ duration: 0.3 }}
-            >
-              <CategoryManagement />
-            </motion.div>
-          )}
-          {activeTab === "Gestion des Catégories forum" && (
-            <motion.div
-              key="Gestion des Catégories forum"
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -50 }}
-              transition={{ duration: 0.3 }}
-            >
-              <CategoriesForumManagement />
-            </motion.div>
-          )}
-        </AnimatePresence>
+          </AnimatePresence>
+        </div>
       </div>
     </div>
   );

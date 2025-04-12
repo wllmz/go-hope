@@ -88,3 +88,13 @@ export const getAllArticlesPartenaire = async () => {
     throw error.response?.data || error.message;
   }
 };
+
+export const getAllArticlesNews = async () => {
+  try {
+    const response = await axiosInstance.get("/articles/new");
+    return response.data;
+  } catch (error) {
+    // Vérifie si error.response existe, sinon renvoie error.message
+    throw error.response?.data || error.message;
+  }
+};

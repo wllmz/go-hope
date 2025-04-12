@@ -14,6 +14,13 @@ const InfoUser = () => {
   const navigate = useNavigate();
   const { user } = useUserInfo();
 
+  // Logs pour déboguer
+  console.log("User object:", user);
+  console.log("User role:", user?.role);
+
+  const isAdmin = user && user.role === "admin";
+  console.log("isAdmin:", isAdmin);
+
   // Gestion des favoris pour les sujets
   const {
     fetchFavorites,
@@ -102,6 +109,11 @@ const InfoUser = () => {
     navigate(`/articles/${articleId}`);
   };
 
+  // Handler pour naviguer vers la page d'administration
+  const handleAdminClick = () => {
+    navigate("/admin");
+  };
+
   // Permet d'ajouter ou de retirer un favori sur un sujet
   const handleFavorisClickSubject = async (subjectId) => {
     try {
@@ -155,9 +167,41 @@ const InfoUser = () => {
   };
 
   return (
-    <div className="max-w-full mx-auto  bg-white">
+    <div className="max-w-full mx-auto bg-white">
       <div className="bg-gradient-to-b from-[#B3D7EC] to-white p-5">
         <UserProfile user={user} />
+
+        {/* Bouton Admin visible uniquement pour les administrateurs */}
+        {isAdmin && (
+          <div className="mt-4 flex justify-center">
+            <button
+              onClick={handleAdminClick}
+              className="bg-[#1D5F84] hover:bg-[#174963] text-white px-6 py-2 rounded-lg shadow transition-colors duration-200 flex items-center"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5 mr-2"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                />
+              </svg>
+              Accéder à l'administration
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Affichage des sujets créés par l'utilisateur avec possibilité de basculer leur statut de favori */}
