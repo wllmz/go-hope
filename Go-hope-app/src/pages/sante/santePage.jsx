@@ -1,11 +1,14 @@
 import React from "react";
+import Sante from "../../components/fiche/sante/sante";
+import Menu from "../../components/layout/menu";
 
-const santePage = () => {
+const SantePage = () => {
   return (
     <div>
-      <h1>Santé</h1>
+      <Menu />
+      <Sante />
     </div>
   );
 };
 
-export default santePage;
+export default SantePage;

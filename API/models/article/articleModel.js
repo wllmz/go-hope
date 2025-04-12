@@ -81,7 +81,7 @@ const articles = new mongoose.Schema({
   ],
   genre: {
     type: String,
-    enum: ["partenaire", "classique", "sante"],
+    enum: ["partenaire", "classique", "sante", "news"],
     default: "classique",
   },
 });

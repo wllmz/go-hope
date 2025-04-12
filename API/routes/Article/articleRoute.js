@@ -9,6 +9,7 @@ import {
   getArticlesAdmin,
   getArticlesSante,
   getArticlesPartenaire,
+  getArticlesNews,
 } from "../../controllers/article/articleController.js";
 import { verifyToken } from "../../middleware/jwtMiddleware.js";
 import { AdminRole } from "../../middleware/authMiddleware.js";
@@ -29,6 +30,7 @@ router.get("/sante", verifyToken, getArticlesSante);
 // Route pour récupérer tous les articles admin
 router.get("/partenaire", verifyToken, getArticlesPartenaire);
 
+router.get("/new", verifyToken, getArticlesNews);
 // Route pour récupérer tous les articles
 router.get("/", verifyToken, getArticles);
 

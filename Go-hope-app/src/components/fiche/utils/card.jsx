@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-const PartenaireCard = ({ slide }) => {
+const Card = ({ slide }) => {
   const navigate = useNavigate();
 
   return (
@@ -22,7 +22,14 @@ const PartenaireCard = ({ slide }) => {
           <h2 className={`text-xl font-semibold ${slide.titleColor}`}>
             {slide.title}
           </h2>
-          <p className={`${slide.textColor}`}>{slide.description}</p>
+          {slide.isHtml ? (
+            <div
+              className={`${slide.textColor} rich-text-content`}
+              dangerouslySetInnerHTML={{ __html: slide.description }}
+            />
+          ) : (
+            <p className={`${slide.textColor}`}>{slide.description}</p>
+          )}
         </div>
 
         <button
@@ -36,4 +43,4 @@ const PartenaireCard = ({ slide }) => {
   );
 };
 
-export default PartenaireCard;
+export default Card;

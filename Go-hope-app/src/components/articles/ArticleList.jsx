@@ -18,7 +18,11 @@ const ArticleList = ({
   const navigate = useNavigate();
   const location = useLocation();
 
-  const isPartenairesPage = location.pathname.includes("partenaire");
+  // Vérifie si on est sur une page partenaire, news ou santé
+  const isPartenairesPage =
+    location.pathname.includes("partenaire") ||
+    location.pathname.includes("news") ||
+    location.pathname.includes("sante");
 
   // État local pour stocker l'état "favoris" de chaque article
   const [favorites, setFavorites] = useState({});
