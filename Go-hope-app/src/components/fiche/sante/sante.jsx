@@ -69,7 +69,7 @@ const Sante = () => {
                   image: item.image || "/default-health.png",
                   description: item.description,
                   link: `/sante/${item._id}`,
-                  cardColor: "bg-gradient-to-b from-[#B3D7EC] to-[#FDFDFD]",
+                  cardColor: "bg-gradient-to-b from-[#1D5F84] to-[#FDFDFD]",
                   titleColor: "text-[#1D5F84]",
                   textColor: "text-[#0E3043]",
                   buttonColor: "bg-[#F1731F] hover:bg-[#F5943A]",

@@ -16,12 +16,12 @@ const DesktopLayout = () => {
             className={`p-2 pt-4 pb-4 flex-1 rounded-xl shadow-md flex flex-col ${slide.cardColor}`}
           >
             <img
-              className="block mx-auto mb-4 max-w-xs object-contain w-[250px]"
+              className="block mx-auto mb-4 max-w-xs object-contain w-[250px] "
               src={slide.image}
               alt={slide.title}
             />
             <h2
-              className={`text-lg xl:text-xl ${slide.titleColor} text-center mb-3`}
+              className={`text-lg xl:text-xl ${slide.titleColor} text-center mb-3 font-confiteria`}
             >
               {slide.title}
             </h2>
