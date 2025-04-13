@@ -64,7 +64,7 @@ const News = () => {
                   image: item.image || "/default-news.png",
                   description: item.description,
                   link: `/news/${item._id}`,
-                  cardColor: "bg-gradient-to-b from-[#B3D7EC] to-[#FDFDFD]",
+                  cardColor: "bg-gradient-to-b from-[#F5943A] to-[#FFF6ED]",
                   titleColor: "text-[#1D5F84]",
                   textColor: "text-[#0E3043]",
                   buttonColor: "bg-[#F1731F] hover:bg-[#F5943A]",

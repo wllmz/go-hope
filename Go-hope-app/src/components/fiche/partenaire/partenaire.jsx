@@ -60,6 +60,7 @@ const Partenaire = () => {
               <Card
                 key={partenaire._id}
                 slide={{
+                  title: partenaire.titre,
                   image: partenaire.image || "/default-partner.png",
                   description: partenaire.description,
                   link: `/partenaires/${partenaire._id}`,

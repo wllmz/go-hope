@@ -154,7 +154,7 @@ const NewsDetail = () => {
                 />
               </svg>
             </button>
-            <h1 className="text-[#F1731F] font-medium">{news.titre}</h1>
+            <h1 className="text-[#F1731F] font-medium ">{news.titre}</h1>
           </div>
 
           {/* Image principale si présente */}
@@ -173,7 +173,7 @@ const NewsDetail = () => {
           {/* Articles associés si présents */}
           {news.article && (
             <div className="mt-10 rounded-xl p-6">
-              <h2 className="text-xl font-semibold text-[#1D5F84] mb-4">
+              <h2 className="text-xl font-semibold text-[#1D5F84] mb-4 font-confiteria">
                 {news.article.titre}
               </h2>
               <div

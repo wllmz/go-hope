@@ -7,7 +7,7 @@ const FirstComponent = () => {
   const { user } = useUserInfo();
 
   return (
-    <div className=" bg-gradient-to-b from-[#B3D7EC] to-[#FDFDFD]   ">
+    <div className=" bg-gradient-to-b from-[#B3D7EC] to-[white]   ">
       <p className="text-xl p-4 pt-6 text-[#0E3043]  ">
         Bonjour {user?.username} !{" "}
       </p>
