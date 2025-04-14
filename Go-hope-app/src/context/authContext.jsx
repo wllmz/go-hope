@@ -18,6 +18,10 @@ export const AuthProvider = ({ children }) => {
         console.log("Vérification de l'utilisateur...");
         const authenticatedUser = await getAuthenticatedUser(); // Appelle /me
         console.log("Utilisateur authentifié :", authenticatedUser);
+        console.log(
+          "Structure de l'utilisateur:",
+          JSON.stringify(authenticatedUser, null, 2)
+        );
 
         if (authenticatedUser) {
           setUser(authenticatedUser); // Stocke l'utilisateur
@@ -37,8 +41,18 @@ export const AuthProvider = ({ children }) => {
     fetchUser();
   }, []);
 
+  const hasRole = (role) => {
+    console.log("Vérification du rôle:", role);
+    console.log("User object:", user);
+
+    if (user && user.user && Array.isArray(user.user.roles)) {
+      return user.user.roles.includes(role);
+    }
+
+    return false;
+  };
+
   const isAuthenticated = () => !!user; // Utilisateur authentifié si `user` existe
-  const hasRole = (role) => user?.roles?.includes(role); // Vérifier les rôles
 
   const logout = () => {
     document.cookie =

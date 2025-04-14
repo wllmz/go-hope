@@ -2,7 +2,7 @@ import React from "react";
 import bg from "../../../../assets/papillon-blanc.png";
 import arrow from "../../../../assets/arrow.png";
 
-const FirstComponent = () => {
+const ThirdComponent = () => {
   return (
     <div className="flex flex-col  items-center mb-6 mt-4 sm:mt-15 ">
       <div className="w-full text-center items-center mt-5 mb-5">
@@ -71,7 +71,7 @@ const FirstComponent = () => {
             // onClick={handleNextStep}
             className="w-sm sm:w-[300px] bg-[#F5943A] hover:bg-[#F1731F] text-white font-semibold py-2 px-2 rounded-lg shadow-md transition duration-300 text-lg"
           >
-            Découvrir le projet
+            Devenir patient aidant
           </button>
         </div>
       </div>
@@ -79,4 +79,4 @@ const FirstComponent = () => {
   );
 };
 
-export default FirstComponent;
+export default ThirdComponent;

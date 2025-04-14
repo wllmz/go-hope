@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import useFiche from "../../../hooks/fiche/useFiche";
-import Article from "./article";
+import Article from "./articleSante";
 
 const SanteDetail = () => {
   const { id } = useParams();
@@ -170,7 +170,7 @@ const SanteDetail = () => {
           {/* Articles associés si présents */}
           {sante.article && (
             <div className="mt-10 rounded-xl p-6">
-              <h2 className="text-xl font-semibold text-[#1D5F84] mb-4">
+              <h2 className="text-xl font-semibold text-[#F1731F] mb-4 font-confiteria">
                 {sante.article.titre}
               </h2>
               <div

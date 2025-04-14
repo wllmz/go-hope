@@ -62,7 +62,7 @@ const AllArticle = () => {
 
   const handleNavigateToAllArticles = () => {
     if (isSantePage) {
-      navigate("/la-sep");
+      navigate("/sante/la-sep");
     }
   };
 
