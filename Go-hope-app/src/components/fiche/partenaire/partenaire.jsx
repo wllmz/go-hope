@@ -5,25 +5,28 @@ import useFiche from "../../../hooks/fiche/useFiche";
 
 const Partenaire = () => {
   const navigate = useNavigate();
-  const [partenaires, setPartenaires] = useState([]);
+  const [partenaire, setPartenaire] = useState([]);
   const [loading, setLoading] = useState(true);
   const { fetchFichesByCategory } = useFiche();
 
   useEffect(() => {
-    const loadPartenaires = async () => {
+    const loadPartenaire = async () => {
       try {
-        const partenairesFiches = await fetchFichesByCategory("partenaire");
-        if (partenairesFiches && partenairesFiches.length > 0) {
-          setPartenaires(partenairesFiches);
+        const partenaireFiches = await fetchFichesByCategory("partenaire");
+        if (partenaireFiches && partenaireFiches.length > 0) {
+          setPartenaire(partenaireFiches);
         }
       } catch (error) {
-        console.error("Erreur lors du chargement des partenaires:", error);
+        console.error(
+          "Erreur lors du chargement des informations partenaire:",
+          error
+        );
       } finally {
         setLoading(false);
       }
     };
 
-    loadPartenaires();
+    loadPartenaire();
   }, [fetchFichesByCategory]);
 
   return (
@@ -48,22 +51,24 @@ const Partenaire = () => {
             />
           </svg>
         </button>
-        <h1 className="font-bold text-[#F1731F]">Les partenaires</h1>
+        <h1 className="font-bold text-[#F1731F]">Partenaire</h1>
       </div>
 
       {loading ? (
-        <div className="text-center py-10">Chargement des partenaires...</div>
+        <div className="text-center py-10">
+          Chargement des informations partenaire...
+        </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {partenaires.length > 0 ? (
-            partenaires.map((partenaire) => (
+          {partenaire.length > 0 ? (
+            partenaire.map((item) => (
               <Card
-                key={partenaire._id}
+                key={item._id}
                 slide={{
-                  title: partenaire.titre,
-                  image: partenaire.image || "/default-partner.png",
-                  description: partenaire.description,
-                  link: `/partenaires/${partenaire._id}`,
+                  title: item.titre,
+                  image: item.image || "/default-partner.png",
+                  description: item.description,
+                  link: `/partenaires/${item._id}`,
                   cardColor: "bg-gradient-to-b from-[#B3D7EC] to-[#FDFDFD]",
                   titleColor: "text-[#1D5F84]",
                   textColor: "text-[#0E3043]",
@@ -75,7 +80,7 @@ const Partenaire = () => {
             ))
           ) : (
             <div className="text-center py-10 col-span-2">
-              Aucun partenaire trouvé
+              Aucune information partenaire trouvée
             </div>
           )}
         </div>

@@ -19,7 +19,9 @@ const Card = ({ slide }) => {
         </div>
 
         <div className="text-center space-y-4">
-          <h2 className={`text-xl font-semibold ${slide.titleColor}`}>
+          <h2
+            className={`text-xl font-semibold ${slide.titleColor} font-confiteria`}
+          >
             {slide.title}
           </h2>
           {slide.isHtml ? (

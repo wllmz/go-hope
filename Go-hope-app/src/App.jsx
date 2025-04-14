@@ -26,9 +26,13 @@ import AdminPage from "./pages/admin/adminPage";
 import PartenairesPage from "./pages/partenaire/partenairesPage";
 import NewsPage from "./pages/new/newsPage";
 import SantePage from "./pages/sante/santePage";
-import PartenaireDetail from "./components/fiche/partenaire/PartenaireDetail";
-import NewsDetail from "./components/fiche/news/NewsDetail";
-import SanteDetail from "./components/fiche/sante/SanteDetail";
+import PartenaireDetail from "./pages/partenaire/partenaireDetailPage";
+import NewsDetail from "./pages/new/newDetailPage";
+import SanteDetail from "./pages/sante/santeDetailPage";
+import ArticleAll from "./pages/new/articleAllNews";
+import ArticleAllPartenaire from "./pages/partenaire/articleAllPartenaire";
+import SanteAllArticle from "./pages/sante/santeAllArticle";
+import ProjetPage from "./pages/projet/projetPage";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
@@ -168,7 +172,7 @@ function App() {
             <Route
               path="/admin"
               element={
-                <PrivateRoute>
+                <PrivateRoute role="admin">
                   <AdminPage />
                 </PrivateRoute>
               }
@@ -221,6 +225,38 @@ function App() {
               element={
                 <PrivateRoute>
                   <SanteDetail />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/news/la-sep"
+              element={
+                <PrivateRoute>
+                  <ArticleAll />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/partenaire/la-sep"
+              element={
+                <PrivateRoute>
+                  <ArticleAllPartenaire />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/sante/la-sep"
+              element={
+                <PrivateRoute>
+                  <SanteAllArticle />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/projet"
+              element={
+                <PrivateRoute>
+                  <ProjetPage />
                 </PrivateRoute>
               }
             />

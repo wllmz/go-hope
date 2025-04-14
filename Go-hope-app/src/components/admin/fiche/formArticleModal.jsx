@@ -7,7 +7,13 @@ import useArticle from "../../../hooks/fiche/useArticle";
 import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
 
-const FormArticleModal = ({ isOpen, onClose, onSuccess, article }) => {
+const FormArticleModal = ({
+  isOpen,
+  onClose,
+  onSuccess,
+  article,
+  defaultFiche,
+}) => {
   const [formData, setFormData] = useState({
     titre: "",
     description: "",
@@ -64,9 +70,22 @@ const FormArticleModal = ({ isOpen, onClose, onSuccess, article }) => {
     if (article) {
       console.log("Article à modifier:", article);
       console.log("Description de l'article:", article.description);
+      console.log("Fiche associée:", article.fiche);
 
       // Réinitialiser l'état de l'éditeur
       setEditorLoaded(false);
+
+      // Trouver la fiche associée à l'article s'il y en a une
+      let ficheTitre = "";
+      if (article.fiche && fiches.length > 0) {
+        const associatedFiche = fiches.find(
+          (f) => f._id === article.fiche._id || f._id === article.fiche
+        );
+        if (associatedFiche) {
+          ficheTitre = associatedFiche.titre;
+          console.log("Fiche trouvée:", associatedFiche.titre);
+        }
+      }
 
       // Mettre à jour les données du formulaire avec un délai
       setTimeout(() => {
@@ -74,22 +93,32 @@ const FormArticleModal = ({ isOpen, onClose, onSuccess, article }) => {
           titre: article.titre || "",
           description: article.description || "",
           image: article.image || "",
-          ficheTitre: article.ficheTitre || article.fiche?.titre || "",
+          ficheTitre: ficheTitre,
         });
         // Marquer l'éditeur comme chargé après avoir défini le contenu
         setEditorLoaded(true);
       }, 100);
     } else {
-      // Réinitialiser le formulaire si aucun article n'est sélectionné
-      setFormData({
-        titre: "",
-        description: "",
-        image: "",
-        ficheTitre: "",
-      });
+      // Pour un nouvel article, utiliser la fiche par défaut si elle existe
+      if (defaultFiche && fiches.length > 0) {
+        const fiche = fiches.find((f) => f._id === defaultFiche);
+        setFormData({
+          titre: "",
+          description: "",
+          image: "",
+          ficheTitre: fiche ? fiche.titre : "",
+        });
+      } else {
+        setFormData({
+          titre: "",
+          description: "",
+          image: "",
+          ficheTitre: "",
+        });
+      }
       setEditorLoaded(true);
     }
-  }, [article]);
+  }, [article, defaultFiche, fiches]);
 
   // Réinitialiser l'éditeur quand la modal s'ouvre
   useEffect(() => {

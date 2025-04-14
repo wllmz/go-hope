@@ -16,9 +16,16 @@ const InfoUser = () => {
 
   // Logs pour déboguer
   console.log("User object:", user);
-  console.log("User role:", user?.role);
 
-  const isAdmin = user && user.role === "admin";
+  // Vérification correcte du rôle admin
+  const isAdmin =
+    user &&
+    ((user.user &&
+      Array.isArray(user.user.roles) &&
+      user.user.roles.includes("admin")) ||
+      (Array.isArray(user.roles) && user.roles.includes("admin")) ||
+      user.role === "admin");
+
   console.log("isAdmin:", isAdmin);
 
   // Gestion des favoris pour les sujets
@@ -175,7 +182,7 @@ const InfoUser = () => {
         {isAdmin && (
           <div className="mt-4 flex justify-center">
             <button
-              onClick={handleAdminClick}
+              onClick={() => navigate("/admin")}
               className="bg-[#1D5F84] hover:bg-[#174963] text-white px-6 py-2 rounded-lg shadow transition-colors duration-200 flex items-center"
             >
               <svg

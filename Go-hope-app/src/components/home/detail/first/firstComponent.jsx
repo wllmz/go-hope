@@ -1,10 +1,12 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import bg from "../../../../assets/papillon-blanc.png";
 import home from "../../../../assets/home-first.png";
 import { useUserInfo } from "../../../../hooks/user/useUserInfo";
 
 const FirstComponent = () => {
   const { user } = useUserInfo();
+  const navigate = useNavigate();
 
   return (
     <div className=" bg-gradient-to-b from-[#B3D7EC] to-[white]   ">
@@ -38,7 +40,7 @@ const FirstComponent = () => {
             {/* Section pour le bouton en dessous */}
             <div className="flex justify-center mt-4">
               <button
-                // onClick={handleNextStep}
+                onClick={() => navigate("/projet")}
                 className="w-[200px] sm:w-[300px] bg-[#F5943A] hover:bg-[#F1731F] text-white font-semibold py-2 px-2 rounded-lg shadow-md transition duration-300 text-lg"
               >
                 Découvrir le projet
