@@ -59,22 +59,26 @@ const suiviSchema = new mongoose.Schema({
       },
       niveau: {
         type: String,
-        enum: ["normale", "basse", "forte", "faible"],
+        enum: ["normale", "basse", "forte", "faible", null],
+        default: null,
       },
     },
   ],
   troublesCognitifs: {
     memoire: {
       type: String,
-      enum: ["normale", "basse", "haute"],
+      enum: ["normale", "basse", "forte"],
+      default: null,
     },
     attention: {
       type: String,
-      enum: ["normale", "basse", "haute"],
+      enum: ["normale", "basse", "forte"],
+      default: null,
     },
     brouillardCerebral: {
       type: String,
-      enum: ["normale", "basse", "haute"],
+      enum: ["normale", "basse", "forte"],
+      default: null,
     },
   },
   fatigue: {

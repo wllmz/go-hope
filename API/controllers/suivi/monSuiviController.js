@@ -318,6 +318,7 @@ export const updateTrackingEntry = async (req, res) => {
     console.log("=== Début updateTrackingEntry ===");
     console.log("Headers:", req.headers);
     console.log("Body:", req.body);
+    console.log("Params:", req.params);
 
     const authId = req.user.id;
     const { category, entryId } = req.params;
@@ -332,38 +333,34 @@ export const updateTrackingEntry = async (req, res) => {
       });
     }
 
-    // Trouver le suivi de l'utilisateur
-    const suivi = await suiviModel.findOne({ user: authId });
-    if (!suivi) {
-      return res.status(404).json({ message: "Suivi non trouvé" });
-    }
+    // Trouver le suivi qui contient l'entrée avec l'ID spécifié
+    const suivi = await suiviModel.findOne({
+      user: authId,
+      [`${category}._id`]: entryId,
+    });
 
-    // Vérifier que la catégorie existe dans le suivi
-    if (!suivi[category] || !Array.isArray(suivi[category])) {
+    if (!suivi) {
       return res.status(404).json({
-        message: `Aucune entrée trouvée pour la catégorie ${category}`,
+        message: `Aucun suivi trouvé contenant l'entrée avec l'ID ${entryId} dans la catégorie ${category}`,
       });
     }
 
-    // Trouver et mettre à jour l'entrée spécifique
-    const updatedEntries = suivi[category].map((item) => {
+    console.log("Suivi trouvé:", suivi);
+
+    // Mettre à jour l'entrée spécifique
+    suivi[category] = suivi[category].map((item) => {
       if (item._id.toString() === entryId) {
-        return {
-          ...item,
-          ...updates,
-        };
+        return { ...item, ...updates };
       }
       return item;
     });
 
-    // Mettre à jour le document
-    suivi[category] = updatedEntries;
-    await suivi.save();
+    const updatedSuivi = await suivi.save();
+    console.log("Suivi mis à jour avec succès:", updatedSuivi);
 
-    console.log(`Entrée ${category} mise à jour avec succès`);
     res.status(200).json({
       message: `Entrée ${category} mise à jour avec succès`,
-      suivi,
+      suivi: updatedSuivi,
     });
   } catch (error) {
     console.error("Erreur détaillée:", {
@@ -403,28 +400,62 @@ export const updateSimpleField = async (req, res) => {
       });
     }
 
-    // Trouver le suivi existant
-    const suivi = await suiviModel.findOne({
+    // Formatage de la date en tenant compte du fuseau horaire français
+    const targetDate = new Date(date);
+    // Ajuster pour le fuseau horaire français (UTC+1)
+    targetDate.setHours(targetDate.getHours() + 1);
+    targetDate.setHours(0, 0, 0, 0);
+
+    const nextDay = new Date(targetDate);
+    nextDay.setDate(nextDay.getDate() + 1);
+
+    console.log("Date reçue:", date);
+    console.log("Date cible formatée (avec fuseau horaire):", targetDate);
+    console.log("Jour suivant:", nextDay);
+
+    // Trouver ou créer le suivi
+    let suivi = await suiviModel.findOne({
       user: authId,
       date: {
-        $gte: new Date(date + "T00:00:00.000Z"),
-        $lte: new Date(date + "T23:59:59.999Z"),
+        $gte: targetDate,
+        $lt: nextDay,
       },
     });
 
+    console.log("Suivi trouvé:", suivi);
+
+    // Si aucun suivi n'existe pour cette date, en créer un nouveau
     if (!suivi) {
-      return res.status(404).json({ message: "Suivi non trouvé" });
+      console.log("Création d'un nouveau suivi pour la date:", targetDate);
+      suivi = new suiviModel({
+        user: authId,
+        date: targetDate,
+      });
     }
 
     // Mettre à jour le champ
     if (field === "troublesCognitifs") {
-      suivi.troublesCognitifs = value;
+      // Initialiser troublesCognitifs s'il n'existe pas
+      if (!suivi.troublesCognitifs) {
+        suivi.troublesCognitifs = {
+          memoire: null,
+          attention: null,
+          brouillardCerebral: null,
+        };
+      }
+
+      // Mettre à jour uniquement les champs fournis
+      Object.keys(value).forEach((key) => {
+        if (value[key] !== undefined && key in suivi.troublesCognitifs) {
+          suivi.troublesCognitifs[key] = value[key];
+        }
+      });
     } else {
       suivi[field] = value;
     }
 
     const updatedSuivi = await suivi.save();
-    console.log("Champ mis à jour avec succès:", updatedSuivi);
+    console.log("Suivi mis à jour avec succès:", updatedSuivi);
 
     res.status(200).json({
       message: `Champ ${field} mis à jour avec succès`,
@@ -438,6 +469,93 @@ export const updateSimpleField = async (req, res) => {
     });
     res.status(500).json({
       message: "Erreur lors de la mise à jour du champ",
+      error: error.message,
+    });
+  }
+};
+
+// Mettre à jour les troubles cognitifs
+export const updateTroublesCognitifs = async (req, res) => {
+  try {
+    console.log("=== Début updateTroublesCognitifs ===");
+    console.log("Headers:", req.headers);
+    console.log("Body:", req.body);
+
+    const authId = req.user.id;
+    const { date, troublesCognitifs } = req.body;
+
+    if (!date || !troublesCognitifs) {
+      return res.status(400).json({
+        message: "La date et les troubles cognitifs sont requis",
+      });
+    }
+
+    // Formatage de la date en tenant compte du fuseau horaire français
+    const targetDate = new Date(date);
+    targetDate.setHours(targetDate.getHours() + 1);
+    targetDate.setHours(0, 0, 0, 0);
+
+    const nextDay = new Date(targetDate);
+    nextDay.setDate(nextDay.getDate() + 1);
+
+    console.log("Date reçue:", date);
+    console.log("Date cible formatée:", targetDate);
+    console.log("Troubles cognitifs reçus:", troublesCognitifs);
+
+    // Trouver ou créer le suivi
+    let suivi = await suiviModel.findOne({
+      user: authId,
+      date: {
+        $gte: targetDate,
+        $lt: nextDay,
+      },
+    });
+
+    console.log("Suivi trouvé:", suivi);
+
+    // Si aucun suivi n'existe pour cette date, en créer un nouveau
+    if (!suivi) {
+      console.log("Création d'un nouveau suivi pour la date:", targetDate);
+      suivi = new suiviModel({
+        user: authId,
+        date: targetDate,
+      });
+    }
+
+    // Initialiser troublesCognitifs s'il n'existe pas
+    if (!suivi.troublesCognitifs) {
+      suivi.troublesCognitifs = {
+        memoire: null,
+        attention: null,
+        brouillardCerebral: null,
+      };
+    }
+
+    // Mettre à jour uniquement les champs fournis
+    Object.keys(troublesCognitifs).forEach((key) => {
+      if (
+        troublesCognitifs[key] !== undefined &&
+        key in suivi.troublesCognitifs
+      ) {
+        suivi.troublesCognitifs[key] = troublesCognitifs[key];
+      }
+    });
+
+    const updatedSuivi = await suivi.save();
+    console.log("Suivi mis à jour avec succès:", updatedSuivi);
+
+    res.status(200).json({
+      message: "Troubles cognitifs mis à jour avec succès",
+      suivi: updatedSuivi,
+    });
+  } catch (error) {
+    console.error("Erreur détaillée:", {
+      message: error.message,
+      stack: error.stack,
+      name: error.name,
+    });
+    res.status(500).json({
+      message: "Erreur lors de la mise à jour des troubles cognitifs",
       error: error.message,
     });
   }

@@ -1,59 +1,60 @@
 import React, { useState, useEffect } from "react";
-import { Box } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import TrackingTabs from "../../../tracking/TrackingTabs";
 import MotriciteSection from "../../../tracking/sections/MotriciteSection";
 import DouleursSection from "../../../tracking/sections/DouleursSection";
 import Calendar from "../../../tracking/components/Calendar";
 import useSuivi from "../../../../hooks/suivi/useSuivi";
 import { format, startOfDay } from "date-fns";
+import TroublesCognitifsSection from "../../../tracking/sections/TroublesCognitifsSection";
 
 const FirstComponentUser = () => {
   const [activeTab, setActiveTab] = useState("motricite");
-  const [selectedDate, setSelectedDate] = useState(startOfDay(new Date()));
-  const [showHistory, setShowHistory] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(null);
   const [data, setData] = useState({
     motricite: [],
     douleurs: [],
+    troublesCognitifs: {},
   });
   const {
     getSuiviByDate,
     createSuivi,
     updateTrackingEntry,
     removeTrackingEntry,
+    updateTroublesCognitifs,
   } = useSuivi();
-
-  const handleTabChange = (newTab) => {
-    setActiveTab(newTab);
-  };
 
   const handleDateSelect = async (date) => {
     try {
-      console.log("handleDateSelect - Date sélectionnée:", date);
       setSelectedDate(date);
       const formattedDate = format(date, "yyyy-MM-dd");
-      console.log("handleDateSelect - Date formatée:", formattedDate);
-
       const response = await getSuiviByDate(formattedDate);
-      console.log("handleDateSelect - Réponse complète de l'API:", response);
 
       if (response?.suivi) {
-        console.log("handleDateSelect - Données trouvées:", response.suivi);
-        setData((prev) => ({
-          ...prev,
+        setData({
           motricite: response.suivi.motricité || [],
           douleurs: response.suivi.douleurs || [],
-        }));
+          troublesCognitifs: response.suivi.troublesCognitifs || {},
+        });
       } else {
-        console.log("handleDateSelect - Aucune donnée trouvée");
-        setData((prev) => ({
-          ...prev,
+        setData({
           motricite: [],
           douleurs: [],
-        }));
+          troublesCognitifs: {},
+        });
       }
     } catch (error) {
-      console.error("handleDateSelect - Erreur:", error);
+      console.error("Erreur lors de la récupération des données:", error);
     }
+  };
+
+  const handleHistoryClick = async () => {
+    const today = startOfDay(new Date());
+    handleDateSelect(today);
+  };
+
+  const handleTabChange = (newTab) => {
+    setActiveTab(newTab);
   };
 
   const handleCreateSuivi = async (zoneData) => {
@@ -92,7 +93,8 @@ const FirstComponentUser = () => {
 
   const handleUpdateNiveau = async (entryId, newNiveau) => {
     try {
-      const response = await getSuiviByDate(selectedDate);
+      const formattedDate = format(selectedDate, "yyyy-MM-dd");
+      const response = await getSuiviByDate(formattedDate);
       const suiviId = response.suivi._id;
 
       await updateTrackingEntry(
@@ -101,7 +103,6 @@ const FirstComponentUser = () => {
         entryId,
         { niveau: newNiveau }
       );
-
       setData((prev) => ({
         ...prev,
         [activeTab]: prev[activeTab].map((entry) =>
@@ -150,11 +151,18 @@ const FirstComponentUser = () => {
     }
   };
 
-  const handleHistoryClick = () => {
-    setShowHistory(true);
+  const handleUpdateTroublesCognitifs = async (updatedData) => {
+    try {
+      const formattedDate = format(selectedDate, "yyyy-MM-dd");
+      await updateTroublesCognitifs(formattedDate, updatedData);
+      setData((prev) => ({
+        ...prev,
+        troublesCognitifs: updatedData,
+      }));
+    } catch (error) {
+      console.error("Erreur mise à jour troubles cognitifs:", error);
+    }
   };
-
-  const shouldShowContent = selectedDate || showHistory;
 
   const renderContent = () => {
     console.log("renderContent - Données actuelles:", data);
@@ -179,6 +187,14 @@ const FirstComponentUser = () => {
             onUpdateNiveau={handleUpdateNiveau}
             onCreate={handleCreateSuivi}
             onDeleteEntry={handleDeleteEntry}
+          />
+        );
+      case "troublesCognitifs":
+        return (
+          <TroublesCognitifsSection
+            data={data.troublesCognitifs}
+            selectedDate={selectedDate}
+            onUpdateTroublesCognitifs={handleUpdateTroublesCognitifs}
           />
         );
       default:
@@ -206,10 +222,35 @@ const FirstComponentUser = () => {
       }}
     >
       <Calendar selectedDate={selectedDate} onDateSelect={handleDateSelect} />
-      {shouldShowContent && (
-        <TrackingTabs activeTab={activeTab} onTabChange={handleTabChange} />
+
+      {!selectedDate && (
+        <Button
+          variant="contained"
+          onClick={handleHistoryClick}
+          sx={{
+            backgroundColor: "#FFA726",
+            color: "white",
+            "&:hover": {
+              backgroundColor: "#FFA726/80",
+            },
+            borderRadius: "25px",
+            padding: "12px 24px",
+            textTransform: "none",
+            fontSize: "16px",
+            fontWeight: "400",
+            boxShadow: "none",
+          }}
+        >
+          Accédez à mon historique
+        </Button>
       )}
-      {renderContent()}
+
+      {selectedDate && (
+        <>
+          <TrackingTabs activeTab={activeTab} onTabChange={handleTabChange} />
+          {renderContent()}
+        </>
+      )}
     </Box>
   );
 };

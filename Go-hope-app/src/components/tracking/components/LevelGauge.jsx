@@ -74,10 +74,16 @@ const LevelText = styled(Box)(({ niveau }) => ({
   },
 }));
 
-const LEVEL_ICONS = {
+const MOTRICITE_ICONS = {
   basse: Frown,
   normale: Smile,
   forte: Meh,
+};
+
+const DOULEURS_ICONS = {
+  basse: Smile,
+  normale: Meh,
+  forte: Frown,
 };
 
 const LEVEL_LABELS = {
@@ -86,7 +92,7 @@ const LEVEL_LABELS = {
   forte: "Forte",
 };
 
-const LevelGauge = ({ niveau = null, onNiveauChange }) => {
+const LevelGauge = ({ niveau = null, onNiveauChange, type = "motricite" }) => {
   const handleClick = (event) => {
     const rect = event.currentTarget.getBoundingClientRect();
     const x = event.clientX - rect.left;
@@ -102,12 +108,16 @@ const LevelGauge = ({ niveau = null, onNiveauChange }) => {
       newNiveau = "forte";
     }
 
-    if (onNiveauChange) {
+    if (onNiveauChange && typeof onNiveauChange === "function") {
       onNiveauChange(newNiveau);
     }
   };
 
-  const Icon = niveau ? LEVEL_ICONS[niveau] : null;
+  const Icon = niveau
+    ? type === "motricite"
+      ? MOTRICITE_ICONS[niveau]
+      : DOULEURS_ICONS[niveau]
+    : null;
 
   return (
     <GaugeContainer onClick={handleClick}>

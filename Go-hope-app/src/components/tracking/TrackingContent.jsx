@@ -22,7 +22,7 @@ const TrackingContent = ({ activeTab, data, onUpdate }) => {
         return (
           <TroublesCognitifsSection
             data={data?.troublesCognitifs}
-            onUpdate={onUpdate}
+            onUpdateNiveau={onUpdate}
           />
         );
       case "douleurs":

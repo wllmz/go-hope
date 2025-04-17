@@ -28,7 +28,7 @@ const TABS = [
   { id: "humeurs", label: "Humeurs" },
   { id: "douleurs", label: "Douleurs" },
   { id: "fatigue", label: "Fatigue" },
-  { id: "troubles", label: "Troubles cognitifs" },
+  { id: "troublesCognitifs", label: "Troubles cognitifs" },
 ];
 
 const TrackingTabs = ({ activeTab, onTabChange }) => {
