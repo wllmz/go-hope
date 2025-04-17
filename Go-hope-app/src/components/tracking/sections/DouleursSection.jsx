@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Box, Button, IconButton, styled } from "@mui/material";
 import LevelGauge from "../components/LevelGauge";
 import { Add, Close } from "@mui/icons-material";
-import { format } from "date-fns";
 import SelectionModal from "./SelectionModal";
 
 const Container = styled(Box)({
@@ -71,15 +70,19 @@ const DeleteButton = styled(IconButton)({
   },
 });
 
-const MotriciteSection = ({
-  selectedDate,
+const DouleursSection = ({
   data = [],
-  onUpdateNiveau,
   onCreate,
+  onUpdateNiveau,
   onDeleteEntry,
 }) => {
   const [showHistory, setShowHistory] = useState(false);
   const [showModal, setShowModal] = useState(false);
+
+  useEffect(() => {
+    console.log("DouleursSection - Données reçues:", data);
+    console.log("DouleursSection - onCreate:", onCreate);
+  }, [data, onCreate]);
 
   const handleSelection = async (selection) => {
     console.log("Nouvelle sélection:", selection);
@@ -90,7 +93,7 @@ const MotriciteSection = ({
         const newZone = {
           zone: zone.zone,
           side: zone.side,
-          niveau: null,
+          niveau: "normale",
         };
 
         await onCreate(newZone);
@@ -144,7 +147,7 @@ const MotriciteSection = ({
     setShowHistory(true);
   };
 
-  const shouldShowContent = selectedDate || showHistory;
+  const shouldShowContent = true;
 
   return (
     <Container>
@@ -156,7 +159,7 @@ const MotriciteSection = ({
 
       {shouldShowContent && (
         <>
-          {data.length > 0 && (
+          {data && data.length > 0 ? (
             <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
               {data.map((zone, index) => (
                 <ZoneItem key={index}>
@@ -177,9 +180,13 @@ const MotriciteSection = ({
                 </ZoneItem>
               ))}
             </Box>
+          ) : (
+            <Box sx={{ textAlign: "center", color: "#666", mt: 2 }}>
+              Aucune douleur enregistrée
+            </Box>
           )}
 
-          <Box sx={{ display: "flex", justifyContent: "center" }}>
+          <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
             <AddButton onClick={handleAddClick}>
               <Add />
             </AddButton>
@@ -192,11 +199,10 @@ const MotriciteSection = ({
           open={showModal}
           onClose={handleModalClose}
           onSelect={handleSelection}
-          selectedDate={selectedDate}
         />
       )}
     </Container>
   );
 };
 
-export default MotriciteSection;
+export default DouleursSection;

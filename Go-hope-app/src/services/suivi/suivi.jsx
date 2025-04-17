@@ -12,10 +12,14 @@ const validateSide = (side) => {
 };
 
 const validateNiveau = (niveau) => {
+  // Si le niveau est null, on le retourne tel quel
+  if (niveau === null) return null;
+
   const validNiveaux = ["normale", "basse", "forte"];
-  return validNiveaux.includes(niveau.toLowerCase())
+  // Si le niveau n'est pas dans les valeurs valides, on retourne null
+  return validNiveaux.includes(niveau?.toLowerCase())
     ? niveau.toLowerCase()
-    : niveau;
+    : null;
 };
 
 // Créer ou ajouter des entrées au suivi
@@ -26,11 +30,14 @@ export const createSuivi = async (suiviData, date) => {
     const dataToSend = {
       ...rest,
       motricité:
-        motricité?.map((zone) => ({
-          zone: validateZone(zone.zone),
-          side: validateSide(zone.side),
-          niveau: validateNiveau(zone.niveau),
-        })) || [],
+        motricité?.map((zone) => {
+          // On garde niveau: null explicitement si c'est la valeur
+          return {
+            zone: validateZone(zone.zone),
+            side: validateSide(zone.side),
+            niveau: zone.niveau === null ? null : validateNiveau(zone.niveau),
+          };
+        }) || [],
       date: rest.date,
     };
 

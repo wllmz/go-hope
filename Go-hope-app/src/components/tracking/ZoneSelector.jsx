@@ -1,18 +1,21 @@
 import React, { useState } from "react";
 import { Box, Container } from "@mui/material";
 import TrackingTabs from "./TrackingTabs";
-import ZoneList from "./ZoneList";
+import TrackingContent from "./TrackingContent";
 
 const ZoneSelector = () => {
   const [activeTab, setActiveTab] = useState("motricite");
-  const [zones, setZones] = useState([]);
+  const [data, setData] = useState({});
 
   const handleTabChange = (newValue) => {
     setActiveTab(newValue);
   };
 
-  const handleAddZone = (newZone) => {
-    setZones([...zones, newZone]);
+  const handleUpdate = (type, newData) => {
+    setData((prevData) => ({
+      ...prevData,
+      [activeTab]: newData,
+    }));
   };
 
   return (
@@ -26,7 +29,11 @@ const ZoneSelector = () => {
         }}
       >
         <TrackingTabs activeTab={activeTab} onTabChange={handleTabChange} />
-        <ZoneList zones={zones} onAddZone={handleAddZone} type={activeTab} />
+        <TrackingContent
+          activeTab={activeTab}
+          data={data}
+          onUpdate={handleUpdate}
+        />
       </Box>
     </Container>
   );

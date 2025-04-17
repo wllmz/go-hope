@@ -26,7 +26,7 @@ const TABS = [
   { id: "motricite", label: "Motricité" },
   { id: "sensoriel", label: "Sensoriel" },
   { id: "humeurs", label: "Humeurs" },
-  { id: "doule", label: "Doulé" },
+  { id: "douleurs", label: "Douleurs" },
   { id: "fatigue", label: "Fatigue" },
   { id: "troubles", label: "Troubles cognitifs" },
 ];

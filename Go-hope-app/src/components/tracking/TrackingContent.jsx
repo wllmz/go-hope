@@ -5,6 +5,7 @@ import SensorielSection from "./sections/SensorielSection";
 import HumeursSection from "./sections/HumeursSection";
 import FatigueSection from "./sections/FatigueSection";
 import TroublesCognitifsSection from "./sections/TroublesCognitifsSection";
+import DouleursSection from "./sections/DouleursSection";
 
 const TrackingContent = ({ activeTab, data, onUpdate }) => {
   const renderContent = () => {
@@ -24,6 +25,8 @@ const TrackingContent = ({ activeTab, data, onUpdate }) => {
             onUpdate={onUpdate}
           />
         );
+      case "douleurs":
+        return <DouleursSection data={data?.douleurs} onUpdate={onUpdate} />;
       default:
         return null;
     }

@@ -18,7 +18,8 @@ const suiviSchema = new mongoose.Schema({
       },
       niveau: {
         type: String,
-        enum: ["normale", "basse", "forte"],
+        enum: ["normale", "basse", "forte", null],
+        default: null,
       },
     },
   ],
