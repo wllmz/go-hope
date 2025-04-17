@@ -13,7 +13,12 @@ const FirstComponentUser = () => {
   const [data, setData] = useState({
     motricite: [],
   });
-  const { getSuiviByDate, createSuivi, updateTrackingEntry } = useSuivi();
+  const {
+    getSuiviByDate,
+    createSuivi,
+    updateTrackingEntry,
+    removeTrackingEntry,
+  } = useSuivi();
 
   const handleTabChange = (newTab) => {
     setActiveTab(newTab);
@@ -34,9 +39,17 @@ const FirstComponentUser = () => {
           "handleDateSelect - Données motricité trouvées:",
           response.suivi.motricité
         );
+        // Vérifier que chaque entrée a un ID
+        const entriesWithIds = response.suivi.motricité.map((entry) => {
+          if (!entry._id) {
+            console.warn("Entrée sans ID:", entry);
+          }
+          return entry;
+        });
+
         setData((prev) => ({
           ...prev,
-          motricite: response.suivi.motricité,
+          motricite: entriesWithIds,
         }));
       } else {
         console.log("handleDateSelect - Aucune donnée motricité trouvée");
@@ -69,17 +82,33 @@ const FirstComponentUser = () => {
         JSON.stringify(newZone, null, 2)
       );
 
-      // Envoyer uniquement la nouvelle entrée
-      await createSuivi({
+      // Envoyer uniquement la nouvelle entrée et attendre la réponse
+      const response = await createSuivi({
         date: formattedDate,
         motricité: [newZone],
       });
 
-      // Mettre à jour l'état directement avec la nouvelle entrée
-      setData((prev) => ({
-        ...prev,
-        motricite: [...prev.motricite, newZone],
-      }));
+      console.log("handleCreateSuivi - Réponse de l'API:", response);
+
+      // Vérifier que la réponse contient les données motricité
+      if (response?.suivi?.motricité) {
+        // Récupérer la dernière entrée créée (qui devrait être la nôtre)
+        const createdEntry =
+          response.suivi.motricité[response.suivi.motricité.length - 1];
+
+        if (!createdEntry._id) {
+          console.error("L'entrée créée n'a pas d'ID:", createdEntry);
+          return;
+        }
+
+        // Mettre à jour l'état avec l'entrée complète du backend
+        setData((prev) => ({
+          ...prev,
+          motricite: [...prev.motricite, createdEntry],
+        }));
+      } else {
+        console.error("Réponse de l'API invalide:", response);
+      }
     } catch (error) {
       console.error("Erreur création suivi:", error);
     }
@@ -108,6 +137,42 @@ const FirstComponentUser = () => {
     }
   };
 
+  const handleDeleteEntry = async (entryId) => {
+    try {
+      // Récupérer le suiviId AVANT la suppression
+      const formattedDate = format(selectedDate, "yyyy-MM-dd");
+      const response = await getSuiviByDate(formattedDate);
+
+      if (!response?.suivi) {
+        console.error("Aucun suivi trouvé pour la date:", formattedDate);
+        return;
+      }
+
+      const suiviId = response.suivi._id;
+      if (!suiviId) {
+        console.error("SuiviId non trouvé dans la réponse:", response);
+        return;
+      }
+
+      console.log("Suppression de l'entrée:", {
+        suiviId,
+        entryId,
+        date: formattedDate,
+      });
+
+      // Appeler removeTrackingEntry
+      await removeTrackingEntry(suiviId, "motricité", entryId);
+
+      // Mettre à jour l'état local
+      setData((prev) => ({
+        ...prev,
+        motricite: prev.motricite.filter((entry) => entry._id !== entryId),
+      }));
+    } catch (error) {
+      console.error("Erreur suppression entrée:", error);
+    }
+  };
+
   const handleHistoryClick = () => {
     setShowHistory(true);
   };
@@ -126,6 +191,7 @@ const FirstComponentUser = () => {
             data={data.motricite}
             onUpdateNiveau={handleUpdateNiveau}
             onCreate={handleCreateSuivi}
+            onDeleteEntry={handleDeleteEntry}
           />
         );
       default:
