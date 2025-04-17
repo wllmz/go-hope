@@ -76,6 +76,7 @@ const MotriciteSection = ({
   data = [],
   onUpdateNiveau,
   onCreate,
+  onDeleteEntry,
 }) => {
   const [showHistory, setShowHistory] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -131,10 +132,20 @@ const MotriciteSection = ({
     }
   };
 
-  const handleDeleteZone = (index) => {
-    console.log("Suppression de la zone:", index);
-    const updatedData = data.filter((_, i) => i !== index);
-    onUpdate(updatedData);
+  const handleDeleteZone = async (index) => {
+    const entry = data[index];
+    console.log("Tentative de suppression:", { entry, index });
+
+    if (!entry._id) {
+      console.error("ID manquant pour la suppression:", entry);
+      return;
+    }
+
+    try {
+      await onDeleteEntry(entry._id);
+    } catch (error) {
+      console.error("Erreur suppression:", error);
+    }
   };
 
   const shouldShowContent = selectedDate || showHistory;
