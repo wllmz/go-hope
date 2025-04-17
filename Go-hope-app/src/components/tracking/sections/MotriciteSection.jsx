@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Box, Button, IconButton, styled } from "@mui/material";
 import LevelGauge from "../components/LevelGauge";
 import { Add, Close } from "@mui/icons-material";
-import { format } from "date-fns";
+import { format, startOfDay } from "date-fns";
 import SelectionModal from "./SelectionModal";
 
 const Container = styled(Box)({
@@ -148,12 +148,6 @@ const MotriciteSection = ({
 
   return (
     <Container>
-      {!shouldShowContent && (
-        <StyledButton onClick={handleHistoryClick}>
-          Accéder à mon historique
-        </StyledButton>
-      )}
-
       {shouldShowContent && (
         <>
           {data.length > 0 && (
@@ -171,7 +165,7 @@ const MotriciteSection = ({
                   <LevelGauge
                     niveau={zone.niveau}
                     onNiveauChange={(newNiveau) =>
-                      handleNiveauChange(index, newNiveau)
+                      selectedDate ? handleNiveauChange(index, newNiveau) : null
                     }
                   />
                 </ZoneItem>

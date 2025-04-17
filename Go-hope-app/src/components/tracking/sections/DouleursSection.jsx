@@ -3,6 +3,7 @@ import { Box, Button, IconButton, styled } from "@mui/material";
 import LevelGauge from "../components/LevelGauge";
 import { Add, Close } from "@mui/icons-material";
 import SelectionModal from "./SelectionModal";
+import { startOfDay } from "date-fns";
 
 const Container = styled(Box)({
   display: "flex",
@@ -71,18 +72,14 @@ const DeleteButton = styled(IconButton)({
 });
 
 const DouleursSection = ({
+  selectedDate,
   data = [],
-  onCreate,
   onUpdateNiveau,
+  onCreate,
   onDeleteEntry,
 }) => {
   const [showHistory, setShowHistory] = useState(false);
   const [showModal, setShowModal] = useState(false);
-
-  useEffect(() => {
-    console.log("DouleursSection - Données reçues:", data);
-    console.log("DouleursSection - onCreate:", onCreate);
-  }, [data, onCreate]);
 
   const handleSelection = async (selection) => {
     console.log("Nouvelle sélection:", selection);
@@ -93,7 +90,7 @@ const DouleursSection = ({
         const newZone = {
           zone: zone.zone,
           side: zone.side,
-          niveau: "normale",
+          niveau: null,
         };
 
         await onCreate(newZone);
@@ -147,19 +144,13 @@ const DouleursSection = ({
     setShowHistory(true);
   };
 
-  const shouldShowContent = true;
+  const shouldShowContent = selectedDate || showHistory;
 
   return (
     <Container>
-      {!shouldShowContent && (
-        <StyledButton onClick={handleHistoryClick}>
-          Accéder à mon historique
-        </StyledButton>
-      )}
-
       {shouldShowContent && (
         <>
-          {data && data.length > 0 ? (
+          {data.length > 0 && (
             <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
               {data.map((zone, index) => (
                 <ZoneItem key={index}>
@@ -174,19 +165,15 @@ const DouleursSection = ({
                   <LevelGauge
                     niveau={zone.niveau}
                     onNiveauChange={(newNiveau) =>
-                      handleNiveauChange(index, newNiveau)
+                      selectedDate ? handleNiveauChange(index, newNiveau) : null
                     }
                   />
                 </ZoneItem>
               ))}
             </Box>
-          ) : (
-            <Box sx={{ textAlign: "center", color: "#666", mt: 2 }}>
-              Aucune douleur enregistrée
-            </Box>
           )}
 
-          <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
+          <Box sx={{ display: "flex", justifyContent: "center" }}>
             <AddButton onClick={handleAddClick}>
               <Add />
             </AddButton>
@@ -199,6 +186,7 @@ const DouleursSection = ({
           open={showModal}
           onClose={handleModalClose}
           onSelect={handleSelection}
+          selectedDate={selectedDate}
         />
       )}
     </Container>
