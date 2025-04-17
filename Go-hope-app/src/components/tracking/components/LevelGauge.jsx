@@ -20,9 +20,17 @@ const GaugeBackground = styled(Box)(({ niveau }) => ({
   position: "absolute",
   height: "100%",
   left: 0,
-  backgroundColor: "#FFA726",
-  width: niveau === "basse" ? "10%" : niveau === "normale" ? "50%" : "100%",
-  transition: "width 0.3s ease",
+  backgroundColor: niveau === null ? "#E0E0E0" : "#FFA726",
+  width:
+    niveau === null
+      ? "7%"
+      : niveau === "basse"
+      ? "10%"
+      : niveau === "normale"
+      ? "50%"
+      : "100%",
+  opacity: niveau === null ? 0.3 : 1,
+  transition: "width 0.3s ease, opacity 0.3s ease, background-color 0.3s ease",
   borderRadius: "20px",
 }));
 
@@ -34,16 +42,12 @@ const LevelText = styled(Box)(({ niveau }) => ({
   alignItems: "center",
   "& .text": {
     position: "absolute",
-    color: niveau === "forte" ? "#fff" : "#FFA726",
+    color:
+      niveau === null ? "#757575" : niveau === "forte" ? "#fff" : "#FFA726",
     fontWeight: 500,
     ...(niveau === "normale"
       ? {
           left: "calc(50% + 30px)",
-        }
-      : niveau === "basse"
-      ? {
-          left: "50%",
-          transform: "translateX(-50%)",
         }
       : {
           left: "50%",
@@ -55,7 +59,7 @@ const LevelText = styled(Box)(({ niveau }) => ({
     width: "25px",
     height: "25px",
     strokeWidth: 2,
-    color: "#fff",
+    color: niveau === null ? "#757575" : "#fff",
     ...(niveau === "basse"
       ? {
           left: "15px",
@@ -72,8 +76,8 @@ const LevelText = styled(Box)(({ niveau }) => ({
 
 const LEVEL_ICONS = {
   basse: Frown,
-  normale: Meh,
-  forte: Smile,
+  normale: Smile,
+  forte: Meh,
 };
 
 const LEVEL_LABELS = {
@@ -82,7 +86,7 @@ const LEVEL_LABELS = {
   forte: "Forte",
 };
 
-const LevelGauge = ({ niveau, onNiveauChange }) => {
+const LevelGauge = ({ niveau = null, onNiveauChange }) => {
   const handleClick = (event) => {
     const rect = event.currentTarget.getBoundingClientRect();
     const x = event.clientX - rect.left;
@@ -103,16 +107,16 @@ const LevelGauge = ({ niveau, onNiveauChange }) => {
     }
   };
 
-  // Convertir le niveau en minuscules si nécessaire
-  const normalizedNiveau = niveau?.toLowerCase() || "basse";
-  const Icon = LEVEL_ICONS[normalizedNiveau];
+  const Icon = niveau ? LEVEL_ICONS[niveau] : null;
 
   return (
     <GaugeContainer onClick={handleClick}>
-      <GaugeBackground niveau={normalizedNiveau} />
-      <LevelText niveau={normalizedNiveau}>
-        <Icon />
-        <span className="text">{LEVEL_LABELS[normalizedNiveau]}</span>
+      <GaugeBackground niveau={niveau} />
+      <LevelText niveau={niveau}>
+        {Icon && <Icon />}
+        <span className="text">
+          {LEVEL_LABELS[niveau] || LEVEL_LABELS[null]}
+        </span>
       </LevelText>
     </GaugeContainer>
   );

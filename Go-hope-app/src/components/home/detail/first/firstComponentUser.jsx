@@ -1,8 +1,8 @@
-
 import React, { useState, useEffect } from "react";
 import { Box } from "@mui/material";
 import TrackingTabs from "../../../tracking/TrackingTabs";
 import MotriciteSection from "../../../tracking/sections/MotriciteSection";
+import DouleursSection from "../../../tracking/sections/DouleursSection";
 import Calendar from "../../../tracking/components/Calendar";
 import useSuivi from "../../../../hooks/suivi/useSuivi";
 import { format, startOfDay } from "date-fns";
@@ -13,6 +13,7 @@ const FirstComponentUser = () => {
   const [showHistory, setShowHistory] = useState(false);
   const [data, setData] = useState({
     motricite: [],
+    douleurs: [],
   });
   const {
     getSuiviByDate,
@@ -35,28 +36,19 @@ const FirstComponentUser = () => {
       const response = await getSuiviByDate(formattedDate);
       console.log("handleDateSelect - Réponse complète de l'API:", response);
 
-      if (response?.suivi?.motricité) {
-        console.log(
-          "handleDateSelect - Données motricité trouvées:",
-          response.suivi.motricité
-        );
-        // Vérifier que chaque entrée a un ID
-        const entriesWithIds = response.suivi.motricité.map((entry) => {
-          if (!entry._id) {
-            console.warn("Entrée sans ID:", entry);
-          }
-          return entry;
-        });
-
+      if (response?.suivi) {
+        console.log("handleDateSelect - Données trouvées:", response.suivi);
         setData((prev) => ({
           ...prev,
-          motricite: entriesWithIds,
+          motricite: response.suivi.motricité || [],
+          douleurs: response.suivi.douleurs || [],
         }));
       } else {
-        console.log("handleDateSelect - Aucune donnée motricité trouvée");
+        console.log("handleDateSelect - Aucune donnée trouvée");
         setData((prev) => ({
           ...prev,
           motricite: [],
+          douleurs: [],
         }));
       }
     } catch (error) {
@@ -70,42 +62,25 @@ const FirstComponentUser = () => {
       const newZone = {
         ...zoneData,
         date: formattedDate,
-        niveau: "Basse", // Niveau initial
+        niveau: null,
       };
 
-      console.log(
-        "handleCreateSuivi - ZoneData reçu:",
-        JSON.stringify(zoneData, null, 2)
-      );
+      console.log("handleCreateSuivi - ZoneData reçu:", zoneData);
       console.log("handleCreateSuivi - Date formatée:", formattedDate);
-      console.log(
-        "handleCreateSuivi - Nouvelle zone:",
-        JSON.stringify(newZone, null, 2)
-      );
+      console.log("handleCreateSuivi - Nouvelle zone:", newZone);
 
-      // Envoyer uniquement la nouvelle entrée et attendre la réponse
       const response = await createSuivi({
         date: formattedDate,
-        motricité: [newZone],
+        [activeTab === "motricite" ? "motricité" : "douleurs"]: [newZone],
       });
 
       console.log("handleCreateSuivi - Réponse de l'API:", response);
 
-      // Vérifier que la réponse contient les données motricité
-      if (response?.suivi?.motricité) {
-        // Récupérer la dernière entrée créée (qui devrait être la nôtre)
-        const createdEntry =
-          response.suivi.motricité[response.suivi.motricité.length - 1];
-
-        if (!createdEntry._id) {
-          console.error("L'entrée créée n'a pas d'ID:", createdEntry);
-          return;
-        }
-
-        // Mettre à jour l'état avec l'entrée complète du backend
+      if (response?.suivi) {
         setData((prev) => ({
           ...prev,
-          motricite: [...prev.motricite, createdEntry],
+          motricite: response.suivi.motricité || [],
+          douleurs: response.suivi.douleurs || [],
         }));
       } else {
         console.error("Réponse de l'API invalide:", response);
@@ -117,19 +92,19 @@ const FirstComponentUser = () => {
 
   const handleUpdateNiveau = async (entryId, newNiveau) => {
     try {
-      // Récupérer le suiviId depuis la réponse de getSuiviByDate
       const response = await getSuiviByDate(selectedDate);
       const suiviId = response.suivi._id;
 
-      // Appeler updateTrackingEntry pour mettre à jour uniquement le niveau
-      await updateTrackingEntry(suiviId, "motricité", entryId, {
-        niveau: newNiveau,
-      });
+      await updateTrackingEntry(
+        suiviId,
+        activeTab === "motricite" ? "motricité" : "douleurs",
+        entryId,
+        { niveau: newNiveau }
+      );
 
-      // Mettre à jour l'état local
       setData((prev) => ({
         ...prev,
-        motricite: prev.motricite.map((entry) =>
+        [activeTab]: prev[activeTab].map((entry) =>
           entry._id === entryId ? { ...entry, niveau: newNiveau } : entry
         ),
       }));
@@ -140,7 +115,6 @@ const FirstComponentUser = () => {
 
   const handleDeleteEntry = async (entryId) => {
     try {
-      // Récupérer le suiviId AVANT la suppression
       const formattedDate = format(selectedDate, "yyyy-MM-dd");
       const response = await getSuiviByDate(formattedDate);
 
@@ -161,13 +135,15 @@ const FirstComponentUser = () => {
         date: formattedDate,
       });
 
-      // Appeler removeTrackingEntry
-      await removeTrackingEntry(suiviId, "motricité", entryId);
+      await removeTrackingEntry(
+        suiviId,
+        activeTab === "motricite" ? "motricité" : "douleurs",
+        entryId
+      );
 
-      // Mettre à jour l'état local
       setData((prev) => ({
         ...prev,
-        motricite: prev.motricite.filter((entry) => entry._id !== entryId),
+        [activeTab]: prev[activeTab].filter((entry) => entry._id !== entryId),
       }));
     } catch (error) {
       console.error("Erreur suppression entrée:", error);
@@ -181,7 +157,7 @@ const FirstComponentUser = () => {
   const shouldShowContent = selectedDate || showHistory;
 
   const renderContent = () => {
-    console.log("renderContent - Données actuelles:", data.motricite);
+    console.log("renderContent - Données actuelles:", data);
     console.log("renderContent - Date sélectionnée:", selectedDate);
 
     switch (activeTab) {
@@ -190,6 +166,16 @@ const FirstComponentUser = () => {
           <MotriciteSection
             selectedDate={selectedDate}
             data={data.motricite}
+            onUpdateNiveau={handleUpdateNiveau}
+            onCreate={handleCreateSuivi}
+            onDeleteEntry={handleDeleteEntry}
+          />
+        );
+      case "douleurs":
+        return (
+          <DouleursSection
+            selectedDate={selectedDate}
+            data={data.douleurs}
             onUpdateNiveau={handleUpdateNiveau}
             onCreate={handleCreateSuivi}
             onDeleteEntry={handleDeleteEntry}

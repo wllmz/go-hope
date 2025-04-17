@@ -65,6 +65,14 @@ export const userSuivi = async (req, res) => {
       });
     }
 
+    if (req.body.douleurs && Array.isArray(req.body.douleurs)) {
+      console.log("Ajout de nouvelles entrées douleurs:", req.body.douleurs);
+      if (!suivi.douleurs) suivi.douleurs = [];
+      req.body.douleurs.forEach((newEntry) => {
+        suivi.douleurs.push(newEntry);
+      });
+    }
+
     console.log("Suivi avant sauvegarde:", suivi);
     const updatedSuivi = await suivi.save();
     console.log("Suivi après sauvegarde:", updatedSuivi);
