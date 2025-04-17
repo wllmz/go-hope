@@ -119,6 +119,14 @@ const useSuivi = () => {
     setLoading(true);
     setError(null);
     try {
+      // Vérifier que la catégorie est valide (uniquement les tableaux)
+      const validCategories = ["motricité", "sensoriel", "douleurs"];
+      if (!validCategories.includes(category)) {
+        throw new Error(
+          "Catégorie invalide. Les catégories valides sont: motricité, sensoriel, douleurs"
+        );
+      }
+
       const result = await suiviService.updateTrackingEntry(
         suiviId,
         category,
@@ -135,14 +143,41 @@ const useSuivi = () => {
   };
 
   // Mettre à jour un champ simple
-  const updateSimpleField = async (suiviId, field, value) => {
+  const updateSimpleField = async (suiviId, field, value, date) => {
     setLoading(true);
     setError(null);
     try {
+      // Vérifier que le champ est valide
+      const validFields = ["fatigue", "humeur", "troublesCognitifs"];
+      if (!validFields.includes(field)) {
+        throw new Error(
+          "Champ invalide. Les champs valides sont: fatigue, humeur, troublesCognitifs"
+        );
+      }
+
       const result = await suiviService.updateSimpleField(
         suiviId,
         field,
-        value
+        value,
+        date
+      );
+      setLoading(false);
+      return result;
+    } catch (err) {
+      setError(err.response?.data?.message || "Une erreur est survenue");
+      setLoading(false);
+      throw err;
+    }
+  };
+
+  // Mettre à jour les troubles cognitifs
+  const updateTroublesCognitifs = async (date, troublesCognitifs) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const result = await suiviService.updateTroublesCognitifs(
+        date,
+        troublesCognitifs
       );
       setLoading(false);
       return result;
@@ -165,6 +200,7 @@ const useSuivi = () => {
     removeField,
     updateTrackingEntry,
     updateSimpleField,
+    updateTroublesCognitifs,
   };
 };
 
