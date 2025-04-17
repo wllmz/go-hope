@@ -51,7 +51,9 @@ export const AuthProvider = ({ children }) => {
     return false;
   };
 
+
   const isAuthenticated = () => !!user;
+
 
   const logout = () => {
     document.cookie =
