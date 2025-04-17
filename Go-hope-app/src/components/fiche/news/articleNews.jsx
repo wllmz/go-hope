@@ -13,17 +13,17 @@ const AllArticle = () => {
     articles,
     loading: articlesLoading,
     error: articlesError,
-    fetchAllArticlesPartenaire,
+    getAllArticlesNews,
   } = useArticles();
 
   const { user, loading: userLoading, error: userError } = useUserInfo();
 
   useEffect(() => {
     const fetchData = async () => {
-      await fetchAllArticlesPartenaire();
+      await getAllArticlesNews();
     };
     fetchData();
-  }, [fetchAllArticlesPartenaire]);
+  }, [getAllArticlesNews]);
 
   if (articlesLoading || userLoading) {
     return <div className="text-center py-4">Chargement...</div>;
@@ -50,9 +50,10 @@ const AllArticle = () => {
     (article) => article.mediaType === selectedMediaType
   );
 
-  // Appliquer le slice uniquement si on est sur la page entreprise
-  const isEntreprisePage = location.pathname.includes("entreprise");
-  const displayedArticles = isEntreprisePage
+  // Appliquer le slice uniquement si on est sur la page principale
+  const isNewsPage = location.pathname.includes("news");
+  const isLaSepPage = location.pathname.includes("la-sep");
+  const displayedArticles = isNewsPage
     ? filteredArticles.slice(0, 4)
     : filteredArticles;
 
@@ -61,8 +62,8 @@ const AllArticle = () => {
   };
 
   const handleNavigateToAllArticles = () => {
-    if (isEntreprisePage) {
-      navigate("/partenaire/la-sep");
+    if (isNewsPage) {
+      navigate("/news/la-sep");
     }
   };
 
@@ -71,13 +72,14 @@ const AllArticle = () => {
       <div className="max-w-6xl mx-auto p-5">
         <div className="flex items-center justify-between text-[#1D5F84] mb-6">
           <div className="flex items-center gap-2">
-            <h2 className="text-[#1D5F84] font-medium">Suggestion</h2>
+            <h2 className="text-[#1D5F84] font-medium">Articles suggérés</h2>
           </div>
-          {isEntreprisePage && (
+          {isNewsPage && !isLaSepPage && (
             <button
               onClick={handleNavigateToAllArticles}
               className="text-[#F1731F] hover:text-[#1D5F84] transition-colors flex items-center gap-1"
             >
+              <span>Voir tous les articles</span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-5 w-5"
@@ -101,9 +103,9 @@ const AllArticle = () => {
           selectedMediaType={selectedMediaType}
           onArticleClick={handleArticleClick}
           onNavigateToAllArticles={
-            isEntreprisePage ? handleNavigateToAllArticles : undefined
+            isNewsPage && !isLaSepPage ? handleNavigateToAllArticles : undefined
           }
-          onFavoritesUpdate={fetchAllArticlesPartenaire}
+          onFavoritesUpdate={getAllArticlesNews}
         />
       </div>
     </div>

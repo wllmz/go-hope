@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import useFiche from "../../../hooks/fiche/useFiche";
-import Article from "./article";
+import Article from "./articlePart";
 
 const PartenaireDetail = () => {
   const { id } = useParams();
@@ -206,12 +206,10 @@ const PartenaireDetail = () => {
             <h1 className="text-[#F1731F] font-medium">{partenaire.titre}</h1>
           </div>
 
-          {/* Titre principal */}
-
           {/* Section d'article associé au partenaire */}
           {partenaire.article && (
             <div className="mt-10 rounded-xl p-6">
-              <h2 className="text-xl font-semibold text-[#1D5F84] mb-4">
+              <h2 className="text-xl font-semibold text-[#F1731F] mb-4 font-confiteria">
                 {partenaire.article.titre}
               </h2>
 
@@ -234,6 +232,7 @@ const PartenaireDetail = () => {
             </div>
           )}
         </div>
+        {/* Supprimez cette ligne pour enlever la section "Suggestion" */}
         <Article />
       </div>
     </header>

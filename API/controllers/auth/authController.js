@@ -38,19 +38,15 @@ const setTokenCookies = (res, accessToken, refreshToken) => {
   res.cookie("accessToken", accessToken, {
     httpOnly: false,
     secure: false,
-    // sameSite: "None",
-    // domain: ".flow-parents.com", // Inclure tous les sous-domaines
-    // path: "/",
-    // maxAge: 15 * 60 * 1000, // 15 minutes
+    sameSite: "Lax",
+    maxAge: 15 * 60 * 1000, // 15 minutes
   });
 
   res.cookie("refreshToken", refreshToken, {
     httpOnly: false,
     secure: false,
-    // sameSite: "None",
-    // domain: ".flow-parents.com",
-    // path: "/",
-    // maxAge: 7 * 24 * 60 * 60 * 1000, // 7 jours
+    sameSite: "Lax",
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 jours
   });
 
   console.log("Set-Cookie headers envoyés : ", res.getHeaders()["set-cookie"]);
@@ -201,10 +197,8 @@ export const refreshToken = (req, res) => {
     res.cookie("accessToken", newAccessToken, {
       httpOnly: false,
       secure: false,
-      // sameSite: "None",
-      // domain: ".flow-parents.com",
-      // path: "/",
-      // maxAge: 15 * 60 * 1000,
+      sameSite: "Lax",
+      maxAge: 15 * 60 * 1000, // 15 minutes
     });
 
     console.log("Nouveau accessToken généré : ", newAccessToken);
