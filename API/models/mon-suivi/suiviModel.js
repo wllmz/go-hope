@@ -10,7 +10,7 @@ const suiviSchema = new mongoose.Schema({
     {
       zone: {
         type: String,
-        enum: ["Jambes", "Bras", "Pied", "Main", "Oeil"],
+        enum: ["jambes", "bras", "pied", "main", "oeil"],
       },
       side: {
         type: String,
@@ -18,7 +18,7 @@ const suiviSchema = new mongoose.Schema({
       },
       niveau: {
         type: String,
-        enum: ["Normale", "Basse", "Forte", "Faible"],
+        enum: ["normale", "basse", "forte"],
       },
     },
   ],
@@ -26,7 +26,7 @@ const suiviSchema = new mongoose.Schema({
     {
       zone: {
         type: String,
-        enum: ["Jambes", "Bras", "Pied", "Main", "Oeil"],
+        enum: ["jambes", "bras", "pied", "main", "oeil"],
       },
       side: {
         type: String,
@@ -34,15 +34,15 @@ const suiviSchema = new mongoose.Schema({
       },
       fourmillement: {
         type: String,
-        enum: ["Normale", "Basse", "Forte", "Faible"],
+        enum: ["normale", "basse", "forte", "faible"],
       },
       picotements: {
         type: String,
-        enum: ["Normale", "Basse", "Forte", "Faible"],
+        enum: ["normale", "basse", "forte", "faible"],
       },
       brulures: {
         type: String,
-        enum: ["Normale", "Basse", "Forte", "Faible"],
+        enum: ["normale", "basse", "forte", "faible"],
       },
     },
   ],
@@ -50,7 +50,7 @@ const suiviSchema = new mongoose.Schema({
     {
       zone: {
         type: String,
-        enum: ["Jambes", "Bras", "Pied", "Main", "Oeil"],
+        enum: ["jambes", "bras", "pied", "main", "oeil"],
       },
       side: {
         type: String,
@@ -58,39 +58,39 @@ const suiviSchema = new mongoose.Schema({
       },
       niveau: {
         type: String,
-        enum: ["Normale", "Basse", "Forte", "Faible"],
+        enum: ["normale", "basse", "forte", "faible"],
       },
     },
   ],
   troublesCognitifs: {
     memoire: {
       type: String,
-      enum: ["Normale", "Basse", "Haute"],
+      enum: ["normale", "basse", "haute"],
     },
     attention: {
       type: String,
-      enum: ["Normale", "Basse", "Haute"],
+      enum: ["normale", "basse", "haute"],
     },
     brouillardCerebral: {
       type: String,
-      enum: ["Normale", "Basse", "Haute"],
+      enum: ["normale", "basse", "haute"],
     },
   },
   fatigue: {
     type: String,
     enum: [
-      "Inexistant",
-      "Bas",
-      "Notable",
-      "Important",
-      "Très important",
-      "Insoutenable",
-      "Ne sais pas",
+      "inexistant",
+      "bas",
+      "notable",
+      "important",
+      "très important",
+      "insoutenable",
+      "ne sais pas",
     ],
   },
   humeur: {
     type: String,
-    enum: ["Joyeux.se", "Bien", "Neutre", "Perdu.e", "Stressé.e", "Inquiet.e"],
+    enum: ["joyeux.se", "bien", "neutre", "perdu.e", "stressé.e", "inquiet.e"],
   },
   date: {
     type: Date,

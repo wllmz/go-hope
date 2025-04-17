@@ -22,6 +22,7 @@ import actionSubject from "./routes/forum/actionSubject.js";
 import allAction from "./routes/forum/allAction.js";
 import ficheRoute from "./routes/Fiche/ficheRoute.js";
 import articleFicheRoute from "./routes/Fiche/articleRoute.js";
+import suiviRoute from "./routes/Suivi/suiviRoute.js";
 
 dotenv.config();
 
@@ -121,6 +122,7 @@ async function startServer() {
     app.use("/api/forum/favoris", allAction);
     app.use("/api/fiches", ficheRoute);
     app.use("/api/fiches-articles", articleFicheRoute);
+    app.use("/api/suivi", suiviRoute);
 
     // Middleware de gestion des erreurs
     app.use((err, req, res, next) => {

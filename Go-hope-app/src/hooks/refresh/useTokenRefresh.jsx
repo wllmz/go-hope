@@ -3,9 +3,8 @@ import { refreshAccessToken } from "../../services/auth/authService";
 
 const refreshAccessTokenIfNeeded = async () => {
   try {
-    // Appel de la fonction refreshAccessToken
-    const response = await refreshAccessToken();
-    if (!response.ok) {
+    const newAccessToken = await refreshAccessToken();
+    if (!newAccessToken) {
       throw new Error("Échec du rafraîchissement du token");
     }
     console.log("Token rafraîchi avec succès");

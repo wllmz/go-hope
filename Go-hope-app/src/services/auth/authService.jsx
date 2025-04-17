@@ -68,16 +68,13 @@ export const checkUsername = async ({ username }) => {
   return response.data;
 };
 
-export const refreshAccessToken = async (refreshToken) => {
-  console.log(
-    "Appel pour rafraîchir le accessToken avec le refreshToken : ",
-    refreshToken
-  );
+export const refreshAccessToken = async () => {
+  console.log("Appel pour rafraîchir le accessToken");
 
   try {
     const response = await axiosInstance.post(
       "/auth/refresh-token",
-      { refreshToken },
+      {},
       { withCredentials: true }
     );
     console.log(
@@ -94,6 +91,6 @@ export const refreshAccessToken = async (refreshToken) => {
     return accessToken;
   } catch (error) {
     console.error("Erreur lors du rafraîchissement du token", error);
-    throw error; // Lancer l'erreur pour la gestion côté frontend
+    throw error;
   }
 };

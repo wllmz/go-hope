@@ -5,26 +5,12 @@ import {
   getUserById,
   deleteMyAccount,
 } from "../../controllers/user/userController.js";
-import {
-  userSuivi,
-  getSuivi,
-  getSuiviById,
-} from "../../controllers/suivi/monSuiviController.js";
 import { verifyToken } from "../../middleware/jwtMiddleware.js";
 
 const router = express.Router();
 
 // Route pour créer ou mettre à jour un utilisateur
 router.post("/", verifyToken, upsertUser);
-
-// Route pour créer ou mettre à jour le suivi utilisateur
-router.post("/suivi", verifyToken, userSuivi);
-
-// Route pour récupérer le suivi de l'utilisateur connecté
-router.get("/suivi", verifyToken, getSuivi);
-
-// Route pour récupérer un suivi par son ID
-router.get("/suivi/:suiviId", verifyToken, getSuiviById);
 
 // Route pour mettre à jour le mot de passe de l'utilisateur
 router.put("/update-password", verifyToken, updatePassword);
@@ -39,7 +25,7 @@ router.delete("/delete-account", verifyToken, deleteMyAccount);
  * @swagger
  * tags:
  *   - name: User
- *     description: Gestion des utilisateurs et de leur suivi
+ *     description: Gestion des utilisateurs
  */
 
 /**
@@ -80,177 +66,6 @@ router.delete("/delete-account", verifyToken, deleteMyAccount);
  *         description: Champs requis manquants
  *       401:
  *         description: Non autorisé
- */
-
-/**
- * @swagger
- * /api/user/suivi:
- *   post:
- *     summary: Créer ou mettre à jour le suivi de l'utilisateur
- *     tags: [User]
- *     security:
- *       - cookieAuth: []
- *     requestBody:
- *       required: false
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               motricite:
- *                 type: array
- *                 description: Tableau des données de motricité
- *                 items:
- *                   type: object
- *                   properties:
- *                     zone:
- *                       type: string
- *                       enum: ["Jambes", "Bras", "Pied", "Main", "Oeil"]
- *                     side:
- *                       type: string
- *                       enum: ["gauche", "droite", "les deux"]
- *                     niveau:
- *                       type: string
- *                       enum: ["Normale", "Basse", "Forte", "Faible"]
- *               sensoriel:
- *                 type: array
- *                 description: Tableau des données sensorielles
- *                 items:
- *                   type: object
- *                   properties:
- *                     zone:
- *                       type: string
- *                       enum: ["Jambes", "Bras", "Pied", "Main", "Oeil"]
- *                     side:
- *                       type: string
- *                       enum: ["gauche", "droite", "les deux"]
- *                     fourmillement:
- *                       type: string
- *                       enum: ["Normale", "Basse", "Forte", "Faible"]
- *                     picotements:
- *                       type: string
- *                       enum: ["Normale", "Basse", "Forte", "Faible"]
- *                     brulures:
- *                       type: string
- *                       enum: ["Normale", "Basse", "Forte", "Faible"]
- *               douleurs:
- *                 type: array
- *                 description: Tableau des données de douleurs
- *                 items:
- *                   type: object
- *                   properties:
- *                     zone:
- *                       type: string
- *                       enum: ["Jambes", "Bras", "Pied", "Main", "Oeil"]
- *                     side:
- *                       type: string
- *                       enum: ["gauche", "droite", "les deux"]
- *                     niveau:
- *                       type: string
- *                       enum: ["Normale", "Basse", "Forte", "Faible"]
- *               troublesCognitifs:
- *                 type: object
- *                 description: Données concernant les troubles cognitifs
- *                 properties:
- *                   memoire:
- *                     type: string
- *                     enum: ["Normale", "Basse", "Haute"]
- *                   attention:
- *                     type: string
- *                     enum: ["Normale", "Basse", "Haute"]
- *                   brouillardCerebral:
- *                     type: string
- *                     enum: ["Normale", "Basse", "Haute"]
- *               fatigue:
- *                 type: string
- *                 description: Niveau de fatigue
- *                 enum: ["Inexistant", "Bas", "Notable", "Important", "Très important", "Insoutenable", "Ne sais pas"]
- *               humeur:
- *                 type: string
- *                 description: Humeur de l'utilisateur
- *                 enum: ["Joyeux.se", "Bien", "Neutre", "Perdu.e", "Stressé.e", "Inquiet.e"]
- *     responses:
- *       201:
- *         description: Suivi créé avec succès
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Suivi créé avec succès
- *                 suivi:
- *                   $ref: '#/components/schemas/Suivi'
- *       200:
- *         description: Suivi mis à jour avec succès
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Suivi mis à jour avec succès
- *                 suivi:
- *                   $ref: '#/components/schemas/Suivi'
- *       500:
- *         description: Erreur serveur lors de la création/mise à jour du suivi
- */
-
-/**
- * @swagger
- * /api/user/suivi:
- *   get:
- *     summary: Récupérer le suivi de l'utilisateur connecté
- *     tags: [User]
- *     security:
- *       - cookieAuth: []
- *     responses:
- *       200:
- *         description: Suivi récupéré avec succès
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 suivi:
- *                   $ref: '#/components/schemas/Suivi'
- *       404:
- *         description: Suivi non trouvé
- *       500:
- *         description: Erreur serveur lors de la récupération du suivi
- */
-
-/**
- * @swagger
- * /api/user/suivi/{suiviId}:
- *   get:
- *     summary: Récupérer un suivi par son ID
- *     tags: [User]
- *     security:
- *       - cookieAuth: []
- *     parameters:
- *       - in: path
- *         name: suiviId
- *         schema:
- *           type: string
- *         required: true
- *         description: ID du suivi
- *     responses:
- *       200:
- *         description: Suivi récupéré avec succès
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 suivi:
- *                   $ref: '#/components/schemas/Suivi'
- *       404:
- *         description: Suivi non trouvé
- *       500:
- *         description: Erreur serveur lors de la récupération du suivi
  */
 
 /**
