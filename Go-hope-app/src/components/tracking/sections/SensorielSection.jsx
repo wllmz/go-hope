@@ -132,18 +132,34 @@ const SensorielSection = ({
 
     try {
       await onDeleteEntry(entry._id);
+      setShowGaugeView(false);
+      setSelectedZone(null);
     } catch (error) {
       console.error("Erreur suppression:", error);
     }
   };
 
   const handleZoneSelect = (zone) => {
-    setSelectedZone(zone);
-    setShowGaugeView(true);
+    // Réinitialiser complètement la zone sélectionnée avant d'en sélectionner une nouvelle
+    setSelectedZone(null);
+
+    // Trouver la zone exacte dans data en utilisant l'_id
+    const selectedZoneData = data.find((item) => item._id === zone._id);
+    if (selectedZoneData) {
+      // Petit délai pour s'assurer que la réinitialisation est effectuée
+      setTimeout(() => {
+        setSelectedZone(selectedZoneData);
+        setShowGaugeView(true);
+      }, 0);
+    } else {
+      console.error("Zone non trouvée:", zone);
+    }
   };
 
   const handleBack = () => {
+    // Réinitialiser complètement lors du retour
     setShowGaugeView(false);
+    setSelectedZone(null);
   };
 
   const handleAddClick = () => {
@@ -157,6 +173,22 @@ const SensorielSection = ({
   const handleUpdate = async (date, entryId, sensorielData) => {
     try {
       await onUpdateSensoriel(date, entryId, sensorielData);
+
+      // Mettre à jour la zone sélectionnée avec les nouvelles valeurs
+      setSelectedZone((prev) => ({
+        ...prev,
+        ...sensorielData,
+      }));
+
+      // Mettre à jour les données dans la liste
+      const updatedData = data.map((zone) =>
+        zone._id === entryId ? { ...zone, ...sensorielData } : zone
+      );
+
+      // Forcer la mise à jour des données
+      if (typeof onUpdateSensoriel === "function") {
+        onUpdateSensoriel(date, entryId, sensorielData);
+      }
     } catch (error) {
       console.error("Erreur mise à jour sensoriel:", error);
     }
@@ -170,7 +202,10 @@ const SensorielSection = ({
             {data.length > 0 && (
               <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
                 {data.map((zone, index) => (
-                  <ZoneItem key={index} onClick={() => handleZoneSelect(zone)}>
+                  <ZoneItem
+                    key={zone._id}
+                    onClick={() => handleZoneSelect(zone)}
+                  >
                     <ZoneHeader>
                       <ZoneTitle>
                         {zone.zone} {zone.side}
@@ -196,6 +231,7 @@ const SensorielSection = ({
       <ViewContainer show={showGaugeView}>
         {selectedZone && (
           <SensorielGaugeView
+            key={selectedZone._id} // Forcer le remontage du composant
             data={selectedZone}
             onUpdate={handleUpdate}
             onBack={handleBack}

@@ -11,6 +11,7 @@ import {
   updateSimpleField,
   updateTroublesCognitifs,
   updateSensoriel,
+  removeSensorielObject,
 } from "../../controllers/suivi/monSuiviController.js";
 import { verifyToken } from "../../middleware/jwtMiddleware.js";
 
@@ -52,6 +53,9 @@ router.put("/update-troubles-cognitifs", verifyToken, updateTroublesCognitifs);
 
 // Route pour mettre à jour le sensoriel
 router.put("/update-sensoriel", verifyToken, updateSensoriel);
+
+// Route pour supprimer un objet sensoriel par son ID
+router.delete("/sensoriel/:objectId", verifyToken, removeSensorielObject);
 
 /**
  * @swagger

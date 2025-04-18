@@ -29,6 +29,7 @@ const FirstComponentUser = () => {
     removeTrackingEntry,
     updateTroublesCognitifs,
     updateSensoriel,
+    removeSensorielObject,
   } = useSuivi();
 
   const handleDateSelect = async (date) => {
@@ -247,15 +248,27 @@ const FirstComponentUser = () => {
       );
 
       if (response?.suivi) {
+        // Mettre à jour les données avec la réponse complète du serveur
         setData((prev) => ({
           ...prev,
-          sensoriel: prev.sensoriel.map((entry) =>
-            entry._id === entryId ? { ...entry, ...updatedData } : entry
-          ),
+          sensoriel: response.suivi.sensoriel || [],
         }));
       }
     } catch (error) {
       console.error("Erreur mise à jour sensoriel:", error);
+    }
+  };
+
+  const handleDeleteSensoriel = async (objectId) => {
+    try {
+      await removeSensorielObject(objectId);
+      // Mettre à jour les données localement
+      setData((prev) => ({
+        ...prev,
+        sensoriel: prev.sensoriel.filter((entry) => entry._id !== objectId),
+      }));
+    } catch (error) {
+      console.error("Erreur suppression sensoriel:", error);
     }
   };
 
@@ -288,10 +301,10 @@ const FirstComponentUser = () => {
         return (
           <SensorielSection
             selectedDate={selectedDate}
-            data={data.sensoriel}
+            data={data.sensoriel || []}
             onUpdateSensoriel={handleUpdateSensoriel}
             onCreate={handleCreateSuivi}
-            onDeleteEntry={handleDeleteEntry}
+            onDeleteEntry={handleDeleteSensoriel}
           />
         );
       case "troublesCognitifs":
