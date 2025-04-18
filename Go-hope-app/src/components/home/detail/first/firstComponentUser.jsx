@@ -9,6 +9,7 @@ import { format, startOfDay } from "date-fns";
 import TroublesCognitifsSection from "../../../tracking/sections/TroublesCognitifsSection";
 import FatigueSection from "../../../tracking/sections/FatigueSection";
 import HumeurSection from "../../../tracking/sections/HumeurSection";
+import SensorielSection from "../../../tracking/sections/SensorielSection";
 
 const FirstComponentUser = () => {
   const [activeTab, setActiveTab] = useState("motricite");
@@ -16,6 +17,7 @@ const FirstComponentUser = () => {
   const [data, setData] = useState({
     motricite: [],
     douleurs: [],
+    sensoriel: [],
     troublesCognitifs: {},
     fatigue: null,
     humeur: null,
@@ -26,6 +28,7 @@ const FirstComponentUser = () => {
     updateTrackingEntry,
     removeTrackingEntry,
     updateTroublesCognitifs,
+    updateSensoriel,
   } = useSuivi();
 
   const handleDateSelect = async (date) => {
@@ -38,6 +41,7 @@ const FirstComponentUser = () => {
         setData({
           motricite: response.suivi.motricité || [],
           douleurs: response.suivi.douleurs || [],
+          sensoriel: response.suivi.sensoriel || [],
           troublesCognitifs: response.suivi.troublesCognitifs || {},
           fatigue: response.suivi.fatigue || null,
           humeur: response.suivi.humeur || null,
@@ -46,6 +50,7 @@ const FirstComponentUser = () => {
         setData({
           motricite: [],
           douleurs: [],
+          sensoriel: [],
           troublesCognitifs: {},
           fatigue: null,
           humeur: null,
@@ -71,16 +76,31 @@ const FirstComponentUser = () => {
       const newZone = {
         ...zoneData,
         date: formattedDate,
-        niveau: null,
+        niveau: activeTab !== "sensoriel" ? null : undefined,
       };
 
       console.log("handleCreateSuivi - ZoneData reçu:", zoneData);
       console.log("handleCreateSuivi - Date formatée:", formattedDate);
       console.log("handleCreateSuivi - Nouvelle zone:", newZone);
 
+      let fieldName;
+      switch (activeTab) {
+        case "motricite":
+          fieldName = "motricité";
+          break;
+        case "douleurs":
+          fieldName = "douleurs";
+          break;
+        case "sensoriel":
+          fieldName = "sensoriel";
+          break;
+        default:
+          fieldName = activeTab;
+      }
+
       const response = await createSuivi({
         date: formattedDate,
-        [activeTab === "motricite" ? "motricité" : "douleurs"]: [newZone],
+        [fieldName]: [newZone],
       });
 
       console.log("handleCreateSuivi - Réponse de l'API:", response);
@@ -90,6 +110,7 @@ const FirstComponentUser = () => {
           ...prev,
           motricite: response.suivi.motricité || [],
           douleurs: response.suivi.douleurs || [],
+          sensoriel: response.suivi.sensoriel || [],
           fatigue: response.suivi.fatigue || null,
           humeur: response.suivi.humeur || null,
         }));
@@ -210,6 +231,34 @@ const FirstComponentUser = () => {
     }
   };
 
+  const handleUpdateSensoriel = async (date, entryId, updatedData) => {
+    try {
+      const formattedDate = format(new Date(date), "yyyy-MM-dd");
+      console.log("Mise à jour sensoriel:", {
+        date: formattedDate,
+        entryId: entryId,
+        sensorielData: updatedData,
+      });
+
+      const response = await updateSensoriel(
+        formattedDate,
+        entryId,
+        updatedData
+      );
+
+      if (response?.suivi) {
+        setData((prev) => ({
+          ...prev,
+          sensoriel: prev.sensoriel.map((entry) =>
+            entry._id === entryId ? { ...entry, ...updatedData } : entry
+          ),
+        }));
+      }
+    } catch (error) {
+      console.error("Erreur mise à jour sensoriel:", error);
+    }
+  };
+
   const renderContent = () => {
     console.log("renderContent - Données actuelles:", data);
     console.log("renderContent - Date sélectionnée:", selectedDate);
@@ -231,6 +280,16 @@ const FirstComponentUser = () => {
             selectedDate={selectedDate}
             data={data.douleurs}
             onUpdateNiveau={handleUpdateNiveau}
+            onCreate={handleCreateSuivi}
+            onDeleteEntry={handleDeleteEntry}
+          />
+        );
+      case "sensoriel":
+        return (
+          <SensorielSection
+            selectedDate={selectedDate}
+            data={data.sensoriel}
+            onUpdateSensoriel={handleUpdateSensoriel}
             onCreate={handleCreateSuivi}
             onDeleteEntry={handleDeleteEntry}
           />

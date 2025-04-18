@@ -75,6 +75,14 @@ export const userSuivi = async (req, res) => {
       });
     }
 
+    if (req.body.sensoriel && Array.isArray(req.body.sensoriel)) {
+      console.log("Ajout de nouvelles entrées sensoriel:", req.body.sensoriel);
+      if (!suivi.sensoriel) suivi.sensoriel = [];
+      req.body.sensoriel.forEach((newEntry) => {
+        suivi.sensoriel.push(newEntry);
+      });
+    }
+
     // Mise à jour des champs simples
     if (req.body.fatigue !== undefined) {
       console.log("Mise à jour de la fatigue:", req.body.fatigue);
@@ -569,6 +577,121 @@ export const updateTroublesCognitifs = async (req, res) => {
     });
     res.status(500).json({
       message: "Erreur lors de la mise à jour des troubles cognitifs",
+      error: error.message,
+    });
+  }
+};
+
+// Mettre à jour une entrée sensorielle
+export const updateSensoriel = async (req, res) => {
+  try {
+    console.log("=== Début updateSensoriel ===");
+    console.log("Headers:", req.headers);
+    console.log("Body:", req.body);
+
+    const authId = req.user.id;
+    const { date, entryId, sensorielData } = req.body;
+
+    // Validation des données requises
+    if (!date || !entryId || !sensorielData) {
+      return res.status(400).json({
+        message:
+          "La date, l'ID de l'entrée et les données sensorielles sont requis",
+      });
+    }
+
+    // Validation que sensorielData est un objet
+    if (typeof sensorielData !== "object" || Array.isArray(sensorielData)) {
+      return res.status(400).json({
+        message: "Les données sensorielles doivent être un objet",
+      });
+    }
+
+    // Validation des champs autorisés
+    const validFields = ["fourmillement", "picotements", "brulures"];
+    const receivedFields = Object.keys(sensorielData);
+    const invalidFields = receivedFields.filter(
+      (field) => !validFields.includes(field)
+    );
+
+    if (invalidFields.length > 0) {
+      return res.status(400).json({
+        message: `Champs invalides: ${invalidFields.join(
+          ", "
+        )}. Les champs valides sont: ${validFields.join(", ")}`,
+      });
+    }
+
+    // Validation des valeurs
+    const validValues = ["normale", "basse", "forte", null];
+    for (const [field, value] of Object.entries(sensorielData)) {
+      if (!validValues.includes(value)) {
+        return res.status(400).json({
+          message: `Valeur invalide pour ${field}: ${value}. Les valeurs valides sont: ${validValues.join(
+            ", "
+          )}`,
+        });
+      }
+    }
+
+    // Formatage de la date
+    const targetDate = new Date(date);
+    targetDate.setHours(targetDate.getHours() + 1);
+    targetDate.setHours(0, 0, 0, 0);
+
+    const nextDay = new Date(targetDate);
+    nextDay.setDate(nextDay.getDate() + 1);
+
+    console.log("Date reçue:", date);
+    console.log("Date cible formatée:", targetDate);
+    console.log("Données sensorielles reçues:", sensorielData);
+
+    // Trouver le suivi
+    let suivi = await suiviModel.findOne({
+      user: authId,
+      date: {
+        $gte: targetDate,
+        $lt: nextDay,
+      },
+    });
+
+    if (!suivi) {
+      return res.status(404).json({
+        message: "Aucun suivi trouvé pour cette date",
+      });
+    }
+
+    // Trouver l'entrée sensorielle spécifique
+    const sensorielIndex = suivi.sensoriel.findIndex(
+      (entry) => entry._id.toString() === entryId
+    );
+
+    if (sensorielIndex === -1) {
+      return res.status(404).json({
+        message: "Entrée sensorielle non trouvée",
+      });
+    }
+
+    // Mettre à jour uniquement les champs fournis
+    Object.entries(sensorielData).forEach(([field, value]) => {
+      suivi.sensoriel[sensorielIndex][field] = value;
+    });
+
+    const updatedSuivi = await suivi.save();
+    console.log("Suivi mis à jour avec succès:", updatedSuivi);
+
+    res.status(200).json({
+      message: "Données sensorielles mises à jour avec succès",
+      suivi: updatedSuivi,
+    });
+  } catch (error) {
+    console.error("Erreur détaillée:", {
+      message: error.message,
+      stack: error.stack,
+      name: error.name,
+    });
+    res.status(500).json({
+      message: "Erreur lors de la mise à jour des données sensorielles",
       error: error.message,
     });
   }

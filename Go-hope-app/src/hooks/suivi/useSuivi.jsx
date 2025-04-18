@@ -188,6 +188,25 @@ const useSuivi = () => {
     }
   };
 
+  // Mettre à jour une entrée sensorielle
+  const updateSensoriel = async (date, entryId, sensorielData) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const result = await suiviService.updateSensoriel(
+        date,
+        entryId,
+        sensorielData
+      );
+      setLoading(false);
+      return result;
+    } catch (err) {
+      setError(err.response?.data?.message || "Une erreur est survenue");
+      setLoading(false);
+      throw err;
+    }
+  };
+
   return {
     loading,
     error,
@@ -201,6 +220,7 @@ const useSuivi = () => {
     updateTrackingEntry,
     updateSimpleField,
     updateTroublesCognitifs,
+    updateSensoriel,
   };
 };
 
