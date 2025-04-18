@@ -39,6 +39,8 @@ export const userSuivi = async (req, res) => {
       }
       if (req.body.sensoriel) suiviData.sensoriel = req.body.sensoriel;
       if (req.body.douleurs) suiviData.douleurs = req.body.douleurs;
+      if (req.body.fatigue) suiviData.fatigue = req.body.fatigue;
+      if (req.body.humeur) suiviData.humeur = req.body.humeur;
 
       console.log("Données du nouveau suivi:", suiviData);
 
@@ -71,6 +73,17 @@ export const userSuivi = async (req, res) => {
       req.body.douleurs.forEach((newEntry) => {
         suivi.douleurs.push(newEntry);
       });
+    }
+
+    // Mise à jour des champs simples
+    if (req.body.fatigue !== undefined) {
+      console.log("Mise à jour de la fatigue:", req.body.fatigue);
+      suivi.fatigue = req.body.fatigue;
+    }
+
+    if (req.body.humeur !== undefined) {
+      console.log("Mise à jour de la fatigue:", req.body.humeur);
+      suivi.humeur = req.body.humeur;
     }
 
     console.log("Suivi avant sauvegarde:", suivi);
