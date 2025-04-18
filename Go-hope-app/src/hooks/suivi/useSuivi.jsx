@@ -207,6 +207,21 @@ const useSuivi = () => {
     }
   };
 
+  // Supprimer un objet sensoriel
+  const removeSensorielObject = async (objectId) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const result = await suiviService.removeSensorielObject(objectId);
+      setLoading(false);
+      return result;
+    } catch (err) {
+      setError(err.response?.data?.message || "Une erreur est survenue");
+      setLoading(false);
+      throw err;
+    }
+  };
+
   return {
     loading,
     error,
@@ -221,6 +236,7 @@ const useSuivi = () => {
     updateSimpleField,
     updateTroublesCognitifs,
     updateSensoriel,
+    removeSensorielObject,
   };
 };
 

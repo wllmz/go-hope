@@ -696,3 +696,47 @@ export const updateSensoriel = async (req, res) => {
     });
   }
 };
+
+// Supprimer un objet sensoriel par son ID
+export const removeSensorielObject = async (req, res) => {
+  try {
+    const { objectId } = req.params;
+    const authId = req.user.id;
+
+    if (!objectId) {
+      return res.status(400).json({
+        message: "L'ID de l'objet sensoriel est requis",
+      });
+    }
+
+    // Trouver le suivi qui contient l'objet sensoriel
+    const suivi = await suiviModel.findOne({
+      user: authId,
+      "sensoriel._id": objectId,
+    });
+
+    if (!suivi) {
+      return res.status(404).json({
+        message: "Aucun suivi trouvé contenant l'objet sensoriel",
+      });
+    }
+
+    // Supprimer l'objet sensoriel du tableau
+    suivi.sensoriel = suivi.sensoriel.filter(
+      (entry) => entry._id.toString() !== objectId
+    );
+
+    const updatedSuivi = await suivi.save();
+
+    res.status(200).json({
+      message: "Objet sensoriel supprimé avec succès",
+      suivi: updatedSuivi,
+    });
+  } catch (error) {
+    console.error("Erreur lors de la suppression de l'objet sensoriel:", error);
+    res.status(500).json({
+      message: "Erreur lors de la suppression de l'objet sensoriel",
+      error: error.message,
+    });
+  }
+};

@@ -222,3 +222,18 @@ export const updateSensoriel = async (date, entryId, sensorielData) => {
     throw error;
   }
 };
+
+// Supprimer un objet sensoriel par son ID
+export const removeSensorielObject = async (objectId) => {
+  try {
+    if (!objectId) {
+      throw new Error("L'ID de l'objet sensoriel est requis");
+    }
+
+    const response = await axiosInstance.delete(`/suivi/sensoriel/${objectId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Erreur removeSensorielObject:", error);
+    throw error;
+  }
+};
