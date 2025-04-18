@@ -7,6 +7,8 @@ import Calendar from "../../../tracking/components/Calendar";
 import useSuivi from "../../../../hooks/suivi/useSuivi";
 import { format, startOfDay } from "date-fns";
 import TroublesCognitifsSection from "../../../tracking/sections/TroublesCognitifsSection";
+import FatigueSection from "../../../tracking/sections/FatigueSection";
+import HumeurSection from "../../../tracking/sections/HumeurSection";
 
 const FirstComponentUser = () => {
   const [activeTab, setActiveTab] = useState("motricite");
@@ -15,6 +17,8 @@ const FirstComponentUser = () => {
     motricite: [],
     douleurs: [],
     troublesCognitifs: {},
+    fatigue: null,
+    humeur: null,
   });
   const {
     getSuiviByDate,
@@ -35,12 +39,16 @@ const FirstComponentUser = () => {
           motricite: response.suivi.motricité || [],
           douleurs: response.suivi.douleurs || [],
           troublesCognitifs: response.suivi.troublesCognitifs || {},
+          fatigue: response.suivi.fatigue || null,
+          humeur: response.suivi.humeur || null,
         });
       } else {
         setData({
           motricite: [],
           douleurs: [],
           troublesCognitifs: {},
+          fatigue: null,
+          humeur: null,
         });
       }
     } catch (error) {
@@ -82,6 +90,8 @@ const FirstComponentUser = () => {
           ...prev,
           motricite: response.suivi.motricité || [],
           douleurs: response.suivi.douleurs || [],
+          fatigue: response.suivi.fatigue || null,
+          humeur: response.suivi.humeur || null,
         }));
       } else {
         console.error("Réponse de l'API invalide:", response);
@@ -164,6 +174,42 @@ const FirstComponentUser = () => {
     }
   };
 
+  const handleUpdateFatigue = async (newValue) => {
+    try {
+      const formattedDate = format(selectedDate, "yyyy-MM-dd");
+
+      // On crée d'abord la valeur avec createSuivi
+      await createSuivi({
+        date: formattedDate,
+        fatigue: newValue,
+      });
+
+      // Mise à jour du state local
+      setData((prev) => ({
+        ...prev,
+        fatigue: newValue,
+      }));
+    } catch (error) {
+      console.error("Erreur mise à jour fatigue:", error);
+    }
+  };
+
+  const handleUpdateHumeur = async (newValue) => {
+    try {
+      const formattedDate = format(selectedDate, "yyyy-MM-dd");
+      await createSuivi({
+        date: formattedDate,
+        humeur: newValue,
+      });
+      setData((prev) => ({
+        ...prev,
+        humeur: newValue,
+      }));
+    } catch (error) {
+      console.error("Erreur mise à jour humeur:", error);
+    }
+  };
+
   const renderContent = () => {
     console.log("renderContent - Données actuelles:", data);
     console.log("renderContent - Date sélectionnée:", selectedDate);
@@ -195,6 +241,22 @@ const FirstComponentUser = () => {
             data={data.troublesCognitifs}
             selectedDate={selectedDate}
             onUpdateTroublesCognitifs={handleUpdateTroublesCognitifs}
+          />
+        );
+      case "fatigue":
+        return (
+          <FatigueSection
+            data={data.fatigue}
+            selectedDate={selectedDate}
+            onUpdateFatigue={handleUpdateFatigue}
+          />
+        );
+      case "humeurs":
+        return (
+          <HumeurSection
+            data={data.humeur}
+            selectedDate={selectedDate}
+            onUpdateHumeur={handleUpdateHumeur}
           />
         );
       default:
