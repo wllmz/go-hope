@@ -10,6 +10,7 @@ import {
   updateTrackingEntry,
   updateSimpleField,
   updateTroublesCognitifs,
+  updateSensoriel,
 } from "../../controllers/suivi/monSuiviController.js";
 import { verifyToken } from "../../middleware/jwtMiddleware.js";
 
@@ -48,6 +49,9 @@ router.put("/update-simple-field", verifyToken, updateSimpleField);
 
 // Route pour mettre à jour les troubles cognitifs
 router.put("/update-troubles-cognitifs", verifyToken, updateTroublesCognitifs);
+
+// Route pour mettre à jour le sensoriel
+router.put("/update-sensoriel", verifyToken, updateSensoriel);
 
 /**
  * @swagger

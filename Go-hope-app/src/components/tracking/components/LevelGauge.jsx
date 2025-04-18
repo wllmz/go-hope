@@ -86,6 +86,12 @@ const DOULEURS_ICONS = {
   forte: Frown,
 };
 
+const SENSORIEL_ICONS = {
+  basse: Smile,
+  normale: Meh,
+  forte: Frown,
+};
+
 const LEVEL_LABELS = {
   basse: "Basse",
   normale: "Normale",
@@ -116,6 +122,8 @@ const LevelGauge = ({ niveau = null, onNiveauChange, type = "motricite" }) => {
   const Icon = niveau
     ? type === "motricite"
       ? MOTRICITE_ICONS[niveau]
+      : type === "sensoriel"
+      ? SENSORIEL_ICONS[niveau]
       : DOULEURS_ICONS[niveau]
     : null;
 

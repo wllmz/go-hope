@@ -188,3 +188,37 @@ export const updateTroublesCognitifs = async (date, troublesCognitifs) => {
     throw error;
   }
 };
+
+// Mettre à jour une entrée sensorielle
+export const updateSensoriel = async (date, entryId, sensorielData) => {
+  try {
+    // Validation des données
+    if (!date || !entryId || !sensorielData) {
+      throw new Error("Date, entryId et sensorielData sont requis");
+    }
+
+    // S'assurer que sensorielData est un objet et pas un tableau
+    if (typeof sensorielData !== "object" || Array.isArray(sensorielData)) {
+      throw new Error("sensorielData doit être un objet (pas un tableau)");
+    }
+
+    const dataToSend = {
+      date,
+      entryId,
+      sensorielData,
+    };
+
+    console.log("updateSensoriel - Données à envoyer:", dataToSend);
+
+    const response = await axiosInstance.put(
+      "/suivi/update-sensoriel",
+      dataToSend
+    );
+
+    console.log("updateSensoriel - Réponse:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Erreur lors de la mise à jour sensoriel:", error);
+    throw error;
+  }
+};

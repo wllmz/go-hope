@@ -35,15 +35,18 @@ const suiviSchema = new mongoose.Schema({
       },
       fourmillement: {
         type: String,
-        enum: ["normale", "basse", "forte", "faible"],
+        enum: ["normale", "basse", "forte", null],
+        default: null,
       },
       picotements: {
         type: String,
-        enum: ["normale", "basse", "forte", "faible"],
+        enum: ["normale", "basse", "forte", null],
+        default: null,
       },
       brulures: {
         type: String,
-        enum: ["normale", "basse", "forte", "faible"],
+        enum: ["normale", "basse", "forte", null],
+        default: null,
       },
     },
   ],
@@ -59,7 +62,7 @@ const suiviSchema = new mongoose.Schema({
       },
       niveau: {
         type: String,
-        enum: ["normale", "basse", "forte", "faible", null],
+        enum: ["normale", "basse", "forte", null],
         default: null,
       },
     },
