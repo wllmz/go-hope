@@ -62,7 +62,7 @@ const SelectionModal = ({ onClose, onSelect }) => {
       case "zone":
         return (
           <>
-            <Box sx={{ p: 2, borderBottom: "1px solid #f0f0f0" }}>
+            <Box sx={{ p: 2, borderBottom: "1px solid #f0f0f0", mt: 1 }}>
               Sélectionner une zone
             </Box>
             {ZONES.map((zone) => (

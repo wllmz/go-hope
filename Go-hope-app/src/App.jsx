@@ -29,7 +29,6 @@ import SantePage from "./pages/sante/santePage";
 import PartenaireDetail from "./pages/partenaire/partenaireDetailPage";
 import NewsDetail from "./pages/new/newDetailPage";
 import SanteDetail from "./pages/sante/santeDetailPage";
-import ArticleAll from "./pages/new/articleAllNews";
 import ArticleAllPartenaire from "./pages/partenaire/articleAllPartenaire";
 import SanteAllArticle from "./pages/sante/santeAllArticle";
 import ProjetPage from "./pages/projet/projetPage";
@@ -225,14 +224,6 @@ function App() {
               element={
                 <PrivateRoute>
                   <SanteDetail />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/news/la-sep"
-              element={
-                <PrivateRoute>
-                  <ArticleAll />
                 </PrivateRoute>
               }
             />

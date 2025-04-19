@@ -2,19 +2,25 @@ import React from "react";
 import { Box, styled } from "@mui/material";
 import { Smile, Frown, Meh } from "lucide-react";
 
-const GaugeContainer = styled(Box)({
+const GaugeContainer = styled(Box)(({ theme }) => ({
   width: "100%",
-  height: "40px",
+  height: "35px",
   position: "relative",
   cursor: "pointer",
-  borderRadius: "20px",
+  borderRadius: "15px",
   overflow: "hidden",
-  marginTop: "8px",
-  minWidth: "300px",
+  marginTop: "6px",
+  minWidth: "250px",
   backgroundColor: "#fff",
   border: "none",
   boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-});
+  [theme.breakpoints.up("sm")]: {
+    height: "40px",
+    borderRadius: "20px",
+    marginTop: "8px",
+    minWidth: "300px",
+  },
+}));
 
 const GaugeBackground = styled(Box)(({ niveau }) => ({
   position: "absolute",
@@ -34,7 +40,7 @@ const GaugeBackground = styled(Box)(({ niveau }) => ({
   borderRadius: "20px",
 }));
 
-const LevelText = styled(Box)(({ niveau }) => ({
+const LevelText = styled(Box)(({ niveau, theme }) => ({
   position: "absolute",
   width: "100%",
   height: "100%",
@@ -45,39 +51,61 @@ const LevelText = styled(Box)(({ niveau }) => ({
     color:
       niveau === null ? "#757575" : niveau === "forte" ? "#fff" : "#FFA726",
     fontWeight: 500,
+    fontSize: "13px",
     ...(niveau === "normale"
       ? {
-          left: "calc(50% + 30px)",
+          left: "calc(50% + 25px)",
         }
       : {
           left: "50%",
           transform: "translateX(-50%)",
         }),
+    [theme.breakpoints.up("sm")]: {
+      fontSize: "14px",
+      ...(niveau === "normale" && {
+        left: "calc(50% + 30px)",
+      }),
+    },
   },
   "& svg": {
     position: "absolute",
-    width: "25px",
-    height: "25px",
+    width: "20px",
+    height: "20px",
     strokeWidth: 2,
     color: niveau === null ? "#757575" : "#fff",
     ...(niveau === "basse"
       ? {
-          left: "15px",
+          left: "5px",
         }
       : niveau === "normale"
       ? {
-          left: "calc(50% - 30px)",
+          left: "calc(50% - 25px)",
         }
       : {
-          right: "15px",
+          right: "10px",
         }),
+    [theme.breakpoints.up("sm")]: {
+      width: "25px",
+      height: "25px",
+      ...(niveau === "basse"
+        ? {
+            left: "15px",
+          }
+        : niveau === "normale"
+        ? {
+            left: "calc(50% - 30px)",
+          }
+        : {
+            right: "15px",
+          }),
+    },
   },
 }));
 
 const MOTRICITE_ICONS = {
   basse: Frown,
   normale: Smile,
-  forte: Meh,
+  forte: Smile,
 };
 
 const DOULEURS_ICONS = {
@@ -88,8 +116,14 @@ const DOULEURS_ICONS = {
 
 const SENSORIEL_ICONS = {
   basse: Smile,
-  normale: Meh,
+  normale: Smile,
   forte: Frown,
+};
+
+const TROUBLES_COGNITIFS_ICONS = {
+  basse: Frown,
+  normale: Smile,
+  forte: Smile,
 };
 
 const LEVEL_LABELS = {
@@ -124,6 +158,8 @@ const LevelGauge = ({ niveau = null, onNiveauChange, type = "motricite" }) => {
       ? MOTRICITE_ICONS[niveau]
       : type === "sensoriel"
       ? SENSORIEL_ICONS[niveau]
+      : type === "troublesCognitifs"
+      ? TROUBLES_COGNITIFS_ICONS[niveau]
       : DOULEURS_ICONS[niveau]
     : null;
 

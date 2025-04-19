@@ -2,8 +2,11 @@ import React, { useState, useEffect, useRef } from "react";
 import { useUpsertUser } from "../../../hooks/user/useUpdateInfo";
 import UserProfileForm from "./UserProfileForm";
 import { useUserInfo } from "../../../hooks/user/useUserInfo";
+import { useNavigate } from "react-router-dom";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 const UserProfileUpdate = () => {
+  const navigate = useNavigate();
   const {
     user,
     loading: userLoading,
@@ -118,6 +121,14 @@ const UserProfileUpdate = () => {
 
   return (
     <div className="w-full mx-auto p-5 bg-gradient-to-b from-[#B3D7EC] to-white">
+      <button
+        onClick={() => navigate(-1)}
+        className="flex items-center gap-2 mb-4 text-[#1D5F84] hover:text-[#164863] transition-colors"
+      >
+        <ArrowBackIcon sx={{ fontSize: 24 }} />
+        <span className="font-medium">Retour</span>
+      </button>
+
       {userLoading ? (
         <p className="text-center">Chargement...</p>
       ) : (

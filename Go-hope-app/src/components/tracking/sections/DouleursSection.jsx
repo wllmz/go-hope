@@ -5,27 +5,17 @@ import { Add, Close } from "@mui/icons-material";
 import SelectionModal from "./SelectionModal";
 import { startOfDay } from "date-fns";
 
-const Container = styled(Box)({
+const Container = styled(Box)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   gap: "16px",
   width: "100%",
   marginTop: "16px",
-});
-
-const StyledButton = styled(Button)({
-  backgroundColor: "#FFA726",
-  color: "#fff",
-  padding: "8px 16px",
-  borderRadius: "50px",
-  textTransform: "none",
-  fontSize: "14px",
-  alignSelf: "center",
-  boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-  "&:hover": {
-    backgroundColor: "#FF9800",
+  minHeight: "150px",
+  [theme.breakpoints.up("sm")]: {
+    minHeight: "300px",
   },
-});
+}));
 
 const AddButton = styled(Button)({
   display: "flex",
@@ -36,11 +26,11 @@ const AddButton = styled(Button)({
   minWidth: "40px",
   padding: 0,
   borderRadius: "50%",
-  backgroundColor: "#FFA726",
+  backgroundColor: "#87BBDF",
   color: "#fff",
   boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
   "&:hover": {
-    backgroundColor: "#FF9800",
+    backgroundColor: "#6BA5D1",
   },
 });
 
@@ -151,7 +141,9 @@ const DouleursSection = ({
       {shouldShowContent && (
         <>
           {data.length > 0 && (
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+            <Box
+              sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 4 }}
+            >
               {data.map((zone, index) => (
                 <ZoneItem key={index}>
                   <ZoneHeader>
@@ -167,13 +159,14 @@ const DouleursSection = ({
                     onNiveauChange={(newNiveau) =>
                       selectedDate ? handleNiveauChange(index, newNiveau) : null
                     }
+                    type="douleurs"
                   />
                 </ZoneItem>
               ))}
             </Box>
           )}
 
-          <Box sx={{ display: "flex", justifyContent: "center" }}>
+          <Box sx={{ display: "flex", justifyContent: "center", mt: 1, mb: 1 }}>
             <AddButton onClick={handleAddClick}>
               <Add />
             </AddButton>

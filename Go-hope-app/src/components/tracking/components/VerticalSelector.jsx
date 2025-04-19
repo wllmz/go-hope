@@ -4,15 +4,21 @@ import { Box, Button, styled } from "@mui/material";
 const OptionButton = styled(Button)(({ theme, selected }) => ({
   width: "100%",
   justifyContent: "center",
-  padding: "12px",
-  marginBottom: "8px",
-  backgroundColor: selected ? "#FFA726" : "transparent",
+  padding: "4px",
+  marginBottom: "6px",
+  backgroundColor: selected ? "#FFA726" : "#FFFFFF",
   color: selected ? "white" : "#666",
-  border: selected ? "none" : "1px solid #E0E0E0",
-  borderRadius: "25px",
+  borderRadius: "20px",
   textTransform: "none",
+  fontSize: "13px",
   "&:hover": {
     backgroundColor: selected ? "#FFA726" : "#F5F5F5",
+  },
+  [theme.breakpoints.up("sm")]: {
+    padding: "12px",
+    marginBottom: "8px",
+    borderRadius: "25px",
+    fontSize: "14px",
   },
 }));
 
@@ -23,9 +29,9 @@ const VerticalSelector = ({ options, value, onChange, title }) => {
         <Box
           sx={{
             textAlign: "center",
-            marginBottom: "20px",
+            marginBottom: { xs: "12px", sm: "20px" },
             color: "#666",
-            fontSize: "16px",
+            fontSize: { xs: "14px", sm: "16px" },
           }}
         >
           {title}
