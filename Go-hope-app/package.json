@@ -19,6 +19,7 @@
     "@mui/material": "^6.4.4",
     "@tailwindcss/vite": "^4.0.3",
     "axios": "^1.7.9",
+    "date-fns": "^4.1.0",
     "dompurify": "^3.2.5",
     "framer-motion": "^12.4.0",
     "keen-slider": "^6.8.6",

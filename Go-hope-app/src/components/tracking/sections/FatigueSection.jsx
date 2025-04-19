@@ -22,7 +22,15 @@ const FatigueSection = ({ data, selectedDate, onUpdateFatigue }) => {
   };
 
   return (
-    <Box sx={{ width: "100%", mt: 2 }}>
+    <Box
+      sx={{
+        width: "100%",
+        mt: 1,
+        minHeight: { xs: "150px", sm: "300px" },
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
       <VerticalSelector
         title="Mon niveau de fatigue est"
         options={FATIGUE_OPTIONS}

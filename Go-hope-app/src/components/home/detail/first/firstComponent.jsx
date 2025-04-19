@@ -9,10 +9,7 @@ const FirstComponent = () => {
   const navigate = useNavigate();
 
   return (
-    <div className=" bg-gradient-to-b from-[#B3D7EC] to-[white]   ">
-      <p className="text-xl p-4 pt-6 text-[#0E3043]  ">
-        Bonjour {user?.username} !{" "}
-      </p>
+    <div className="   ">
       <div className="flex flex-col mb-6 items-center relative">
         <div className="w-full p-4 text-center rounded-xl">
           {/* Image de fond */}

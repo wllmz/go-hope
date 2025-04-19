@@ -3,13 +3,17 @@ import { Box, styled } from "@mui/material";
 import LevelGauge from "../components/LevelGauge";
 import { format } from "date-fns";
 
-const Container = styled(Box)({
+const Container = styled(Box)(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   gap: "16px",
   width: "100%",
   marginTop: "16px",
-});
+  minHeight: "150px",
+  [theme.breakpoints.up("sm")]: {
+    minHeight: "300px",
+  },
+}));
 
 const TroubleItem = styled(Box)({
   display: "flex",
@@ -63,7 +67,7 @@ const TroublesCognitifsSection = ({
   };
 
   return (
-    <Container>
+    <Container sx={{ mt: 1 }}>
       <TroubleItem>
         <TroubleTitle>Mémoire</TroubleTitle>
         <LevelGauge

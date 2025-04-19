@@ -6,7 +6,7 @@ const UserProfile = ({ user }) => {
   const navigate = useNavigate();
 
   return (
-    <div className="flex flex-col items-center ">
+    <div className="flex flex-col items-center">
       {user && user.image ? (
         <img
           src={user.image}
@@ -24,12 +24,10 @@ const UserProfile = ({ user }) => {
       </p>
       <button
         onClick={() => navigate("/modifier-profile")}
-        className="mt-5 w-lg flex justify-center items-center space-x-2 px-4 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+        className="mt-5 w-full sm:w-auto flex justify-center items-center space-x-2 px-3 sm:px-4 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 mx-4 sm:mx-0"
       >
         <HiInformationCircle className="h-4 w-4 text-gray-500" />
-
         <span>Modifier mon profil</span>
-
         <HiChevronDown className="h-4 w-4 text-gray-500" />
       </button>
     </div>

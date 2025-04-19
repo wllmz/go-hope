@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Box, Button } from "@mui/material";
+import { Box, Button, Avatar } from "@mui/material";
 import TrackingTabs from "../../../tracking/TrackingTabs";
 import MotriciteSection from "../../../tracking/sections/MotriciteSection";
 import DouleursSection from "../../../tracking/sections/DouleursSection";
@@ -10,10 +10,14 @@ import TroublesCognitifsSection from "../../../tracking/sections/TroublesCogniti
 import FatigueSection from "../../../tracking/sections/FatigueSection";
 import HumeurSection from "../../../tracking/sections/HumeurSection";
 import SensorielSection from "../../../tracking/sections/SensorielSection";
+import { useUserInfo } from "../../../../hooks/user/useUserInfo";
+import papillonBleu from "../../../../assets/papillon-bleu.png";
 
 const FirstComponentUser = () => {
+  const { user } = useUserInfo();
   const [activeTab, setActiveTab] = useState("motricite");
   const [selectedDate, setSelectedDate] = useState(null);
+  const [datesWithData, setDatesWithData] = useState([]);
   const [data, setData] = useState({
     motricite: [],
     douleurs: [],
@@ -31,6 +35,43 @@ const FirstComponentUser = () => {
     updateSensoriel,
     removeSensorielObject,
   } = useSuivi();
+
+  useEffect(() => {
+    const fetchDatesWithData = async () => {
+      try {
+        const today = new Date();
+        const dates = [];
+
+        for (let i = 0; i < 7; i++) {
+          const date = new Date(today);
+          date.setDate(date.getDate() - i);
+          const formattedDate = format(date, "yyyy-MM-dd");
+          const response = await getSuiviByDate(formattedDate);
+
+          if (
+            response?.suivi &&
+            (response.suivi.motricité?.length > 0 ||
+              response.suivi.douleurs?.length > 0 ||
+              response.suivi.sensoriel?.length > 0 ||
+              Object.keys(response.suivi.troublesCognitifs || {}).length > 0 ||
+              response.suivi.fatigue ||
+              response.suivi.humeur)
+          ) {
+            dates.push(formattedDate);
+          }
+        }
+
+        setDatesWithData(dates);
+      } catch (error) {
+        console.error(
+          "Erreur lors de la récupération des dates avec données:",
+          error
+        );
+      }
+    };
+
+    fetchDatesWithData();
+  }, []);
 
   const handleDateSelect = async (date) => {
     try {
@@ -343,19 +384,84 @@ const FirstComponentUser = () => {
   return (
     <Box
       sx={{
+        position: "relative",
         background: "linear-gradient(180deg, #B3D7EC 0%, #FDFDFF 100%)",
+        boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
         height: "auto",
-        p: 6,
+        minHeight: { xs: "350px", sm: "550px" },
+        padding: { xs: "20px 0", sm: "40px 20px" },
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
         maxWidth: "800px",
         margin: "0 auto",
         borderRadius: "24px",
-        gap: 4,
+        gap: { xs: 4, sm: 6 },
       }}
     >
-      <Calendar selectedDate={selectedDate} onDateSelect={handleDateSelect} />
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          width: "100%",
+          mb: 2,
+          gap: { xs: 6, sm: 8 },
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: { xs: 6, sm: 8 },
+          }}
+        >
+          <Avatar
+            src={user?.profileImage}
+            alt={user?.firstName}
+            sx={{
+              width: { xs: 60, sm: 80 },
+              height: { xs: 60, sm: 80 },
+              border: "3px solid white",
+              boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+            }}
+          />
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "flex-start",
+            }}
+          >
+            <Box
+              sx={{
+                fontSize: { xs: "20px", sm: "24px" },
+                fontWeight: 600,
+                color: "#2C3E50",
+                mb: 1,
+                fontFamily: "'Confiteria', cursive",
+              }}
+            >
+              Mon suivi
+            </Box>
+            <Box
+              sx={{
+                fontSize: { xs: "14px", sm: "16px" },
+                color: "#7F8C8D",
+                fontWeight: 400,
+              }}
+            >
+              Votre ressenti du jour
+            </Box>
+          </Box>
+        </Box>
+      </Box>
+
+      <Calendar
+        selectedDate={selectedDate}
+        onDateSelect={handleDateSelect}
+        datesWithData={datesWithData}
+      />
 
       {!selectedDate && (
         <Button
@@ -367,11 +473,12 @@ const FirstComponentUser = () => {
             "&:hover": {
               backgroundColor: "#FFA726/80",
             },
-            borderRadius: "25px",
+            borderRadius: "10px",
             padding: "12px 24px",
             textTransform: "none",
             fontSize: "16px",
-            fontWeight: "400",
+            fontWeight: "500",
+            fontFamily: "'halcom', cursive",
             boxShadow: "none",
           }}
         >
@@ -380,11 +487,35 @@ const FirstComponentUser = () => {
       )}
 
       {selectedDate && (
-        <>
+        <Box
+          sx={{
+            background: "#FFF6ED",
+            padding: "10px",
+            margin: "10px",
+            borderRadius: "16px",
+            width: { xs: "85%", sm: "100%" },
+            maxWidth: "600px",
+            boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+          }}
+        >
           <TrackingTabs activeTab={activeTab} onTabChange={handleTabChange} />
           {renderContent()}
-        </>
+        </Box>
       )}
+
+      <Box
+        component="img"
+        src={papillonBleu}
+        alt="Papillon bleu"
+        sx={{
+          position: "absolute",
+          bottom: { xs: "10px", sm: "20px" },
+          right: { xs: "10px", sm: "20px" },
+          width: { xs: "40px", sm: "45px" },
+          height: "auto",
+          opacity: 0.8,
+        }}
+      />
     </Box>
   );
 };
