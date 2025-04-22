@@ -1,9 +1,10 @@
-name: Deploy to VPS
+name: Deploy to VPSs
 
 on:
   push:
     branches:
       - dev
+      - main
 
 jobs:
   deploy:
@@ -20,12 +21,31 @@ jobs:
           username: ${{ secrets.VPS_USERNAME }}
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
-            cd /var/www/Mylizy
-            git pull origin dev
-            cd /var/www/Mylizy
+            cd /var/www/go-hope
 
-            docker-compose down
-            docker-compose pull
-            docker-compose build --no-cache
-            docker-compose up -d --remove-orphans
+            # Désactiver BuildKit pour éviter le bug ContainerConfig
+            export DOCKER_BUILDKIT=0
+
+            # Récupère la branche qui a déclenché le workflow
+            BRANCH="${{ github.ref }}"
+            echo "Branche déclenchante : $BRANCH"
+
+            if [ "$BRANCH" = "refs/heads/main" ]; then
+              echo "Déploiement production (frontend-prod et backend-prod)"
+              git pull origin main
+              docker-compose stop frontend-prod backend-prod
+              docker-compose rm -f frontend-prod backend-prod
+              docker-compose pull frontend-prod backend-prod
+              docker-compose build --no-cache frontend-prod backend-prod
+              docker-compose up -d --remove-orphans frontend-prod backend-prod
+            else
+              echo "Déploiement développement (frontend-dev et backend-dev)"
+              git pull origin dev
+              docker-compose stop frontend-dev backend-dev
+              docker-compose rm -f frontend-dev backend-dev
+              docker-compose pull frontend-dev backend-dev
+              docker-compose build --no-cache frontend-dev backend-dev
+              docker-compose up -d --remove-orphans frontend-dev backend-dev
+            fi
+
             echo "Déploiement avec Docker terminé avec succès."

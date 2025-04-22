@@ -22,7 +22,7 @@ const generateTokens = (user) => {
     { id: user._id, roles: user.roles },
     JWT_SECRET,
     {
-      expiresIn: "15m", // 15 minutes
+      expiresIn: "1h", // Augmenté à 1 heure pour la production
     }
   );
 
@@ -30,7 +30,7 @@ const generateTokens = (user) => {
     { id: user._id, roles: user.roles },
     JWT_REFRESH_SECRET,
     {
-      expiresIn: "7d", // 7 jours
+      expiresIn: "30d", // Augmenté à 30 jours pour la production
     }
   );
 
@@ -39,18 +39,23 @@ const generateTokens = (user) => {
 
 // 2. Fonction utilitaire pour enregistrer les tokens dans les cookies
 const setTokenCookies = (res, accessToken, refreshToken) => {
+  // Configuration des cookies pour la production
+  const isProduction = process.env.NODE_ENV === "production";
+
   res.cookie("accessToken", accessToken, {
-    httpOnly: false,
-    secure: false,
-    sameSite: "Lax",
-    maxAge: 15 * 60 * 1000, // 15 minutes
+    httpOnly: true, // Sécurisé pour la production
+    secure: true, // true en production
+    sameSite: "None", // None avec secure:true en production
+    maxAge: 60 * 60 * 1000, // 1 heure
+    path: "/",
   });
 
   res.cookie("refreshToken", refreshToken, {
-    httpOnly: false,
-    secure: false,
-    sameSite: "Lax",
-    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 jours
+    httpOnly: true, // Sécurisé pour la production
+    secure: true, // true en production
+    sameSite: "None", // None avec secure:true en production
+    maxAge: 60 * 60 * 1000, // 1 heure
+    path: "/",
   });
 
   console.log("Set-Cookie headers envoyés : ", res.getHeaders()["set-cookie"]);
@@ -169,11 +174,6 @@ export const loginUser = async (req, res) => {
 export const refreshToken = (req, res) => {
   const refreshTokenCookie = req.cookies.refreshToken;
 
-  console.log(
-    "Token de rafraîchissement reçu dans les cookies : ",
-    refreshTokenCookie
-  );
-
   if (!refreshTokenCookie) {
     console.log("Aucun refreshToken trouvé.");
     return res
@@ -189,23 +189,23 @@ export const refreshToken = (req, res) => {
         .json({ message: "Token de rafraîchissement invalide ou expiré." });
     }
 
-    console.log("Le refreshToken est valide. Données décodées : ", decoded);
-
     const newAccessToken = jwt.sign(
       { id: decoded.id, roles: decoded.roles },
       JWT_SECRET,
-      { expiresIn: "15m" }
+      { expiresIn: "1h" } // Augmenté à 1 heure pour la production
     );
+
+    // Configuration pour la production
+    const isProduction = process.env.NODE_ENV === "production";
 
     // Mise à jour du cookie accessToken
     res.cookie("accessToken", newAccessToken, {
-      httpOnly: false,
-      secure: false,
-      sameSite: "Lax",
-      maxAge: 15 * 60 * 1000, // 15 minutes
+      httpOnly: true, // Sécurisé pour la production
+      secure: true, // true en production
+      sameSite: "None", // None avec secure:true en production
+      maxAge: 60 * 60 * 1000, // 1 heure
+      path: "/",
     });
-
-    console.log("Nouveau accessToken généré : ", newAccessToken);
 
     res.status(200).json({
       accessToken: newAccessToken,
@@ -223,8 +223,6 @@ export const logoutUser = (req, res) => {
     const accessToken = req.cookies.accessToken;
     const refreshToken = req.cookies.refreshToken;
 
-    console.log("Cookies reçus :", { accessToken, refreshToken });
-
     if (!accessToken && !refreshToken) {
       console.log("Aucun token trouvé dans les cookies !");
       return res.status(401).json({
@@ -232,29 +230,31 @@ export const logoutUser = (req, res) => {
       });
     }
 
+    const isProduction = process.env.NODE_ENV === "production";
+
     // Suppression des cookies
     res.clearCookie("accessToken", {
-      httpOnly: false,
-      secure: false,
-      // sameSite: "None",
-      // path: "/",
+      httpOnly: true, // Sécurisé pour la production
+      secure: true, // true en production
+      sameSite: "None", // None avec secure:true en production
+      path: "/",
     });
 
     res.clearCookie("refreshToken", {
-      httpOnly: false,
-      secure: false,
-      // sameSite: "None",
-      // path: "/",
+      httpOnly: true, // Sécurisé pour la production
+      secure: true, // true en production
+      sameSite: "None", // None avec secure:true en production
+      path: "/",
     });
 
     console.log("Cookies supprimés avec succès !");
     res.status(200).json({
-      message: "Déconnexion réussie avec succès (message personnalisé).",
+      message: "Déconnexion réussie avec succès.",
     });
   } catch (error) {
     console.error("Erreur lors de la déconnexion :", error.message);
     res.status(500).json({
-      message: `Erreur serveur personnalisée : ${error.message}`,
+      message: `Erreur serveur : ${error.message}`,
     });
   }
 };
