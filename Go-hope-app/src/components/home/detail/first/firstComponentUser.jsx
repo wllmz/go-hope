@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Box, Button, Avatar } from "@mui/material";
+import { Box, Button, Avatar, IconButton } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
 import TrackingTabs from "../../../tracking/TrackingTabs";
 import MotriciteSection from "../../../tracking/sections/MotriciteSection";
 import DouleursSection from "../../../tracking/sections/DouleursSection";
@@ -11,13 +12,17 @@ import FatigueSection from "../../../tracking/sections/FatigueSection";
 import HumeurSection from "../../../tracking/sections/HumeurSection";
 import SensorielSection from "../../../tracking/sections/SensorielSection";
 import { useUserInfo } from "../../../../hooks/user/useUserInfo";
+import useUploads from "../../../../hooks/uploads/useUploads";
+import ImageCropper from "../../../Cropper/ImageCropper";
+import Modal from "../../../../utils/form/modal";
 import papillonBleu from "../../../../assets/papillon-bleu.png";
 
 const FirstComponentUser = () => {
-  const { user } = useUserInfo();
+  const { user, updateUserProfile } = useUserInfo();
   const [activeTab, setActiveTab] = useState("motricite");
   const [selectedDate, setSelectedDate] = useState(null);
   const [datesWithData, setDatesWithData] = useState([]);
+  const [showImageCropperModal, setShowImageCropperModal] = useState(false);
   const [data, setData] = useState({
     motricite: [],
     douleurs: [],
@@ -26,6 +31,15 @@ const FirstComponentUser = () => {
     fatigue: null,
     humeur: null,
   });
+
+  // Hook pour gérer l'upload d'images
+  const {
+    isLoading: uploadLoading,
+    error: uploadError,
+    uploadedImage,
+    handleImageUpload,
+  } = useUploads();
+
   const {
     getSuiviByDate,
     createSuivi,
@@ -40,6 +54,14 @@ const FirstComponentUser = () => {
   const [currentWeekStart, setCurrentWeekStart] = useState(
     startOfWeek(new Date(), { weekStartsOn: 1 })
   );
+
+  // Effet pour mettre à jour l'image du profil après un upload réussi
+  useEffect(() => {
+    if (uploadedImage && uploadedImage.filePath && updateUserProfile) {
+      updateUserProfile({ image: uploadedImage.filePath });
+      setShowImageCropperModal(false);
+    }
+  }, [uploadedImage]);
 
   const loadWeekData = async (weekStart) => {
     try {
@@ -70,6 +92,30 @@ const FirstComponentUser = () => {
   useEffect(() => {
     loadWeekData(currentWeekStart);
   }, []);
+
+  // Fonction pour ouvrir la modale de modification d'image
+  const handleEditAvatar = () => {
+    setShowImageCropperModal(true);
+  };
+
+  // Fonction appelée quand l'image est recadrée
+  const handleCropComplete = (croppedImageData) => {
+    // Convertir la data URL en fichier
+    const convertAndUpload = async () => {
+      try {
+        const response = await fetch(croppedImageData);
+        const blob = await response.blob();
+        const file = new File([blob], "avatar.png", { type: "image/png" });
+
+        // Upload du fichier
+        await handleImageUpload(file);
+      } catch (err) {
+        console.error("Erreur lors de l'upload:", err);
+      }
+    };
+
+    convertAndUpload();
+  };
 
   // Gestionnaire pour la navigation dans le calendrier
   const handleWeekChange = (direction) => {
@@ -425,16 +471,56 @@ const FirstComponentUser = () => {
             gap: { xs: 6, sm: 8 },
           }}
         >
-          <Avatar
-            src={user?.profileImage}
-            alt={user?.firstName}
-            sx={{
-              width: { xs: 60, sm: 80 },
-              height: { xs: 60, sm: 80 },
-              border: "3px solid white",
-              boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-            }}
-          />
+          <Box sx={{ position: "relative" }}>
+            <Avatar
+              src={user?.image}
+              alt={user?.username}
+              sx={{
+                width: { xs: 60, sm: 80 },
+                height: { xs: 60, sm: 80 },
+                border: "3px solid white",
+                boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+              }}
+            />
+            <IconButton
+              onClick={handleEditAvatar}
+              aria-label="Modifier avatar"
+              sx={{
+                position: "absolute",
+                bottom: -8,
+                right: -8,
+                backgroundColor: "#87BBDF",
+                color: "white",
+                padding: "6px",
+                "&:hover": {
+                  backgroundColor: "#1D5F84",
+                },
+                boxShadow: "0 2px 4px rgba(0,0,0,0.2)",
+                width: 28,
+                height: 28,
+              }}
+            >
+              <EditIcon sx={{ fontSize: 16 }} />
+            </IconButton>
+            {uploadLoading && (
+              <Box
+                sx={{
+                  position: "absolute",
+                  width: "100%",
+                  height: "100%",
+                  top: 0,
+                  left: 0,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  backgroundColor: "rgba(255,255,255,0.7)",
+                  borderRadius: "50%",
+                }}
+              >
+                Chargement...
+              </Box>
+            )}
+          </Box>
           <Box
             sx={{
               display: "flex",
@@ -529,6 +615,18 @@ const FirstComponentUser = () => {
           opacity: 0.8,
         }}
       />
+
+      {/* Modal pour le cropping d'image */}
+      <Modal
+        isOpen={showImageCropperModal}
+        onClose={() => setShowImageCropperModal(false)}
+      >
+        <ImageCropper
+          closeModal={() => setShowImageCropperModal(false)}
+          updateAvatar={handleCropComplete}
+          initialImage={user?.image}
+        />
+      </Modal>
     </Box>
   );
 };

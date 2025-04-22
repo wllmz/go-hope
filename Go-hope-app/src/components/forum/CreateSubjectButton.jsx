@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import Modal from "../../utils/form/ModalFade";
 import useSubjectsForum from "../../hooks/forum/useSubject";
 import useCategoriesForum from "../../hooks/forum/useCategorie";
+import useUploads from "../../hooks/uploads/useUploads";
 
 const CreateSubjectButton = ({ onSubjectCreated }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -9,7 +10,7 @@ const CreateSubjectButton = ({ onSubjectCreated }) => {
   const [title, setTitle] = useState("");
   const [categoryId, setCategoryId] = useState("");
   const [description, setDescription] = useState("");
-  const [images, setImages] = useState([]);
+  const [selectedImage, setSelectedImage] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const fileInputRef = useRef(null);
@@ -21,6 +22,14 @@ const CreateSubjectButton = ({ onSubjectCreated }) => {
     error: categoriesError,
     fetchCategories,
   } = useCategoriesForum();
+
+  // Utilisation du hook d'upload
+  const {
+    isLoading: uploadLoading,
+    error: uploadError,
+    uploadedImage,
+    handleImageUpload,
+  } = useUploads();
 
   useEffect(() => {
     console.log("Categories chargées:", categories);
@@ -38,17 +47,24 @@ const CreateSubjectButton = ({ onSubjectCreated }) => {
     setTitle("");
     setCategoryId("");
     setDescription("");
-    setImages([]);
+    setSelectedImage(null);
     setErrorMessage("");
   };
 
   const handleFileChange = (e) => {
-    const selectedFiles = Array.from(e.target.files);
-    setImages(selectedFiles);
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedImage(file);
+    }
   };
 
   const handleClickUpload = () => {
     fileInputRef.current.click();
+  };
+
+  const handleRemoveImage = () => {
+    setSelectedImage(null);
+    fileInputRef.current.value = "";
   };
 
   const handleSubmit = async (e) => {
@@ -63,27 +79,34 @@ const CreateSubjectButton = ({ onSubjectCreated }) => {
     setIsSubmitting(true);
 
     try {
-      const formData = new FormData();
-      formData.append("title", title);
-      formData.append("content", description);
-      // Envoi de la catégorie directement, sans JSON.stringify.
-      formData.append("category", categoryId);
+      let imageUrl = null;
 
-      // Envoi uniquement de la première image sélectionnée
-      if (images.length > 0) {
-        formData.append("image", images[0]);
+      // Si une image est sélectionnée, on l'upload d'abord
+      if (selectedImage) {
+        try {
+          const uploadResult = await handleImageUpload(selectedImage);
+          if (uploadResult && uploadResult.filePath) {
+            imageUrl = uploadResult.filePath;
+          }
+        } catch (uploadErr) {
+          console.error("Erreur lors de l'upload de l'image:", uploadErr);
+          setErrorMessage("Erreur lors de l'upload de l'image");
+          setIsSubmitting(false);
+          return;
+        }
       }
 
-      console.log("Données envoyées au serveur:");
-      console.log("- title:", title);
-      console.log("- category:", categoryId);
-      console.log("- content:", description);
-      console.log(
-        "- image:",
-        images.length > 0 ? "1 fichier" : "aucun fichier"
-      );
+      // Création du sujet avec l'URL de l'image si disponible
+      const subjectData = {
+        title,
+        content: description,
+        category: categoryId,
+        image: imageUrl,
+      };
 
-      const response = await createSubject(formData);
+      console.log("Données envoyées au serveur:", subjectData);
+
+      const response = await createSubject(subjectData);
       const newSubject = response.subject || response;
 
       console.log("Sujet créé avec succès!");
@@ -133,7 +156,7 @@ const CreateSubjectButton = ({ onSubjectCreated }) => {
       {/* Popup de création de post */}
       <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
         <div>
-          <h2 className=" mb-4">Créer un post</h2>
+          <h2 className="mb-4">Créer un post</h2>
 
           {/* Affichage du message d'erreur de manière bien visible */}
           {errorMessage && (
@@ -152,7 +175,7 @@ const CreateSubjectButton = ({ onSubjectCreated }) => {
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-                placeholder="Le sport et la Sclérose en plaque"
+                placeholder=""
               />
             </div>
 
@@ -192,26 +215,51 @@ const CreateSubjectButton = ({ onSubjectCreated }) => {
 
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Images
+                Image
               </label>
-              <div
-                onClick={handleClickUpload}
-                className="w-full p-4 border border-gray-300 rounded-md text-center cursor-pointer bg-orange-100 hover:bg-orange-200 transition-colors"
-              >
-                <span className="text-orange-500">Cliquer pour ajouter</span>
-                <input
-                  type="file"
-                  multiple
-                  ref={fileInputRef}
-                  onChange={handleFileChange}
-                  className="hidden"
-                />
-              </div>
-              {images.length > 0 && (
-                <div className="mt-2">
-                  <p className="text-sm text-gray-500">
-                    {images.length} image(s) sélectionnée(s)
-                  </p>
+
+              {selectedImage ? (
+                <div className="relative mb-2">
+                  <img
+                    src={URL.createObjectURL(selectedImage)}
+                    alt="Preview"
+                    className="w-full h-40 object-cover rounded-md"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleRemoveImage}
+                    className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full w-6 h-6 flex items-center justify-center"
+                  >
+                    ×
+                  </button>
+                </div>
+              ) : (
+                <div
+                  onClick={handleClickUpload}
+                  className="w-full p-4 border border-gray-300 rounded-md text-center cursor-pointer bg-orange-100 hover:bg-orange-200 transition-colors"
+                >
+                  <span className="text-orange-500">
+                    Cliquer pour ajouter une image
+                  </span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    ref={fileInputRef}
+                    onChange={handleFileChange}
+                    className="hidden"
+                  />
+                </div>
+              )}
+
+              {uploadLoading && (
+                <div className="mt-2 text-sm text-blue-500">
+                  Chargement de l'image...
+                </div>
+              )}
+
+              {uploadError && (
+                <div className="mt-2 text-sm text-red-500">
+                  Erreur: {uploadError}
                 </div>
               )}
             </div>
@@ -224,16 +272,18 @@ const CreateSubjectButton = ({ onSubjectCreated }) => {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 min-h-[100px]"
-                placeholder="Le sport et la Sclérose en Plaques, comment composer avec les symptômes ?"
+                placeholder=""
               />
             </div>
 
             <button
               type="submit"
-              disabled={isSubmitting}
-              className="w-full bg-blue-800 text-white py-3 rounded-md hover:bg-blue-900 transition-colors disabled:bg-gray-400"
+              disabled={isSubmitting || uploadLoading}
+              className="w-full bg-[#0a3d64] text-white py-3 rounded-md  transition-colors disabled:bg-gray-400"
             >
-              {isSubmitting ? "Création en cours..." : "Valider"}
+              {isSubmitting || uploadLoading
+                ? "Création en cours..."
+                : "Valider"}
             </button>
           </form>
         </div>
@@ -245,7 +295,7 @@ const CreateSubjectButton = ({ onSubjectCreated }) => {
         onClose={() => setIsRequestSentModalOpen(false)}
       >
         <div className="p-4">
-          <h2 className=" mb-4 text-green-600">Demande envoyée</h2>
+          <h2 className="mb-4 text-green-600">Demande envoyée</h2>
           <p className="text-gray-700">
             Votre demande a bien été envoyée. Elle sera traitée et validée par
             nos admins dans les plus brefs délais.

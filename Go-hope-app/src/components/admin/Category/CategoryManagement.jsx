@@ -3,6 +3,7 @@ import { FiPlus, FiUpload } from "react-icons/fi";
 import useCategories from "../../../hooks/article/useCategories";
 import CategoryRow from "./CategoryRow";
 import Modal from "../../../utils/form/modal";
+import useUploads from "../../../hooks/uploads/useUploads";
 
 const CategoryManagement = () => {
   const {
@@ -15,36 +16,64 @@ const CategoryManagement = () => {
     deleteCategoryHandler,
   } = useCategories();
 
+  // Hook pour gérer l'upload d'images
+  const {
+    isLoading: uploadLoading,
+    error: uploadError,
+    uploadedImage,
+    handleImageUpload,
+  } = useUploads();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null);
   const [formData, setFormData] = useState({
     category_tittle: "",
     category_image: "",
   });
+  const [selectedImage, setSelectedImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
 
   useEffect(() => {
     fetchAllCategories();
   }, [fetchAllCategories]);
 
+  // Mettre à jour les données du formulaire quand l'image est uploadée
+  useEffect(() => {
+    if (uploadedImage && uploadedImage.filePath) {
+      setFormData((prev) => ({
+        ...prev,
+        category_image: uploadedImage.filePath,
+      }));
+    }
+  }, [uploadedImage]);
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      // Sauvegarder le fichier pour l'upload ultérieur
+      setSelectedImage(file);
+
+      // Créer un aperçu pour l'UI
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result);
-        setFormData((prev) => ({
-          ...prev,
-          category_image: reader.result,
-        }));
       };
       reader.readAsDataURL(file);
+
+      // Upload immédiat de l'image
+      handleImageUpload(file);
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      // Si l'upload est en cours, attendre qu'il se termine
+      if (uploadLoading) {
+        alert("Veuillez attendre que l'image soit téléchargée");
+        return;
+      }
+
       if (editingCategory) {
         await updateCategoryHandler(editingCategory._id, formData);
       } else {
@@ -54,6 +83,7 @@ const CategoryManagement = () => {
       setEditingCategory(null);
       setFormData({ category_tittle: "", category_image: "" });
       setImagePreview(null);
+      setSelectedImage(null);
     } catch (err) {
       console.error("Erreur lors de la sauvegarde de la catégorie :", err);
     }
@@ -66,6 +96,7 @@ const CategoryManagement = () => {
       category_image: category.category_image || "",
     });
     setImagePreview(category.category_image);
+    setSelectedImage(null);
     setIsModalOpen(true);
   };
 
@@ -128,6 +159,14 @@ const CategoryManagement = () => {
                 className="hidden"
               />
             </label>
+            {uploadLoading && (
+              <p className="text-blue-500 text-sm mt-1">
+                Téléchargement en cours...
+              </p>
+            )}
+            {uploadError && (
+              <p className="text-red-500 text-sm mt-1">Erreur: {uploadError}</p>
+            )}
           </div>
         </div>
         <div className="flex justify-end space-x-3">
@@ -140,7 +179,10 @@ const CategoryManagement = () => {
           </button>
           <button
             type="submit"
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            disabled={uploadLoading}
+            className={`px-4 py-2 ${
+              uploadLoading ? "bg-blue-400" : "bg-blue-600 hover:bg-blue-700"
+            } text-white rounded-lg transition-colors`}
           >
             {editingCategory ? "Modifier" : "Créer"}
           </button>
@@ -159,6 +201,7 @@ const CategoryManagement = () => {
               setEditingCategory(null);
               setFormData({ category_tittle: "", category_image: "" });
               setImagePreview(null);
+              setSelectedImage(null);
               setIsModalOpen(true);
             }}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors inline-flex items-center"

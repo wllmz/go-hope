@@ -11,7 +11,10 @@ dotenv.config();
 const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET;
 const JWT_RESET_PASSWORD_SECRET = process.env.JWT_RESET_PASSWORD_SECRET;
-const FRONTEND_URL = process.env.FRONTEND_URL;
+const FRONTEND_URL =
+  process.env.NODE_ENV === "production"
+    ? process.env.FRONTEND_PROD_URL
+    : process.env.FRONTEND_DEV_URL;
 
 // 1. Fonction utilitaire pour générer les tokens (AccessToken et RefreshToken)
 const generateTokens = (user) => {

@@ -242,8 +242,8 @@ const AllSubject = () => {
               <button
                 className={`px-4 py-2 min-w-[90px] whitespace-nowrap rounded-xl font-medium transition-all duration-200 ${
                   activeTab === null
-                    ? "bg-gray-200 text-gray-800 shadow"
-                    : "bg-[#3B5F8A] text-white hover:bg-[#2E4A6A]"
+                    ? "bg-[#3B5F8A] text-white shadow"
+                    : "bg-gray-200 text-gray-800 hover:bg-gray-300"
                 }`}
                 onClick={() => changeTab(null)}
               >
@@ -252,16 +252,16 @@ const AllSubject = () => {
               <button
                 className={`flex items-center px-4 py-2 min-w-[90px] whitespace-nowrap rounded-xl transition-all duration-200 ${
                   activeTab === "favoris"
-                    ? "bg-gray-200 text-gray-800 shadow"
-                    : "bg-[#3B5F8A] text-white hover:bg-[#2E4A6A]"
+                    ? "bg-[#3B5F8A] text-white shadow"
+                    : "bg-gray-200 text-gray-800 hover:bg-gray-300"
                 }`}
                 onClick={() => changeTab("favoris")}
               >
                 <svg
                   className="w-4 h-4 mr-1.5 transition-colors"
                   viewBox="0 0 24 24"
-                  fill={activeTab === "favoris" ? "currentColor" : "white"}
-                  stroke={activeTab === "favoris" ? "currentColor" : "white"}
+                  fill={activeTab === "favoris" ? "white" : "currentColor"}
+                  stroke={activeTab === "favoris" ? "white" : "currentColor"}
                 >
                   <path
                     strokeLinecap="round"
@@ -275,8 +275,8 @@ const AllSubject = () => {
               <button
                 className={`px-4 py-2 min-w-[90px] whitespace-nowrap rounded-xl font-medium transition-all duration-200 ${
                   activeTab === "populaire"
-                    ? "bg-gray-200 text-gray-800 shadow"
-                    : "bg-[#3B5F8A] text-white hover:bg-[#2E4A6A]"
+                    ? "bg-[#3B5F8A] text-white shadow"
+                    : "bg-gray-200 text-gray-800 hover:bg-gray-300"
                 }`}
                 onClick={() => changeTab("populaire")}
               >
@@ -285,8 +285,8 @@ const AllSubject = () => {
               <button
                 className={`px-4 py-2 min-w-[90px] whitespace-nowrap rounded-xl font-medium transition-all duration-200 ${
                   activeTab === "recent"
-                    ? "bg-gray-200 text-gray-800 shadow"
-                    : "bg-[#3B5F8A] text-white hover:bg-[#2E4A6A]"
+                    ? "bg-[#3B5F8A] text-white shadow"
+                    : "bg-gray-200 text-gray-800 hover:bg-gray-300"
                 }`}
                 onClick={() => changeTab("recent")}
               >

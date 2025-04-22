@@ -4,6 +4,8 @@ import FormInput from "../../../utils/form/FormInput";
 import useCategories from "../../../hooks/article/useCategories";
 import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
+import useUploads from "../../../hooks/uploads/useUploads";
+import { FiUpload } from "react-icons/fi";
 
 const ArticleModal = ({ isOpen, onClose, onSubmit, article, mode }) => {
   const initialState = {
@@ -22,9 +24,19 @@ const ArticleModal = ({ isOpen, onClose, onSubmit, article, mode }) => {
 
   const [formData, setFormData] = useState(initialState);
   const [errors, setErrors] = useState({});
+  const [imagePreview, setImagePreview] = useState(null);
+  const [uploadType, setUploadType] = useState("image"); // 'image' ou 'video'
 
   // Récupération des catégories
   const { categories, fetchAllCategories } = useCategories();
+
+  // Hook pour gérer l'upload d'images
+  const {
+    isLoading: uploadLoading,
+    error: uploadError,
+    uploadedImage,
+    handleImageUpload,
+  } = useUploads();
 
   // Appel de fetchAllCategories à chaque ouverture de la modal
   useEffect(() => {
@@ -58,11 +70,35 @@ const ArticleModal = ({ isOpen, onClose, onSubmit, article, mode }) => {
           videoDuration: article.videoDuration || 0,
           genre: article.genre || "classique",
         });
+
+        // Définir les aperçus des médias existants
+        if (article.image) {
+          setImagePreview(article.image);
+        }
       } else {
         setFormData(initialState);
+        setImagePreview(null);
       }
     }
   }, [article, mode, isOpen]);
+
+  // Mettre à jour le formulaire quand une image est uploadée
+  useEffect(() => {
+    if (uploadedImage && uploadedImage.filePath) {
+      if (uploadType === "image") {
+        setFormData((prev) => ({
+          ...prev,
+          image: uploadedImage.filePath,
+        }));
+        setImagePreview(uploadedImage.filePath);
+      } else if (uploadType === "video") {
+        setFormData((prev) => ({
+          ...prev,
+          videoUrl: uploadedImage.filePath,
+        }));
+      }
+    }
+  }, [uploadedImage, uploadType]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -77,6 +113,33 @@ const ArticleModal = ({ isOpen, onClose, onSubmit, article, mode }) => {
         ...prev,
         [name]: null,
       }));
+    }
+  };
+
+  // Gestion de l'upload d'image
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setUploadType("image");
+
+      // Créer un aperçu local
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+
+      // Upload l'image
+      handleImageUpload(file);
+    }
+  };
+
+  // Gestion de l'upload de vidéo
+  const handleVideoUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setUploadType("video");
+      handleImageUpload(file);
     }
   };
 
@@ -105,7 +168,7 @@ const ArticleModal = ({ isOpen, onClose, onSubmit, article, mode }) => {
       newErrors.content = "Le contenu est requis";
     }
     if (!formData.image.trim()) {
-      newErrors.image = "L'URL de l'image est requise";
+      newErrors.image = "L'image est requise";
     }
     if (!formData.type) {
       newErrors.type = "Le type d'article est requis";
@@ -113,8 +176,14 @@ const ArticleModal = ({ isOpen, onClose, onSubmit, article, mode }) => {
     if (formData.mediaType === "Fiche" && formData.time_lecture <= 0) {
       newErrors.time_lecture = "Le temps de lecture doit être supérieur à 0";
     }
-    if (formData.mediaType === "Vidéo" && formData.videoDuration <= 0) {
-      newErrors.videoDuration = "La durée de la vidéo doit être supérieure à 0";
+    if (formData.mediaType === "Vidéo") {
+      if (formData.videoDuration <= 0) {
+        newErrors.videoDuration =
+          "La durée de la vidéo doit être supérieure à 0";
+      }
+      if (!formData.videoUrl) {
+        newErrors.videoUrl = "L'URL de la vidéo est requise";
+      }
     }
     if (!formData.category) {
       newErrors.category = "Une catégorie est requise";
@@ -127,6 +196,13 @@ const ArticleModal = ({ isOpen, onClose, onSubmit, article, mode }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Soumission du formulaire avec les données :", formData);
+
+    // Vérifier si un upload est en cours
+    if (uploadLoading) {
+      alert("Veuillez attendre que le téléchargement soit terminé");
+      return;
+    }
+
     if (validateForm()) {
       onSubmit(formData);
     }
@@ -157,18 +233,44 @@ const ArticleModal = ({ isOpen, onClose, onSubmit, article, mode }) => {
             )}
           </div>
 
-          {/* URL de l'image */}
+          {/* Image */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              URL de l'image *
+              Image *
             </label>
-            <FormInput
-              type="text"
-              placeholder="URL de l'image"
-              name="image"
-              value={formData.image}
-              onChange={handleChange}
-            />
+            <div className="space-y-2">
+              {imagePreview && (
+                <div className="relative w-full h-40">
+                  <img
+                    src={imagePreview}
+                    alt="Aperçu"
+                    className="w-full h-full object-cover rounded"
+                  />
+                </div>
+              )}
+              <label className="flex items-center justify-center w-full h-20 px-4 transition bg-white border-2 border-gray-300 border-dashed rounded-md appearance-none cursor-pointer hover:border-blue-400 focus:outline-none">
+                <span className="flex items-center space-x-2">
+                  <FiUpload className="w-5 h-5 text-gray-600" />
+                  <span className="font-medium text-gray-600">
+                    {imagePreview ? "Changer l'image" : "Télécharger une image"}
+                  </span>
+                </span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
+              </label>
+              {uploadType === "image" && uploadLoading && (
+                <p className="text-blue-500 text-xs">
+                  Téléchargement en cours...
+                </p>
+              )}
+              {uploadType === "image" && uploadError && (
+                <p className="text-red-500 text-xs">Erreur: {uploadError}</p>
+              )}
+            </div>
             {errors.image && (
               <p className="text-red-500 text-xs mt-1">{errors.image}</p>
             )}
@@ -216,15 +318,40 @@ const ArticleModal = ({ isOpen, onClose, onSubmit, article, mode }) => {
             <>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  URL de la vidéo *
+                  Vidéo *
                 </label>
-                <FormInput
-                  type="text"
-                  placeholder="URL de la vidéo"
-                  name="videoUrl"
-                  value={formData.videoUrl}
-                  onChange={handleChange}
-                />
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <FormInput
+                      type="text"
+                      placeholder="URL de la vidéo"
+                      name="videoUrl"
+                      value={formData.videoUrl}
+                      onChange={handleChange}
+                      className="flex-1"
+                    />
+                    <label className="flex items-center justify-center h-10 px-4 bg-blue-500 text-white rounded-md cursor-pointer hover:bg-blue-600">
+                      <FiUpload className="mr-2" />
+                      <span>Télécharger</span>
+                      <input
+                        type="file"
+                        accept="video/*"
+                        onChange={handleVideoUpload}
+                        className="hidden"
+                      />
+                    </label>
+                  </div>
+                  {uploadType === "video" && uploadLoading && (
+                    <p className="text-blue-500 text-xs">
+                      Téléchargement en cours...
+                    </p>
+                  )}
+                  {uploadType === "video" && uploadError && (
+                    <p className="text-red-500 text-xs">
+                      Erreur: {uploadError}
+                    </p>
+                  )}
+                </div>
                 {errors.videoUrl && (
                   <p className="text-red-500 text-xs mt-1">{errors.videoUrl}</p>
                 )}
@@ -357,7 +484,10 @@ const ArticleModal = ({ isOpen, onClose, onSubmit, article, mode }) => {
           </button>
           <button
             type="submit"
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+            disabled={uploadLoading}
+            className={`px-4 py-2 ${
+              uploadLoading ? "bg-blue-400" : "bg-blue-600 hover:bg-blue-700"
+            } text-white rounded-md transition-colors`}
           >
             {mode === "create" ? "Créer" : "Enregistrer"}
           </button>
