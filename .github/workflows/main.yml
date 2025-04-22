@@ -9,7 +9,6 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 60 # Ajouté timeout total pour le job
 
     steps:
       - name: Checkout repository
@@ -21,58 +20,36 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USERNAME }}
           key: ${{ secrets.VPS_SSH_KEY }}
-          script_timeout: 40m # Augmenté le timeout du script SSH
-          command_timeout: 40m # Ajouté timeout pour les commandes
+          script_timeout: 30m # Augmenté pour éviter les timeouts
           script: |
             cd /var/www/go-hope
 
             # Désactiver BuildKit pour éviter le bug ContainerConfig
             export DOCKER_BUILDKIT=0
 
-            # Nettoyer l'espace disque avant de commencer
-            docker system prune -f --volumes
-
             # Récupère la branche qui a déclenché le workflow
-            BRANCH="${{ github.ref }}"
-            echo "Branche déclenchante : $BRANCH"
+            echo "Branche déclenchante : ${{ github.ref }}"
 
-            if [ "$BRANCH" = "refs/heads/main" ]; then
+            # Nettoyer l'espace pour éviter les problèmes de build
+            docker system prune -f
+
+            if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
               echo "Déploiement production (frontend-prod et backend-prod)"
               git pull origin main
-              
-              # Construction du backend d'abord (généralement plus rapide)
-              echo "Construction du backend-prod..."
-              docker-compose build --no-cache backend-prod
-              docker-compose stop backend-prod
-              docker-compose rm -f backend-prod
-              docker-compose up -d backend-prod
-              
-              # Puis construction du frontend
-              echo "Construction du frontend-prod..."
-              docker-compose build --no-cache frontend-prod
-              docker-compose stop frontend-prod
-              docker-compose rm -f frontend-prod
-              docker-compose up -d frontend-prod
-            else
+              docker-compose stop frontend-prod backend-prod
+              docker-compose rm -f frontend-prod backend-prod
+              docker-compose build --no-cache frontend-prod backend-prod
+              docker-compose up -d --remove-orphans frontend-prod backend-prod
+            elif [[ "${{ github.ref }}" == "refs/heads/dev" ]]; then
               echo "Déploiement développement (frontend-dev et backend-dev)"
               git pull origin dev
-              
-              # Construction du backend d'abord (généralement plus rapide)
-              echo "Construction du backend-dev..."
-              docker-compose build --no-cache backend-dev
-              docker-compose stop backend-dev
-              docker-compose rm -f backend-dev
-              docker-compose up -d backend-dev
-              
-              # Puis construction du frontend
-              echo "Construction du frontend-dev..."
-              docker-compose build --no-cache frontend-dev
-              docker-compose stop frontend-dev
-              docker-compose rm -f frontend-dev
-              docker-compose up -d frontend-dev
+              docker-compose stop frontend-dev backend-dev
+              docker-compose rm -f frontend-dev backend-dev
+              docker-compose build --no-cache frontend-dev backend-dev
+              docker-compose up -d --remove-orphans frontend-dev backend-dev
+            else
+              echo "Branche non reconnue: ${{ github.ref }}"
+              exit 1
             fi
-
-            # Nettoyer les images et volumes non utilisés
-            docker system prune -f
 
             echo "Déploiement avec Docker terminé avec succès."
