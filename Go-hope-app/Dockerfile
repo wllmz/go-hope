@@ -24,6 +24,9 @@ RUN npm install -g serve
 # Copier le dossier 'dist' depuis l'étape précédente
 COPY --from=builder /app/dist /app/dist  
 
+# Copier le fichier de configuration serve.json
+COPY serve.json /app/dist/serve.json
+
 # Exposer le port 80
 EXPOSE 80
 
