@@ -34,6 +34,7 @@ import SanteAllArticle from "./pages/sante/santeAllArticle";
 import ProjetPage from "./pages/projet/projetPage";
 import ForgotPass from "./pages/password-rest/ForgotPass";
 import ResetPass from "./pages/password-rest/ResetPass";
+import ChatPage from "./pages/chat/chatPage";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import PendingPublications from "./pages/forum/PendingPublications";
@@ -261,6 +262,15 @@ function App() {
               element={
                 <PrivateRoute>
                   <PendingPublications />
+                </PrivateRoute>
+              }
+            />
+
+            <Route
+              path="/demande"
+              element={
+                <PrivateRoute>
+                  <ChatPage />
                 </PrivateRoute>
               }
             />
