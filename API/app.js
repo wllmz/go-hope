@@ -31,6 +31,7 @@ import allAction from "./routes/forum/allAction.js";
 import ficheRoute from "./routes/Fiche/ficheRoute.js";
 import articleFicheRoute from "./routes/Fiche/articleRoute.js";
 import suiviRoute from "./routes/Suivi/suiviRoute.js";
+import waitlistRoutes from "./routes/waitingList/waitingRoute.js";
 
 dotenv.config();
 
@@ -128,6 +129,7 @@ async function startServer() {
     app.use("/api/fiches", ficheRoute);
     app.use("/api/fiches-articles", articleFicheRoute);
     app.use("/api/suivi", suiviRoute);
+    app.use("/api/waitlist", waitlistRoutes);
 
     // Gestion des erreurs améliorée
     app.use((err, req, res, next) => {
