@@ -36,6 +36,7 @@ import ForgotPass from "./pages/password-rest/ForgotPass";
 import ResetPass from "./pages/password-rest/ResetPass";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import PendingPublications from "./pages/forum/PendingPublications";
 
 function App() {
   return (
@@ -255,6 +256,14 @@ function App() {
             />
             <Route path="/mot-de-passe-oublie" element={<ForgotPass />} />
             <Route path="/reinitialiser-mot-de-passe" element={<ResetPass />} />
+            <Route
+              path="/mes-publications-en-attente"
+              element={
+                <PrivateRoute>
+                  <PendingPublications />
+                </PrivateRoute>
+              }
+            />
           </Routes>
         </main>
       </AuthProvider>

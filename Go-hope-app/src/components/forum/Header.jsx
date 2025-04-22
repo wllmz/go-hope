@@ -6,6 +6,8 @@ import CreateSubjectButton from "./createSubjectButton";
 const Header = () => {
   const location = useLocation();
   const isCategoriesPage = location.pathname.includes("categories");
+  const isForumPage =
+    location.pathname.includes("forum") || location.pathname === "/forum";
 
   return (
     <header className="w-full pt-8 pb-4 bg-gradient-to-b from-[#B3D7EC] to-white">
@@ -14,7 +16,7 @@ const Header = () => {
         <div className="p-6">
           <SearchBar />
         </div>
-        {!isCategoriesPage && (
+        {isForumPage && !isCategoriesPage && (
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-orange-500 mb-2">Une question ?</h2>

@@ -366,3 +366,73 @@ export const listAllSubjectsByUser = async (req, res) => {
     console.error(error);
   }
 };
+
+/**
+ * Récupérer les sujets en attente de l'utilisateur
+ */
+export const getPendingSubjectsByUser = async (req, res) => {
+  try {
+    const pendingSubjects = await Subject.find({
+      author: req.user.id,
+      validated: "en attente",
+    })
+      .select("+favoris +validated")
+      .populate("categories", "categorie")
+      .populate("author", "username image");
+
+    if (pendingSubjects.length === 0) {
+      return res.status(200).json({
+        message: "Aucun sujet en attente trouvé.",
+        pendingSubjects: [],
+      });
+    }
+
+    res.status(200).json({
+      message: "Sujets en attente récupérés avec succès.",
+      pendingSubjects,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Erreur lors de la récupération des sujets en attente.",
+      error: error.message,
+    });
+    console.error(error);
+  }
+};
+
+/**
+ * Supprimer son propre sujet (vérification de l'auteur)
+ */
+export const deleteOwnSubject = async (req, res) => {
+  const { subjectId } = req.params;
+  const userId = req.user.id;
+
+  try {
+    // Rechercher le sujet et vérifier que l'utilisateur est bien l'auteur
+    const subject = await Subject.findById(subjectId);
+
+    if (!subject) {
+      return res.status(404).json({ message: "Sujet non trouvé." });
+    }
+
+    // Vérifier que l'utilisateur est l'auteur du sujet
+    if (subject.author.toString() !== userId) {
+      return res.status(403).json({
+        message: "Accès refusé. Vous n'êtes pas l'auteur de ce sujet.",
+      });
+    }
+
+    // Supprimer le sujet
+    await Subject.findByIdAndDelete(subjectId);
+
+    res.status(200).json({
+      message: "Votre sujet a été supprimé avec succès.",
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Erreur lors de la suppression du sujet.",
+      error: error.message,
+    });
+    console.error(error);
+  }
+};
