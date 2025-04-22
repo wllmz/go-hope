@@ -2,7 +2,7 @@ import React, { useState, useContext } from "react";
 import { IoArrowBack } from "react-icons/io5";
 import OrangePappilon from "../../../../assets/orange-papillon.png";
 import { usePatient } from "../../../../hooks/patient/usePatient";
-import { AuthContext } from "../../../../context/AuthContext";
+import { AuthContext } from "../../../../context/authContext";
 
 const PatientAidantModal = ({ isOpen, onClose }) => {
   const [showForm, setShowForm] = useState(false);
