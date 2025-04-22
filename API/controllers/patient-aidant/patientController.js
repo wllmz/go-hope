@@ -1,5 +1,5 @@
 import PatientAidant from "../../models/patient/patientModel.js";
-import Auth from "../../models/User/userModel.js";
+import Auth from "../../models/user/userModel.js";
 import {
   sendNewPatientAidantRequestEmail,
   sendPatientAidantDecisionEmail,
