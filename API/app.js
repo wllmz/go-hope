@@ -112,7 +112,25 @@ async function startServer() {
 
     // Configuration CORS avec le FRONTEND_URL
     const corsOptions = {
-      origin: FRONTEND_URL || "http://localhost:5173",
+      origin: function (origin, callback) {
+        const allowedOrigins = [
+          FRONTEND_URL,
+          FRONTEND_URL + ":8443",
+          "https://app.go-hope.fr",
+          "https://app.go-hope.fr:8443",
+          "https://dev-app.go-hope.fr",
+          "https://dev-app.go-hope.fr:8443",
+          "http://localhost:5173",
+        ];
+
+        // Allow requests with no origin (like mobile apps or curl requests)
+        if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+          callback(null, true);
+        } else {
+          console.log("Origin not allowed by CORS:", origin);
+          callback(null, false);
+        }
+      },
       credentials: true,
       methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
       allowedHeaders: [
