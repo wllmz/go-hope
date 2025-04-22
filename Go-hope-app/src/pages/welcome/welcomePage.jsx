@@ -1,5 +1,5 @@
 import React from "react";
-import Welcome from "../../components/welcome/Welcome";
+import Welcome from "../../components/welcome/welcome";
 const welcomePage = () => {
   return (
     <div>
