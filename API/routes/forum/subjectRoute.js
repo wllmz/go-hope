@@ -9,6 +9,8 @@ import {
   updateSubjectValidation,
   listAllSubjectsAdmin,
   listAllSubjectsByUser,
+  getPendingSubjectsByUser,
+  deleteOwnSubject,
 } from "../../controllers/forum/Subjects/subjectController.js";
 import { verifyToken } from "../../middleware/jwtMiddleware.js";
 import { AdminRole } from "../../middleware/authMiddleware.js";
@@ -20,6 +22,8 @@ router.get("/search", verifyToken, searchForum);
 // Routes spécifiques : admin et utilisateur (doivent être déclarées avant la route générique)
 router.get("/admin", verifyToken, AdminRole, listAllSubjectsAdmin);
 router.get("/user", verifyToken, listAllSubjectsByUser);
+router.get("/user/pending", verifyToken, getPendingSubjectsByUser);
+router.delete("/user/:subjectId", verifyToken, deleteOwnSubject);
 
 // Routes génériques
 router.get("/", verifyToken, listAllSubjects);
@@ -317,6 +321,69 @@ router.get("/:subjectId", verifyToken, getSubjectById);
  *                 $ref: '#/components/schemas/Subject'
  *       "401":
  *         description: Non autorisé.
+ *       "500":
+ *         description: Erreur serveur.
+ *
+ * @swagger
+ * /api/forum/subjects/user/pending:
+ *   get:
+ *     summary: Récupérer les sujets en attente de validation de l'utilisateur connecté
+ *     tags:
+ *       - forum-Subjects
+ *     security:
+ *       - cookieAuth: []
+ *     responses:
+ *       "200":
+ *         description: Liste des sujets en attente de l'utilisateur.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Sujets en attente récupérés avec succès."
+ *                 pendingSubjects:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Subject'
+ *       "401":
+ *         description: Non autorisé.
+ *       "500":
+ *         description: Erreur serveur.
+ *
+ * @swagger
+ * /api/forum/subjects/user/{subjectId}:
+ *   delete:
+ *     summary: Supprimer un sujet créé par l'utilisateur connecté
+ *     tags:
+ *       - forum-Subjects
+ *     security:
+ *       - cookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: subjectId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID du sujet à supprimer.
+ *     responses:
+ *       "200":
+ *         description: Sujet supprimé avec succès.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Votre sujet a été supprimé avec succès."
+ *       "401":
+ *         description: Non autorisé.
+ *       "403":
+ *         description: Accès refusé, l'utilisateur n'est pas l'auteur du sujet.
+ *       "404":
+ *         description: Sujet non trouvé.
  *       "500":
  *         description: Erreur serveur.
  */

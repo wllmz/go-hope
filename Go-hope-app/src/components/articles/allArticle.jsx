@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import useArticles from "../../hooks/article/useArticles";
 import useCategories from "../../hooks/article/useCategories";
@@ -11,6 +11,9 @@ import ReadProgress from "./ReadProgress"; // Import du composant ReadProgress
 const AllArticle = () => {
   const navigate = useNavigate();
   const [selectedMediaType, setSelectedMediaType] = useState("Fiche");
+  // Nouvel état pour stocker le nombre d'articles par catégorie
+  const [articleCounts, setArticleCounts] = useState({});
+  const dataFetchedRef = useRef(false);
 
   // Récupération des articles et catégories
   const {
@@ -29,12 +32,47 @@ const AllArticle = () => {
 
   // Re-fetch des données au montage
   useEffect(() => {
-    const fetchData = async () => {
-      await fetchAllArticles();
-      await fetchAllCategories();
-    };
-    fetchData();
+    if (!dataFetchedRef.current) {
+      const fetchData = async () => {
+        await fetchAllArticles();
+        await fetchAllCategories();
+        dataFetchedRef.current = true;
+      };
+      fetchData();
+    }
   }, [fetchAllArticles, fetchAllCategories]);
+
+  // Calculer le nombre d'articles par catégorie
+  useEffect(() => {
+    if (!articles || !articles.length || !categories || !categories.length)
+      return;
+
+    const counts = {};
+    // Initialiser tous les compteurs de catégories à 0
+    categories.forEach((category) => {
+      counts[category._id] = 0;
+    });
+
+    // Compter les articles pour chaque catégorie
+    articles.forEach((article) => {
+      // Vérifier article.category (au singulier, comme dans votre code)
+      if (article.category && Array.isArray(article.category)) {
+        article.category.forEach((cat) => {
+          const categoryId = typeof cat === "object" ? cat._id : cat;
+          counts[categoryId] = (counts[categoryId] || 0) + 1;
+        });
+      } else if (article.category) {
+        // Si c'est une valeur unique
+        const categoryId =
+          typeof article.category === "object"
+            ? article.category._id
+            : article.category;
+        counts[categoryId] = (counts[categoryId] || 0) + 1;
+      }
+    });
+
+    setArticleCounts(counts);
+  }, [articles, categories]);
 
   if (articlesLoading || categoriesLoading || userLoading) {
     return <div className="text-center py-4">Chargement...</div>;
@@ -100,6 +138,7 @@ const AllArticle = () => {
         <CategoryList
           categories={displayedCategories}
           onCategoryClick={handleCategoryClick}
+          articleCounts={articleCounts}
         />
         {/* Affichage du compteur de lecture */}
         <ReadProgress readCount={readCount} totalCount={totalCount} />

@@ -93,3 +93,25 @@ export const getAllsSubjectUser = async () => {
     throw error.response?.data || error.message;
   }
 };
+
+// Récupérer les sujets en attente de l'utilisateur
+export const getPendingSubjectsUser = async () => {
+  try {
+    const response = await axiosInstance.get("/forum/subjects/user/pending");
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
+
+// Supprimer son propre sujet
+export const deleteOwnSubjectForum = async (subjectId) => {
+  try {
+    const response = await axiosInstance.delete(
+      `/forum/subjects/user/${subjectId}`
+    );
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
+};
