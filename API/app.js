@@ -36,29 +36,83 @@ import uploadRoute from "./routes/uploads/uploadRoute.js";
 import path from "path";
 dotenv.config();
 
+// Définition des URLs en fonction de l'environnement (même logique que emailUtils.js)
+const API_URL =
+  process.env.NODE_ENV === "production"
+    ? process.env.API_PROD_URL
+    : process.env.API_DEV_URL;
+
+const FRONTEND_URL =
+  process.env.NODE_ENV === "production"
+    ? process.env.FRONTEND_PROD_URL
+    : process.env.FRONTEND_DEV_URL;
+
+const MONGO_URI =
+  process.env.NODE_ENV === "production"
+    ? process.env.MONGOURI_PROD
+    : process.env.MONGOURI_DEV;
+
 const app = express();
 
+// Pour les proxys comme Heroku, Vercel, Netlify
 app.set("trust proxy", 1);
 
 async function startServer() {
   try {
-    // Middleware de sécurité pour les en-têtes HTTP
-    app.use(helmet());
+    // Configuration Helmet directement pour la production
+    app.use(
+      helmet({
+        contentSecurityPolicy: {
+          directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+            styleSrc: ["'self'", "'unsafe-inline'", "https:"],
+            imgSrc: ["'self'", "data:", "https:"],
+            connectSrc: [
+              "'self'",
+              "https://app.go-hope.fr",
+              "https://dev-app.go-hope.fr",
+              "https://api.go-hope.fr",
+              "https://dev-api.go-hope.fr",
+            ],
+            fontSrc: ["'self'", "https:"],
+            objectSrc: ["'none'"],
+            mediaSrc: ["'self'"],
+            frameSrc: ["'self'"],
+          },
+        },
+        xssFilter: true,
+        noSniff: true,
+        referrerPolicy: { policy: "strict-origin-when-cross-origin" },
+        hsts: {
+          maxAge: 15552000, // 180 jours
+          includeSubDomains: true,
+          preload: true,
+        },
+        frameguard: { action: "deny" },
+        permittedCrossDomainPolicies: { permittedPolicies: "none" },
+      })
+    );
 
-    setupSwagger(app);
+    // Configuration Swagger uniquement en développement
+    if (process.env.NODE_ENV !== "production") {
+      setupSwagger(app);
+    }
 
     // Middleware pour le logging des requêtes
-    app.use(morgan("tiny"));
+    app.use(
+      morgan(process.env.NODE_ENV === "production" ? "combined" : "tiny")
+    );
 
     // Middleware pour le parsing JSON
-    app.use(express.json());
+    app.use(express.json({ limit: "10mb" }));
 
     // Middleware pour gérer les cookies
     app.use(cookieParser());
 
-    // Configuration CORS
+    // Configuration CORS avec le FRONTEND_URL
     const corsOptions = {
-      origin: "http://localhost:5173",
+      origin: FRONTEND_URL || "http://localhost:5173",
       credentials: true,
       methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
       allowedHeaders: [
@@ -89,27 +143,29 @@ async function startServer() {
     app.use("/api/forum", highTrafficLimiter);
     app.use("/api", apiLimiter);
 
-    // Connexion à MongoDB
+    // Connexion à MongoDB avec l'URI approprié
     console.log("Connexion à MongoDB...");
-    await connectMongoDb();
+    await connectMongoDb(MONGO_URI);
     console.log("Connexion à MongoDB réussie !");
 
     // Middleware pour le parsing des données de formulaire
     app.use(express.urlencoded({ extended: true }));
 
-    // Logs pour diagnostiquer les requêtes entrantes
-    app.use((req, res, next) => {
-      console.log(`Requête reçue : ${req.method} ${req.url}`);
-      next();
-    });
-
-    // Logs des en-têtes envoyés
-    app.use((req, res, next) => {
-      res.on("finish", () => {
-        console.log("En-têtes envoyés :", res.getHeaders()["set-cookie"]);
+    // Logs pour diagnostiquer les requêtes entrantes (uniquement en développement)
+    if (process.env.NODE_ENV !== "production") {
+      app.use((req, res, next) => {
+        console.log(`Requête reçue : ${req.method} ${req.url}`);
+        next();
       });
-      next();
-    });
+
+      // Logs des en-têtes envoyés (uniquement en développement)
+      app.use((req, res, next) => {
+        res.on("finish", () => {
+          console.log("En-têtes envoyés :", res.getHeaders()["set-cookie"]);
+        });
+        next();
+      });
+    }
 
     // Routes publiques qui ne nécessitent pas de CSRF
     app.post("/api/auth/login", (req, res, next) => {
@@ -157,6 +213,9 @@ async function startServer() {
     const PORT = process.env.PORT || 5000;
     app.listen(PORT, () => {
       console.log(`Serveur démarré sur http://localhost:${PORT}`);
+      console.log(`Environnement: ${process.env.NODE_ENV}`);
+      console.log(`Frontend URL: ${FRONTEND_URL}`);
+      console.log(`API URL: ${API_URL}`);
     });
   } catch (err) {
     console.error("Erreur au démarrage du serveur :", err);
