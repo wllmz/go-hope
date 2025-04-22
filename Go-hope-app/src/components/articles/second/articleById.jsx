@@ -315,7 +315,7 @@ const ArticleById = () => {
                     className={`w-full flex items-center justify-center gap-2 py-3 rounded-lg transition-colors ${
                       isRead
                         ? "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                        : "bg-orange-500 text-white hover:bg-orange-600"
+                        : "bg-gray-100 text-[#3B5F8A]"
                     }`}
                   >
                     {showSuccessAnimation ? (
@@ -349,7 +349,7 @@ const ArticleById = () => {
                 className={`w-full flex items-center justify-center gap-2 py-3 rounded-lg transition-colors ${
                   isRead
                     ? "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                    : "bg-orange-500 text-white hover:bg-orange-600"
+                    : "bg-gray-100 text-[#3B5F8A]"
                 }`}
               >
                 {showSuccessAnimation ? (

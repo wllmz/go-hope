@@ -3,6 +3,8 @@ import useCategoriesForum from "../../../hooks/forum/useCategorie";
 import CategoriesForumRow from "./CategoriesForumRow";
 import Modal from "../../../utils/form/modal";
 import FormInput from "../../../utils/form/FormInput";
+import { FiUpload } from "react-icons/fi";
+import useUploads from "../../../hooks/uploads/useUploads";
 
 const CategoriesForumManagement = () => {
   const {
@@ -15,6 +17,14 @@ const CategoriesForumManagement = () => {
     deleteCategory,
   } = useCategoriesForum();
 
+  // Hook pour l'upload d'images
+  const {
+    isLoading: uploadLoading,
+    error: uploadError,
+    uploadedImage,
+    handleImageUpload,
+  } = useUploads();
+
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -23,13 +33,25 @@ const CategoriesForumManagement = () => {
     categorie: "",
     image: "",
   });
+  const [imagePreview, setImagePreview] = useState(null);
 
   useEffect(() => {
     fetchCategories();
   }, []);
 
+  // Mettre à jour l'URL de l'image après l'upload
+  useEffect(() => {
+    if (uploadedImage && uploadedImage.filePath) {
+      setFormData((prev) => ({
+        ...prev,
+        image: uploadedImage.filePath,
+      }));
+    }
+  }, [uploadedImage]);
+
   const handleCreateClick = () => {
     setFormData({ categorie: "", image: "" });
+    setImagePreview(null);
     setIsCreateModalOpen(true);
   };
 
@@ -49,6 +71,7 @@ const CategoriesForumManagement = () => {
       categorie: categoryName,
       image: imageUrl,
     });
+    setImagePreview(imageUrl);
     setIsEditModalOpen(true);
   };
 
@@ -59,9 +82,16 @@ const CategoriesForumManagement = () => {
 
   const handleSubmitCreate = async (e) => {
     e.preventDefault();
+
+    if (uploadLoading) {
+      alert("Veuillez attendre que l'image soit téléchargée");
+      return;
+    }
+
     try {
       await createCategory(formData);
       setIsCreateModalOpen(false);
+      setImagePreview(null);
       fetchCategories();
     } catch (err) {
       console.error("Erreur lors de la création de la catégorie :", err);
@@ -72,9 +102,15 @@ const CategoriesForumManagement = () => {
     e.preventDefault();
     if (!selectedCategory?._id) return;
 
+    if (uploadLoading) {
+      alert("Veuillez attendre que l'image soit téléchargée");
+      return;
+    }
+
     try {
       await updateCategory(selectedCategory._id, formData);
       setIsEditModalOpen(false);
+      setImagePreview(null);
       fetchCategories();
     } catch (err) {
       console.error("Erreur lors de la modification de la catégorie :", err);
@@ -101,6 +137,21 @@ const CategoriesForumManagement = () => {
     }));
   };
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Créer un aperçu local
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+
+      // Upload l'image
+      handleImageUpload(file);
+    }
+  };
+
   const renderCategories = () => {
     if (!Array.isArray(categories)) {
       return null;
@@ -123,6 +174,63 @@ const CategoriesForumManagement = () => {
       })
       .filter(Boolean);
   };
+
+  // Contenu du formulaire commun aux modales de création et d'édition
+  const renderFormContent = (isCreate) => (
+    <div className="space-y-4">
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Nom de la catégorie *
+        </label>
+        <FormInput
+          type="text"
+          name="categorie"
+          value={formData.categorie}
+          onChange={handleChange}
+          placeholder="Nom de la catégorie"
+          required
+        />
+      </div>
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Image *
+        </label>
+        <div className="space-y-3">
+          {imagePreview && (
+            <div className="relative w-32 h-32">
+              <img
+                src={imagePreview}
+                alt="Aperçu"
+                className="w-full h-full object-cover rounded"
+              />
+            </div>
+          )}
+          <label className="flex items-center justify-center w-full h-32 px-4 transition bg-white border-2 border-gray-300 border-dashed rounded-md appearance-none cursor-pointer hover:border-gray-400 focus:outline-none">
+            <span className="flex items-center space-x-2">
+              <FiUpload className="w-6 h-6 text-gray-600" />
+              <span className="font-medium text-gray-600">
+                {imagePreview ? "Changer l'image" : "Ajouter une image"}
+              </span>
+            </span>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              className="hidden"
+            />
+          </label>
+          {uploadLoading && (
+            <p className="text-blue-500 text-sm mt-1">
+              Téléchargement en cours...
+            </p>
+          )}
+          {uploadError && (
+            <p className="text-red-500 text-sm mt-1">Erreur: {uploadError}</p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -189,34 +297,7 @@ const CategoriesForumManagement = () => {
           Créer une nouvelle catégorie
         </h2>
         <form onSubmit={handleSubmitCreate}>
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Nom de la catégorie *
-              </label>
-              <FormInput
-                type="text"
-                name="categorie"
-                value={formData.categorie}
-                onChange={handleChange}
-                placeholder="Nom de la catégorie"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                URL de l'image *
-              </label>
-              <FormInput
-                type="text"
-                name="image"
-                value={formData.image}
-                onChange={handleChange}
-                placeholder="URL de l'image"
-                required
-              />
-            </div>
-          </div>
+          {renderFormContent(true)}
           <div className="mt-6 flex justify-end space-x-3">
             <button
               type="button"
@@ -227,7 +308,10 @@ const CategoriesForumManagement = () => {
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              disabled={uploadLoading}
+              className={`px-4 py-2 ${
+                uploadLoading ? "bg-blue-400" : "bg-blue-600 hover:bg-blue-700"
+              } text-white rounded-lg transition-colors`}
             >
               Créer
             </button>
@@ -239,34 +323,7 @@ const CategoriesForumManagement = () => {
       <Modal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)}>
         <h2 className="text-2xl font-bold mb-4">Modifier la catégorie</h2>
         <form onSubmit={handleSubmitEdit}>
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Nom de la catégorie *
-              </label>
-              <FormInput
-                type="text"
-                name="categorie"
-                value={formData.categorie}
-                onChange={handleChange}
-                placeholder="Nom de la catégorie"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                URL de l'image *
-              </label>
-              <FormInput
-                type="text"
-                name="image"
-                value={formData.image}
-                onChange={handleChange}
-                placeholder="URL de l'image"
-                required
-              />
-            </div>
-          </div>
+          {renderFormContent(false)}
           <div className="mt-6 flex justify-end space-x-3">
             <button
               type="button"
@@ -277,7 +334,10 @@ const CategoriesForumManagement = () => {
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              disabled={uploadLoading}
+              className={`px-4 py-2 ${
+                uploadLoading ? "bg-blue-400" : "bg-blue-600 hover:bg-blue-700"
+              } text-white rounded-lg transition-colors`}
             >
               Enregistrer
             </button>

@@ -1,7 +1,7 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import logo from "../../assets/logo.png";
-import { FaHome, FaUsers, FaUser, FaFolder } from "react-icons/fa";
+import { FaHome, FaUsers, FaUser, FaFileAlt } from "react-icons/fa";
 
 const Menu = () => {
   return (
@@ -127,7 +127,7 @@ const Menu = () => {
             >
               {({ isActive }) => (
                 <>
-                  <FaFolder
+                  <FaFileAlt
                     className="w-6 h-6"
                     style={{ fill: isActive ? "#F5943A" : "white" }}
                   />

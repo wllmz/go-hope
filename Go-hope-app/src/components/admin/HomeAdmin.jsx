@@ -202,7 +202,7 @@ const HomeAdmin = () => {
       {/* Sidebar */}
       <nav className="bg-gradient-to-b from-[#1D5F84] to-[#164964] text-white w-64 min-h-screen shadow-xl">
         <div className="p-5 border-b border-blue-700">
-          <h1 className="text-2xl font-bold">Go Hope Admin</h1>
+          <h1 className="text-2xl font-bold">GoHope Admin</h1>
           <p className="text-sm text-blue-200">Panneau d'administration</p>
         </div>
 

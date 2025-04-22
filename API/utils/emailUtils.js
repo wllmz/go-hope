@@ -7,7 +7,10 @@ dotenv.config();
 const EMAIL_USER = process.env.MAIL_USER;
 const EMAIL_PASSWORD = process.env.MAIL_PASSWORD;
 const JWT_RESET_PASSWORD_SECRET = process.env.JWT_RESET_PASSWORD_SECRET; // Définissez cette variable dans votre .env
-const API_URL = process.env.API_URL;
+const API_URL =
+  process.env.NODE_ENV === "production"
+    ? process.env.API_PROD_URL
+    : process.env.API_DEV_URL;
 const FRONTEND_URL = process.env.FRONTEND_URL;
 
 // Créer le transporteur
@@ -27,26 +30,26 @@ export const sendVerificationEmail = async (email) => {
 
   const mailOptions = {
     from: EMAIL_USER,
-    to: EMAIL_USER,
-    subject: "Création de votre compte Go Hope",
+    to: email,
+    subject: "Création de votre compte GoHope",
     html: `
     <!DOCTYPE html>
     <html lang="fr">
     <head>
       <meta charset="UTF-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <title>Création de compte Go Hope</title>
+      <title>Création de compte GoHope</title>
     </head>
     <body style="margin:0; padding:0; background-color: #f9f9f9; font-family: Arial, sans-serif;">
       <table align="center" border="0" cellpadding="0" cellspacing="0" width="600" style="border-collapse: collapse; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
         <tr>
           <td align="center" style="padding: 40px 0; background: linear-gradient(135deg, #0a3d64 0%, #1D5F84 100%);">
-            <img src="https://go-hope.fr/wp-content/uploads/2025/04/Calque_1-2.png" alt="Logo Go Hope" width="200" style="display: block;" />
+            <img src="https://go-hope.fr/wp-content/uploads/2025/04/Calque_1-2.png" alt="Logo GoHope" width="200" style="display: block;" />
           </td>
         </tr>
         <tr>
           <td style="padding: 40px 30px;">
-            <h1 style="color: #0a3d64; font-size: 28px; margin-bottom: 20px; font-weight: 600;">Bienvenue chez Go Hope !</h1>
+            <h1 style="color: #0a3d64; font-size: 28px; margin-bottom: 20px; font-weight: 600;">Bienvenue chez GoHope !</h1>
             <p style="color: #444444; font-size: 16px; line-height: 24px; margin-bottom: 30px;">
               Nous sommes ravis de vous accueillir dans notre communauté. Pour commencer votre expérience, veuillez confirmer votre adresse email en cliquant sur le bouton ci-dessous.
             </p>
@@ -72,7 +75,7 @@ export const sendVerificationEmail = async (email) => {
             <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee;">
               <p style="color: #444444; font-size: 16px; line-height: 24px; margin: 0;">
                 À très bientôt,<br/>
-                <strong style="color: #0a3d64;">L'équipe Go Hope</strong>
+                <strong style="color: #0a3d64;">L'équipe GoHope</strong>
               </p>
             </div>
           </td>
@@ -80,7 +83,7 @@ export const sendVerificationEmail = async (email) => {
         <tr>
           <td style="background: linear-gradient(135deg, #0a3d64 0%, #1D5F84 100%); padding: 30px; text-align: center;">
             <p style="color: #ffffff; font-size: 14px; margin: 0;">
-              © 2025 Go Hope. Tous droits réservés.
+              2025 GoHope. Tous droits réservés.
             </p>
           </td>
         </tr>
@@ -109,27 +112,27 @@ export const sendInvitationEmail = async (email) => {
   const mailOptions = {
     from: EMAIL_USER,
     to: email,
-    subject: "Invitation à rejoindre Go Hope",
+    subject: "Invitation à rejoindre GoHope",
     html: `
     <!DOCTYPE html>
     <html lang="fr">
     <head>
       <meta charset="UTF-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <title>Invitation Go Hope</title>
+      <title>Invitation GoHope</title>
     </head>
     <body style="margin:0; padding:0; background-color: #f9f9f9; font-family: Arial, sans-serif;">
       <table align="center" border="0" cellpadding="0" cellspacing="0" width="600" style="border-collapse: collapse; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
         <tr>
           <td align="center" style="padding: 40px 0; background: linear-gradient(135deg, #0a3d64 0%, #1D5F84 100%);">
-            <img src="https://flow-parents.com/wp-content/uploads/2024/12/Logo-FLOW-transparent-rogne.png" alt="Logo Go Hope" width="200" style="display: block;" />
+            <img src="https://flow-parents.com/wp-content/uploads/2024/12/Logo-FLOW-transparent-rogne.png" alt="Logo GoHope" width="200" style="display: block;" />
           </td>
         </tr>
         <tr>
           <td style="padding: 40px 30px;">
             <h1 style="color: #0a3d64; font-size: 28px; margin-bottom: 20px; font-weight: 600;">Vous êtes invité(e) !</h1>
             <p style="color: #444444; font-size: 16px; line-height: 24px; margin-bottom: 30px;">
-              Vous avez été invité(e) à rejoindre la communauté Go Hope. Pour finaliser votre inscription, veuillez définir votre mot de passe en cliquant sur le bouton ci-dessous.
+              Vous avez été invité(e) à rejoindre la communauté GoHope. Pour finaliser votre inscription, veuillez définir votre mot de passe en cliquant sur le bouton ci-dessous.
             </p>
             <div style="text-align: center; margin: 40px 0;">
               <a href="${resetLink}" 
@@ -152,7 +155,7 @@ export const sendInvitationEmail = async (email) => {
             <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee;">
               <p style="color: #444444; font-size: 16px; line-height: 24px; margin: 0;">
                 À très bientôt,<br/>
-                <strong style="color: #0a3d64;">L'équipe Go Hope</strong>
+                <strong style="color: #0a3d64;">L'équipe GoHope</strong>
               </p>
             </div>
           </td>
@@ -160,7 +163,7 @@ export const sendInvitationEmail = async (email) => {
         <tr>
           <td style="background: linear-gradient(135deg, #0a3d64 0%, #1D5F84 100%); padding: 30px; text-align: center;">
             <p style="color: #ffffff; font-size: 14px; margin: 0;">
-              © 2025 Go Hope. Tous droits réservés.
+              2025 GoHope. Tous droits réservés.
             </p>
           </td>
         </tr>
@@ -183,20 +186,20 @@ export const sendNotificationEmail = async (email, companyName) => {
   const mailOptions = {
     from: EMAIL_USER,
     to: email,
-    subject: "Bienvenue en tant qu'administrateur Go Hope",
+    subject: "Bienvenue en tant qu'administrateur GoHope",
     html: `
     <!DOCTYPE html>
     <html lang="fr">
     <head>
       <meta charset="UTF-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <title>Notification administrateur Go Hope</title>
+      <title>Notification administrateur GoHope</title>
     </head>
     <body style="margin:0; padding:0; background-color: #f9f9f9; font-family: Arial, sans-serif;">
       <table align="center" border="0" cellpadding="0" cellspacing="0" width="600" style="border-collapse: collapse; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
         <tr>
           <td align="center" style="padding: 40px 0; background: linear-gradient(135deg, #0a3d64 0%, #1D5F84 100%);">
-            <img src="https://flow-parents.com/wp-content/uploads/2024/12/Logo-FLOW-transparent-rogne.png" alt="Logo Go Hope" width="200" style="display: block;" />
+            <img src="https://flow-parents.com/wp-content/uploads/2024/12/Logo-FLOW-transparent-rogne.png" alt="Logo GoHope" width="200" style="display: block;" />
           </td>
         </tr>
         <tr>
@@ -216,7 +219,7 @@ export const sendNotificationEmail = async (email, companyName) => {
             <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee;">
               <p style="color: #444444; font-size: 16px; line-height: 24px; margin: 0;">
                 Cordialement,<br/>
-                <strong style="color: #0a3d64;">L'équipe Go Hope</strong>
+                <strong style="color: #0a3d64;">L'équipe GoHope</strong>
               </p>
             </div>
           </td>
@@ -224,7 +227,7 @@ export const sendNotificationEmail = async (email, companyName) => {
         <tr>
           <td style="background: linear-gradient(135deg, #0a3d64 0%, #1D5F84 100%); padding: 30px; text-align: center;">
             <p style="color: #ffffff; font-size: 14px; margin: 0;">
-              © 2025 Go Hope. Tous droits réservés.
+              2025 GoHope. Tous droits réservés.
             </p>
           </td>
         </tr>

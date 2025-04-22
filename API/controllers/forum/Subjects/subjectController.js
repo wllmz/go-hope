@@ -87,14 +87,22 @@ export const createSubject = async (req, res) => {
     await newSubject.save();
 
     // Populer le champ author pour renvoyer les détails de l'auteur
-    await newSubject.populate("author", "firstName email");
+    await newSubject.populate({
+      path: "author",
+      select: "username",
+    });
+
+    // Ajouter cette ligne pour déboguer
+    console.log("Informations d'auteur:", newSubject.author);
+
+    // Utiliser le nom d'utilisateur s'il existe, sinon utiliser "Utilisateur"
+    const authorName =
+      newSubject.author && newSubject.author.username
+        ? newSubject.author.username
+        : "Utilisateur";
 
     // 5. Envoyer un e-mail aux administrateurs pour les prévenir d'un nouveau sujet
-    // On suppose que sendNewSubjectNotificationEmail prend le titre du sujet et l'email de l'auteur.
-    sendNewSubjectNotificationEmail(
-      newSubject.title,
-      newSubject.author.username
-    )
+    sendNewSubjectNotificationEmail(newSubject.title, authorName)
       .then(() => {
         console.log("Notification e-mail envoyée aux administrateurs.");
       })

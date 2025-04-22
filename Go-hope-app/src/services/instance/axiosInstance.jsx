@@ -1,6 +1,15 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:5000/api";
+// Récupérer le nom de domaine à partir de window.location
+const hostname = window.location.hostname;
+console.log("Hostname:", hostname);
+
+// Choisir l'URL de l'API en fonction du nom de domaine
+const API_URL = hostname.includes("dev-app")
+  ? "https://dev-api.go-hope.fr/api"
+  : "https://api.go-hope.fr/api";
+
+console.log("API_URL:", API_URL);
 
 const axiosInstance = axios.create({
   baseURL: API_URL,

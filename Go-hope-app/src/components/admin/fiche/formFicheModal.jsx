@@ -5,6 +5,8 @@ import FormSelect from "../../../utils/form/FormSelect";
 import useFiche from "../../../hooks/fiche/useFiche";
 import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
+import useUploads from "../../../hooks/uploads/useUploads";
+import { FiUpload } from "react-icons/fi";
 
 const FormFicheModal = ({ isOpen, onClose, onSuccess, fiche }) => {
   const [formData, setFormData] = useState({
@@ -17,8 +19,17 @@ const FormFicheModal = ({ isOpen, onClose, onSuccess, fiche }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const isEditing = !!fiche;
+  const [imagePreview, setImagePreview] = useState(null);
 
   const { addFiche, modifyFiche } = useFiche();
+
+  // Hook pour gérer l'upload d'images
+  const {
+    isLoading: uploadLoading,
+    error: uploadError,
+    uploadedImage,
+    handleImageUpload,
+  } = useUploads();
 
   // Configuration de l'éditeur ReactQuill
   const modules = {
@@ -49,6 +60,17 @@ const FormFicheModal = ({ isOpen, onClose, onSuccess, fiche }) => {
   // Gestion spécifique du chargement de l'éditeur ReactQuill
   const [editorLoaded, setEditorLoaded] = useState(false);
 
+  // Mettre à jour le formulaire quand une image est uploadée
+  useEffect(() => {
+    if (uploadedImage && uploadedImage.filePath) {
+      setFormData((prev) => ({
+        ...prev,
+        image: uploadedImage.filePath,
+      }));
+      setImagePreview(uploadedImage.filePath);
+    }
+  }, [uploadedImage]);
+
   // Mise à jour des données du formulaire lorsqu'une fiche est sélectionnée pour modification
   useEffect(() => {
     if (fiche) {
@@ -66,6 +88,11 @@ const FormFicheModal = ({ isOpen, onClose, onSuccess, fiche }) => {
           image: fiche.image || "",
           categorie: fiche.categorie || "",
         });
+
+        // Mettre à jour l'aperçu de l'image
+        if (fiche.image) {
+          setImagePreview(fiche.image);
+        }
 
         // Marquer l'éditeur comme chargé après avoir défini le contenu
         setEditorLoaded(true);
@@ -85,6 +112,7 @@ const FormFicheModal = ({ isOpen, onClose, onSuccess, fiche }) => {
         image: "",
         categorie: "",
       });
+      setImagePreview(null);
       setEditorLoaded(true);
     }
   }, [fiche]);
@@ -113,6 +141,22 @@ const FormFicheModal = ({ isOpen, onClose, onSuccess, fiche }) => {
     }));
   };
 
+  // Gestion de l'upload d'image
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Créer un aperçu local
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+
+      // Upload l'image
+      handleImageUpload(file);
+    }
+  };
+
   const handleQuillChange = (value) => {
     console.log("Contenu de l'éditeur mis à jour:", value);
     setFormData((prev) => ({
@@ -138,7 +182,7 @@ const FormFicheModal = ({ isOpen, onClose, onSuccess, fiche }) => {
       return false;
     }
     if (!formData.image.trim()) {
-      setError("L'URL de l'image est obligatoire");
+      setError("L'image est obligatoire");
       return false;
     }
     if (!formData.categorie) {
@@ -153,6 +197,12 @@ const FormFicheModal = ({ isOpen, onClose, onSuccess, fiche }) => {
     setError(null);
 
     if (!validateForm()) return;
+
+    // Vérifier si un upload est en cours
+    if (uploadLoading) {
+      setError("Veuillez attendre que l'image soit téléchargée");
+      return;
+    }
 
     setLoading(true);
     try {
@@ -255,15 +305,47 @@ const FormFicheModal = ({ isOpen, onClose, onSuccess, fiche }) => {
               htmlFor="image"
               className="block text-sm font-medium text-gray-700 mb-1"
             >
-              URL de l'image
+              Image
             </label>
-            <FormInput
-              id="image"
-              name="image"
-              placeholder="Entrez l'URL de l'image"
-              value={formData.image}
-              onChange={handleChange}
-            />
+            <div className="space-y-2">
+              {imagePreview && (
+                <div className="relative w-full h-40">
+                  <img
+                    src={imagePreview}
+                    alt="Aperçu"
+                    className="w-full h-full object-cover rounded"
+                  />
+                </div>
+              )}
+              <div className="flex items-center gap-2">
+                <FormInput
+                  id="image"
+                  name="image"
+                  placeholder="URL de l'image"
+                  value={formData.image}
+                  onChange={handleChange}
+                  className="flex-1"
+                />
+                <label className="flex items-center justify-center h-10 px-4 bg-blue-500 text-white rounded-md cursor-pointer hover:bg-blue-600">
+                  <FiUpload className="mr-2" />
+                  <span>Télécharger</span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    className="hidden"
+                  />
+                </label>
+              </div>
+              {uploadLoading && (
+                <p className="text-blue-500 text-xs">
+                  Téléchargement en cours...
+                </p>
+              )}
+              {uploadError && (
+                <p className="text-red-500 text-xs">Erreur: {uploadError}</p>
+              )}
+            </div>
           </div>
 
           <div className="mb-6">
@@ -293,9 +375,9 @@ const FormFicheModal = ({ isOpen, onClose, onSuccess, fiche }) => {
             </button>
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || uploadLoading}
               className={`px-4 py-2 bg-[#F1731F] text-white rounded-lg hover:bg-[#F5943A] transition-colors ${
-                loading ? "opacity-70 cursor-not-allowed" : ""
+                loading || uploadLoading ? "opacity-70 cursor-not-allowed" : ""
               }`}
             >
               {loading

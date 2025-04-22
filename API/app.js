@@ -32,7 +32,8 @@ import ficheRoute from "./routes/Fiche/ficheRoute.js";
 import articleFicheRoute from "./routes/Fiche/articleRoute.js";
 import suiviRoute from "./routes/Suivi/suiviRoute.js";
 import waitlistRoutes from "./routes/waitingList/waitingRoute.js";
-
+import uploadRoute from "./routes/uploads/uploadRoute.js";
+import path from "path";
 dotenv.config();
 
 const app = express();
@@ -72,6 +73,9 @@ async function startServer() {
       preflightContinue: false,
       optionsSuccessStatus: 204,
     };
+
+    // Servir les fichiers statiques depuis le dossier "uploads"
+    app.use("/uploads", express.static(path.resolve("uploads")));
 
     // L'ordre est TRÈS important
     app.use(cors(corsOptions));
@@ -130,6 +134,7 @@ async function startServer() {
     app.use("/api/fiches-articles", articleFicheRoute);
     app.use("/api/suivi", suiviRoute);
     app.use("/api/waitlist", waitlistRoutes);
+    app.use("/api/uploads", uploadRoute);
 
     // Gestion des erreurs améliorée
     app.use((err, req, res, next) => {

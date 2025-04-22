@@ -4,7 +4,9 @@ import FormInput from "../../../utils/form/FormInput";
 import FormSelect from "../../../utils/form/FormSelect";
 import SplitPhoneInput from "../../../utils/form/SplitPhoneInput";
 import Modal from "../../../utils/form/modal";
-import PasswordModal from "./PasswordModal"; // Assurez-vous que le chemin est correct
+import PasswordModal from "./PasswordModal";
+import ImageCropper from "../../Cropper/ImageCropper";
+import useUploads from "../../../hooks/uploads/useUploads";
 
 const UserProfileForm = ({ user, onProfileChange, onEditImage }) => {
   const [profile, setProfile] = useState({
@@ -16,9 +18,12 @@ const UserProfileForm = ({ user, onProfileChange, onEditImage }) => {
     image: "",
   });
   const [dateError, setDateError] = useState("");
-
-  // État pour afficher ou non la popup "Modifier mot de passe"
   const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [showImageCropperModal, setShowImageCropperModal] = useState(false);
+  const [croppedImage, setCroppedImage] = useState(null);
+
+  // Utilisation du hook d'upload
+  const { isLoading, error, uploadedImage, handleImageUpload } = useUploads();
 
   useEffect(() => {
     if (user) {
@@ -32,6 +37,14 @@ const UserProfileForm = ({ user, onProfileChange, onEditImage }) => {
       });
     }
   }, [user]);
+
+  // Quand une image a été uploadée, mettre à jour le profil
+  useEffect(() => {
+    if (uploadedImage && uploadedImage.filePath) {
+      handleChange("image", uploadedImage.filePath);
+      setShowImageCropperModal(false);
+    }
+  }, [uploadedImage]);
 
   // Calcul de la date d'aujourd'hui au format "yyyy-MM-dd"
   const today = new Date().toISOString().split("T")[0];
@@ -60,11 +73,34 @@ const UserProfileForm = ({ user, onProfileChange, onEditImage }) => {
       e.stopPropagation();
     }
 
+    setShowImageCropperModal(true);
+
     if (onEditImage) {
       onEditImage();
-    } else {
-      console.log("Modifier l'image");
     }
+  };
+
+  // Fonction appelée par ImageCropper quand l'image est recadrée
+  const onCropComplete = (croppedImageData) => {
+    setCroppedImage(croppedImageData);
+
+    // Convertir la data URL en fichier
+    const convertAndUpload = async () => {
+      try {
+        const response = await fetch(croppedImageData);
+        const blob = await response.blob();
+        const file = new File([blob], "profile-image.png", {
+          type: "image/png",
+        });
+
+        // Upload du fichier avec notre hook
+        await handleImageUpload(file);
+      } catch (err) {
+        console.error("Erreur lors de l'upload:", err);
+      }
+    };
+
+    convertAndUpload();
   };
 
   // Ouvre et ferme la modal de changement de mot de passe
@@ -112,6 +148,10 @@ const UserProfileForm = ({ user, onProfileChange, onEditImage }) => {
             </button>
           </div>
           <p className="text-[#1D5F84] font-semibold mt-2">Mon profil</p>
+          {isLoading && (
+            <p className="text-sm text-gray-500">Chargement de l'image...</p>
+          )}
+          {error && <p className="text-sm text-red-500">{error}</p>}
         </div>
 
         {/* Champs de saisie */}
@@ -182,6 +222,18 @@ const UserProfileForm = ({ user, onProfileChange, onEditImage }) => {
       {/* Modal "Modifier mot de passe" */}
       <Modal isOpen={showPasswordModal} onClose={closePasswordModal}>
         <PasswordModal onClose={closePasswordModal} />
+      </Modal>
+
+      {/* Modal pour le cropping d'image */}
+      <Modal
+        isOpen={showImageCropperModal}
+        onClose={() => setShowImageCropperModal(false)}
+      >
+        <ImageCropper
+          closeModal={() => setShowImageCropperModal(false)}
+          updateAvatar={onCropComplete}
+          initialImage={profile.image}
+        />
       </Modal>
     </>
   );

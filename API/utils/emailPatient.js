@@ -30,7 +30,7 @@ export const sendNewPatientAidantRequestEmail = async (title, username) => {
       <table align="center" border="0" cellpadding="0" cellspacing="0" width="600" style="border-collapse: collapse; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
         <tr>
           <td align="center" style="padding: 40px 0; background: linear-gradient(135deg, #0a3d64 0%, #1D5F84 100%);">
-            <img src="https://go-hope.fr/wp-content/uploads/2025/04/Calque_1-2.png" alt="Logo Go Hope" width="200" style="display: block;" />
+            <img src="https://go-hope.fr/wp-content/uploads/2025/04/Calque_1-2.png" alt="Logo GoHope" width="200" style="display: block;" />
           </td>
         </tr>
         <tr>
@@ -49,7 +49,7 @@ export const sendNewPatientAidantRequestEmail = async (title, username) => {
             <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee;">
               <p style="color: #444444; font-size: 16px; line-height: 24px; margin: 0;">
                 Cordialement,<br/>
-                <strong style="color: #0a3d64;">L'équipe Go Hope</strong>
+                <strong style="color: #0a3d64;">L'équipe GoHope</strong>
               </p>
             </div>
           </td>
@@ -57,7 +57,7 @@ export const sendNewPatientAidantRequestEmail = async (title, username) => {
         <tr>
           <td style="background: linear-gradient(135deg, #0a3d64 0%, #1D5F84 100%); padding: 30px; text-align: center;">
             <p style="color: #ffffff; font-size: 14px; margin: 0;">
-              © 2025 Go Hope. Tous droits réservés.
+              2025 GoHope. Tous droits réservés.
             </p>
           </td>
         </tr>
@@ -103,7 +103,7 @@ export const sendPatientAidantDecisionEmail = async (
       <table align="center" border="0" cellpadding="0" cellspacing="0" width="600" style="border-collapse: collapse; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
         <tr>
           <td align="center" style="padding: 40px 0; background: linear-gradient(135deg, #0a3d64 0%, #1D5F84 100%);">
-            <img src="https://go-hope.fr/wp-content/uploads/2025/04/Calque_1-2.png" alt="Logo Go Hope" width="200" style="display: block;" />
+            <img src="https://go-hope.fr/wp-content/uploads/2025/04/Calque_1-2.png" alt="Logo GoHope" width="200" style="display: block;" />
           </td>
         </tr>
         <tr>
@@ -155,7 +155,7 @@ export const sendPatientAidantDecisionEmail = async (
             <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee;">
               <p style="color: #444444; font-size: 16px; line-height: 24px; margin: 0;">
                 Cordialement,<br/>
-                <strong style="color: #0a3d64;">L'équipe Go Hope</strong>
+                <strong style="color: #0a3d64;">L'équipe GoHope</strong>
               </p>
             </div>
           </td>
@@ -163,7 +163,7 @@ export const sendPatientAidantDecisionEmail = async (
         <tr>
           <td style="background: linear-gradient(135deg, #0a3d64 0%, #1D5F84 100%); padding: 30px; text-align: center;">
             <p style="color: #ffffff; font-size: 14px; margin: 0;">
-              © 2025 Go Hope. Tous droits réservés.
+              2025 GoHope. Tous droits réservés.
             </p>
           </td>
         </tr>
