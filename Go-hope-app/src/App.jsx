@@ -1,11 +1,16 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+} from "react-router-dom";
 import { AuthProvider } from "./context/authContext";
 import RegisterPage from "./pages/auth/registerPage";
 import WelcomePage from "./pages/welcome/welcomePage";
 import VerificationPage from "./pages/welcome/verificationPage";
 import Home from "./pages/home/homePage";
-import "./app.css";
+import "./App.css";
 import PrivateRoute from "./context/PrivateRoute";
 import Login from "./pages/auth/loginPage";
 import ArticlePage from "./pages/article/articlePage";
@@ -45,8 +50,23 @@ import PolitiqueConfidentialite from "./pages/footer/politique-confidentialite";
 import ConditionsGenerales from "./pages/footer/conditions-generales";
 import Cookies from "./pages/footer/cookies";
 
-// Composant App simplifié avec footer partout
+// Composant qui décide si le footer doit être affiché
 const AppContent = () => {
+  const location = useLocation();
+
+  // Liste des chemins où le footer ne doit pas être affiché
+  const noFooterPaths = [
+    "/",
+    "/inscription",
+    "/connexion",
+    "/verification",
+    "/mot-de-passe-oublie",
+    "/reinitialiser-mot-de-passe",
+  ];
+
+  // Vérifier si le chemin actuel est dans la liste des pages sans footer
+  const shouldShowFooter = !noFooterPaths.includes(location.pathname);
+
   return (
     <main className="min-h-screen flex flex-col">
       <div className="flex-grow">
@@ -294,7 +314,7 @@ const AppContent = () => {
           <Route path="/cookies" element={<Cookies />} />
         </Routes>
       </div>
-      <FooterPage />
+      {shouldShowFooter && <FooterPage />}
     </main>
   );
 };
