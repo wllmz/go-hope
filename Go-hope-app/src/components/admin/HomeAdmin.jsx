@@ -9,6 +9,7 @@ import ArticleManagement from "./articles/ArticleManagement";
 import CategoryManagement from "./Category/CategoryManagement";
 import CategoriesForumManagement from "./CategoriesForum/CategoriesForumManagement";
 import FicheAdmin from "./fiche/FicheAdmin";
+import PatientAidantList from "./patient-aidant/PatientAidantList";
 
 // Structure des menus administratifs
 const adminMenus = [
@@ -47,6 +48,12 @@ const adminMenus = [
     label: "Fiches & Articles Partenaires",
     component: FicheAdmin,
     icon: "folder",
+  },
+  {
+    id: "patient-aidant",
+    label: "Demandes Patient-Aidant",
+    component: PatientAidantList,
+    icon: "user",
   },
 ];
 

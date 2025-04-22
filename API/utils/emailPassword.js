@@ -1,9 +1,12 @@
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
+
 dotenv.config();
 
 const EMAIL_USER = process.env.MAIL_USER;
 const EMAIL_PASSWORD = process.env.MAIL_PASSWORD;
+
+// Créer le transporteur
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
@@ -12,22 +15,19 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// Fonction pour notifier les administrateurs d'un nouveau sujet
-export const sendNewSubjectNotificationEmail = async (
-  subjectTitle,
-  authorUsername
-) => {
+// Fonction pour envoyer l'email de réinitialisation
+export const sendResetPasswordEmail = async (email, resetURL) => {
   const mailOptions = {
     from: EMAIL_USER,
-    to: EMAIL_USER,
-    subject: "Nouveau sujet créé sur le forum",
+    to: email,
+    subject: "Réinitialisation de votre mot de passe Go Hope",
     html: `
     <!DOCTYPE html>
     <html lang="fr">
     <head>
       <meta charset="UTF-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <title>Nouveau sujet créé sur le forum</title>
+      <title>Réinitialisation de votre mot de passe</title>
     </head>
     <body style="margin:0; padding:0; background-color: #f9f9f9; font-family: Arial, sans-serif;">
       <table align="center" border="0" cellpadding="0" cellspacing="0" width="600" style="border-collapse: collapse; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
@@ -38,18 +38,12 @@ export const sendNewSubjectNotificationEmail = async (
         </tr>
         <tr>
           <td style="padding: 40px 30px;">
-            <h1 style="color: #0a3d64; font-size: 28px; margin-bottom: 20px; font-weight: 600;">Nouveau sujet sur le forum</h1>
+            <h1 style="color: #0a3d64; font-size: 28px; margin-bottom: 20px; font-weight: 600;">Réinitialisation de votre mot de passe</h1>
             <p style="color: #444444; font-size: 16px; line-height: 24px; margin-bottom: 30px;">
-              Un nouveau sujet vient d'être créé sur le forum. Veuillez le consulter pour vérifier et valider son contenu.
+              Vous avez demandé la réinitialisation de votre mot de passe. Pour continuer, veuillez cliquer sur le bouton ci-dessous.
             </p>
-            <div style="background-color: #f8f9fa; padding: 20px; border-radius: 6px; margin: 30px 0;">
-              <p style="color: #444444; font-size: 16px; line-height: 24px; margin: 0;">
-                <strong style="color: #0a3d64;">Titre :</strong> ${subjectTitle}<br/>
-                <strong style="color: #0a3d64;">Auteur :</strong> ${authorUsername}
-              </p>
-            </div>
             <div style="text-align: center; margin: 40px 0;">
-              <a href="${process.env.FRONTEND_URL}/admin/forum" 
+              <a href="${resetURL}" 
                  style="display: inline-block; 
                         background-color: #F5943A; 
                         color: #ffffff; 
@@ -60,9 +54,16 @@ export const sendNewSubjectNotificationEmail = async (
                         font-weight: 500;
                         transition: background-color 0.3s ease;
                         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
-                Voir le sujet
+                Réinitialiser mon mot de passe
               </a>
             </div>
+            <p style="color: #666666; font-size: 14px; line-height: 20px; margin-top: 30px; padding: 20px; background-color: #f8f9fa; border-radius: 6px;">
+              Si le bouton ne fonctionne pas, vous pouvez copier-coller le lien suivant dans votre navigateur :<br/>
+              <a href="${resetURL}" style="color: #F5943A; text-decoration: none; word-break: break-all;">${resetURL}</a>
+            </p>
+            <p style="color: #666666; font-size: 14px; line-height: 20px;">
+              Ce lien est valable pendant 1 heure. Si vous n'avez pas demandé cette réinitialisation, veuillez ignorer cet email.
+            </p>
             <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee;">
               <p style="color: #444444; font-size: 16px; line-height: 24px; margin: 0;">
                 Cordialement,<br/>
@@ -86,12 +87,11 @@ export const sendNewSubjectNotificationEmail = async (
 
   try {
     await transporter.sendMail(mailOptions);
-    console.log("E-mail de notification envoyé aux administrateurs");
+    console.log("Email de réinitialisation envoyé à : " + email);
   } catch (error) {
     console.error(
-      "Erreur lors de l'envoi de l'e-mail de notification :",
+      "Erreur lors de l'envoi de l'email de réinitialisation :",
       error
     );
-    throw error;
   }
 };

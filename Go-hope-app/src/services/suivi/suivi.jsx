@@ -237,3 +237,41 @@ export const removeSensorielObject = async (objectId) => {
     throw error;
   }
 };
+
+// Récupérer les dates avec données sur une période
+export const getDatesWithData = async (startDate, endDate) => {
+  try {
+    console.log("getDatesWithData - Dates envoyées à l'API:", {
+      startDate,
+      endDate,
+    });
+
+    // Formater les dates si nécessaire
+    const startDateStr =
+      typeof startDate === "string"
+        ? startDate.split("T")[0]
+        : startDate.toISOString().split("T")[0];
+    const endDateStr =
+      typeof endDate === "string"
+        ? endDate.split("T")[0]
+        : endDate.toISOString().split("T")[0];
+
+    const response = await axiosInstance.post("/suivi/dates-with-data", {
+      startDate: startDateStr,
+      endDate: endDateStr,
+    });
+
+    console.log(
+      "getDatesWithData - Réponse de l'API:",
+      JSON.stringify(response.data, null, 2)
+    );
+    return response.data;
+  } catch (error) {
+    console.error("getDatesWithData - Erreur:", {
+      message: error.message,
+      response: error.response?.data,
+      data: error.response?.data,
+    });
+    throw error;
+  }
+};

@@ -9,10 +9,13 @@ import UserProfile from "./UserProfile";
 import UserFavorites from "./UserFavorites";
 import UserSubjects from "./UserSubjects";
 import ThirdComponent from "../home/detail/third/thirdComponent";
+import { useLogout } from "../../hooks/auth/useLogout";
+import solidIcon from "../../assets/Solid.png";
 
 const InfoUser = () => {
   const navigate = useNavigate();
   const { user } = useUserInfo();
+  const { handleLogout, loading: logoutLoading } = useLogout();
 
   // Logs pour déboguer
   console.log("User object:", user);
@@ -121,6 +124,14 @@ const InfoUser = () => {
     navigate("/admin");
   };
 
+  // Gestionnaire de la déconnexion
+  const onLogout = async () => {
+    const success = await handleLogout();
+    if (success) {
+      navigate("/connexion");
+    }
+  };
+
   // Permet d'ajouter ou de retirer un favori sur un sujet
   const handleFavorisClickSubject = async (subjectId) => {
     try {
@@ -212,7 +223,7 @@ const InfoUser = () => {
       </div>
 
       {/* Affichage des sujets créés par l'utilisateur avec possibilité de basculer leur statut de favori */}
-      <div className="max-w-6xl mx-auto  bg-white p-5">
+      <div className="max-w-6xl mx-auto bg-white p-5">
         <UserSubjects
           subjects={displayedSubjects}
           loading={loading}
@@ -235,6 +246,20 @@ const InfoUser = () => {
         />
 
         <ThirdComponent />
+
+        {/* Bouton de déconnexion avec l'image Solid.png et effet de survol simplifié */}
+        <div className="flex justify-center mt-10 mb-6">
+          <button
+            onClick={onLogout}
+            disabled={logoutLoading}
+            className="flex items-center gap-3 text-[#1D5F84] hover:text-[#0a2e43] font-medium py-2 transition-colors duration-200"
+          >
+            <img src={solidIcon} alt="Déconnexion" className="w-6 h-6" />
+            <span className="text-base hover:text-lg transition-all duration-200">
+              Déconnexion
+            </span>
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -102,13 +102,13 @@ const CommentsSection = ({ initialComments, subjectId }) => {
               {/* Info utilisateur */}
               <div className="flex items-center mb-2 sm:mb-3">
                 <img
-                  src={comment.author?.avatar || User}
-                  alt={comment.author?.firstName || "Avatar"}
+                  src={comment.author?.image || User}
+                  alt={comment.author?.username || "Avatar"}
                   className="w-7 h-7 sm:w-8 sm:h-8 rounded-full mr-2 sm:mr-3 object-cover"
                 />
                 <div>
                   <p className="text-sm font-medium text-gray-800 sm:text-base">
-                    {comment.author?.firstName || "Inconnu"}
+                    {comment.author?.username || "Inconnu"}
                   </p>
                   <p className="text-xs text-gray-500">
                     {comment.author?.role || "Patient·e"}

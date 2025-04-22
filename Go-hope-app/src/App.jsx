@@ -32,6 +32,8 @@ import SanteDetail from "./pages/sante/santeDetailPage";
 import ArticleAllPartenaire from "./pages/partenaire/articleAllPartenaire";
 import SanteAllArticle from "./pages/sante/santeAllArticle";
 import ProjetPage from "./pages/projet/projetPage";
+import ForgotPass from "./pages/password-rest/ForgotPass";
+import ResetPass from "./pages/password-rest/ResetPass";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
@@ -251,6 +253,8 @@ function App() {
                 </PrivateRoute>
               }
             />
+            <Route path="/mot-de-passe-oublie" element={<ForgotPass />} />
+            <Route path="/reinitialiser-mot-de-passe" element={<ResetPass />} />
           </Routes>
         </main>
       </AuthProvider>

@@ -1,4 +1,5 @@
 import suiviModel from "../../models/mon-suivi/suiviModel.js";
+import { format } from "date-fns";
 
 // Créer ou ajouter des entrées au suivi
 export const userSuivi = async (req, res) => {
@@ -736,6 +737,73 @@ export const removeSensorielObject = async (req, res) => {
     console.error("Erreur lors de la suppression de l'objet sensoriel:", error);
     res.status(500).json({
       message: "Erreur lors de la suppression de l'objet sensoriel",
+      error: error.message,
+    });
+  }
+};
+
+export const getDatesWithData = async (req, res) => {
+  try {
+    console.log("=== Début getDatesWithData ===");
+    console.log("Headers:", req.headers);
+    console.log("Body:", req.body);
+
+    const authId = req.user.id;
+    console.log("Auth ID:", authId);
+
+    const { startDate, endDate } = req.body;
+    console.log("Dates reçues - Début:", startDate, "Fin:", endDate);
+
+    if (!startDate || !endDate) {
+      return res.status(400).json({
+        message: "Les dates de début et de fin sont requises",
+      });
+    }
+
+    // Formatage des dates pour la recherche
+    const start = new Date(startDate + "T00:00:00.000Z");
+    const end = new Date(endDate + "T23:59:59.999Z");
+
+    console.log("Dates formatées pour la recherche:", {
+      start: start.toISOString(),
+      end: end.toISOString(),
+    });
+
+    // Recherche des suivis avec des données
+    const suivis = await suiviModel
+      .find({
+        user: authId,
+        date: { $gte: start, $lte: end },
+        $or: [
+          { motricité: { $exists: true, $ne: [] } },
+          { douleurs: { $exists: true, $ne: [] } },
+          { sensoriel: { $exists: true, $ne: [] } },
+          { fatigue: { $exists: true, $ne: null } },
+          { humeur: { $exists: true, $ne: null } },
+          { troublesCognitifs: { $exists: true, $ne: null } },
+        ],
+      })
+      .select("date -_id");
+
+    console.log("Suivis trouvés:", suivis);
+
+    // Formater les dates pour la réponse
+    const dates = suivis.map((suivi) => format(suivi.date, "yyyy-MM-dd"));
+
+    console.log("Dates formatées pour la réponse:", dates);
+
+    res.status(200).json({
+      message: "Dates récupérées avec succès",
+      dates: dates,
+    });
+  } catch (error) {
+    console.error("Erreur détaillée:", {
+      message: error.message,
+      stack: error.stack,
+      name: error.name,
+    });
+    res.status(500).json({
+      message: "Erreur lors de la récupération des dates",
       error: error.message,
     });
   }

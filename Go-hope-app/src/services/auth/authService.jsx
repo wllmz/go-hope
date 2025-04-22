@@ -94,3 +94,32 @@ export const refreshAccessToken = async () => {
     throw error;
   }
 };
+
+export const forgotPasswordService = async (email) => {
+  try {
+    const response = await axiosInstance.post("/auth/forgot-password", {
+      email,
+    });
+    return response.data;
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.message || "Erreur lors de l'envoi de l'email."
+    );
+  }
+};
+
+export const resetPasswordService = async ({ newPassword, token }) => {
+  try {
+    const response = await axiosInstance.post(
+      `/auth/reset-password?token=${token}`,
+      {
+        newPassword,
+      }
+    );
+    return response.data; // Retourne la réponse du backend
+  } catch (error) {
+    throw new Error(
+      error.response?.data?.message || "Erreur lors de la réinitialisation."
+    );
+  }
+};

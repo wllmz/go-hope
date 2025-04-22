@@ -10,7 +10,7 @@ export const slideData = [
     image: famille,
     title: "Les news Gohope",
     description:
-      "Accédez aux forums, participez à des discussions et favorisez l'engagement communautaire.",
+      "Suivez les aventures Gohope, les évènements, les actualités et les nouvelles de la communauté.",
     buttonText: "Voir",
     link: "/news",
     cardColor: "bg-gradient-to-b from-[#F5943A] to-[#FDFDFD]",
@@ -22,7 +22,7 @@ export const slideData = [
     image: famille,
     title: "Les news de nos partenaires",
     description:
-      "Pour les aider dans leurs démarches et dans la compréhension de leur maladie.",
+      "Restez à jour sur les actualités, événements et informations de nos partenaires.",
     buttonText: "Voir",
     link: "/partenaires",
     cardColor: "bg-gradient-to-b from-[#B3D7EC] to-[#FDFDFD]",
@@ -33,7 +33,8 @@ export const slideData = [
   {
     image: famille,
     title: "Les news santé",
-    description: "Masterclass, vidéo-conférences pour aider nos patient·e·s.",
+    description:
+      "Suivez l’actualité santé et recevez chaque jour conseils et infos clés.",
     buttonText: "Voir",
     link: "/sante",
     cardColor: "bg-gradient-to-b from-[#1D5F84] to-[#FDFDFD]",

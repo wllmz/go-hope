@@ -18,6 +18,18 @@
   --h5-size: 0.75rem; /* 12px */
 }
 
+/* Mobile menu bottom spacing */
+@media (max-width: 768px) {
+  body {
+    padding-bottom: 60px !important;
+  }
+
+  #root {
+    min-height: 100vh;
+    padding-bottom: 4rem;
+  }
+}
+
 /* Heading styles */
 h1 {
   font-size: var(--h1-size) !important;

@@ -35,32 +35,38 @@ const MobileLayout = () => {
   };
 
   return (
-    // Ce conteneur s'affiche uniquement sur mobile (lg:hidden)
-    <div className="w-full max-w-screen-xl mx-auto lg:hidden overflow-hidden mb-6">
-      {/* Conteneur du slider avec scroll-snap */}
+    <div className="w-full max-w-screen-xl mx-auto lg:hidden overflow-hidden mb-6 px-2">
+      {/* Container avec padding négatif pour compenser le padding des slides */}
       <div
         ref={containerRef}
         className="overflow-x-auto scroll-smooth snap-x snap-mandatory flex no-scrollbar"
+        style={{
+          scrollbarWidth: "none",
+          msOverflowStyle: "none",
+        }}
       >
         {slideData.map((slide, index) => (
           <div
             key={index}
-            className="flex-shrink-0 w-full snap-start px-2 flex justify-center"
+            className="flex-shrink-0 w-[90%] px-2 snap-center"
+            style={{
+              minWidth: "90%",
+            }}
           >
-            {/* Format identique à DesktopLayout */}
-            <div className="border border-orange-500 p-2 pt-4 pb-4 flex-1 rounded-xl shadow-md flex flex-col bg-[#FFF6ED]">
+            {/* La carte garde son format original */}
+            <div className="border border-orange-500 p-2 pt-4 pb-4 rounded-xl shadow-md flex flex-col bg-[#FFF6ED] h-full">
               <img
-                className="block mx-auto mb-4 max-w-xs object-contain w-[150px]"
+                className="block mx-auto mb-4 max-w-xs object-contain w-[150px] h-[150px]"
                 src={slide.image}
                 alt={slide.title}
               />
               <h2 className="text-lg xl:text-xl text-[#0E3043] text-center mb-3">
                 {slide.title}
               </h2>
-              <p className="text-base xl:text-lg text-[#0E3043] text-center mt-2 mb-6">
+              <p className="text-base xl:text-lg text-[#0E3043] text-center mt-2 mb-6 flex-grow">
                 {slide.description}
               </p>
-              <div className="flex justify-center mt-auto">
+              <div className="flex justify-center">
                 <button
                   onClick={() => navigate(slide.link)}
                   className="w-[200px] bg-[#F5943A] hover:bg-[#F1731F] text-white font-semibold py-2 px-2 rounded-lg shadow-md transition duration-300 text-base"
@@ -70,18 +76,6 @@ const MobileLayout = () => {
               </div>
             </div>
           </div>
-        ))}
-      </div>
-      {/* Points de navigation */}
-      <div className="flex justify-center mt-4 space-x-2">
-        {slideData.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => scrollToSlide(index)}
-            className={`w-3 h-3 rounded-full focus:outline-none ${
-              index === currentIndex ? "bg-[#1D5F84]" : "bg-gray-300"
-            }`}
-          ></button>
         ))}
       </div>
     </div>

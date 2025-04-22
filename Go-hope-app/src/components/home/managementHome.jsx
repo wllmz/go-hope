@@ -7,11 +7,11 @@ import DesktopLayoutF from "./detail/fourth/DesktopLayoutF";
 import ThirdComponent from "./detail/third/thirdComponent";
 import FirstComponentUser from "./detail/first/firstComponentUser";
 import { useUserInfo } from "../../hooks/user/useUserInfo";
-
 import Menu from "../layout/menu";
 
 const Home = () => {
   const { user } = useUserInfo();
+
   return (
     <div className="w-full flex flex-col h-full">
       {/* Background gradient fixe */}
@@ -23,26 +23,24 @@ const Home = () => {
       {/* Contenu principal */}
       <main className="flex-grow flex items-center justify-center relative">
         <div className="w-full">
+          {/* Section utilisateur */}
           <div className="p-5">
             <p className="text-xl p-4 pt-6 text-[#0E3043]">
-              Bonjour {user?.username} !{" "}
+              Bonjour {user?.username} !
             </p>
-            {/* <FirstComponent /> */}
-
             <FirstComponentUser />
           </div>
-          {/* Afficher le carrousel pour mobile/tablettes */}
 
-          {/* Afficher le layout classique pour desktop */}
-          <div className="p-5">
+          {/* Section carrousel mobile */}
+          <div className="pt-5 pb-5">
             <MobileCarousel />
+          </div>
 
+          {/* Section desktop et autres composants */}
+          <div className="p-5">
             <DesktopLayout />
-
             <ThirdComponent />
-            {/* Afficher le carrousel pour mobile/tablettes */}
             <MobileCarouselF />
-            {/* Afficher le layout classique pour desktop */}
             <DesktopLayoutF />
           </div>
         </div>
