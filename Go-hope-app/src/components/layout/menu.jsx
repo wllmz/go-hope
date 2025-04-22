@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import logo from "../../assets/logo.png";
+import logo from "../../assets/Logo.png";
 import { FaHome, FaUsers, FaUser, FaFileAlt } from "react-icons/fa";
 
 const Menu = () => {
