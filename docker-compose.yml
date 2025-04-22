@@ -10,7 +10,7 @@ services:
       # Log configuration
       - "--log.level=INFO"
       # Docker provider configuration
-      - "--providers.docker=false"
+      - "--providers.docker=true" # Changé à true pour permettre la découverte de conteneurs
       - "--providers.docker.exposedbydefault=false"
       - "--providers.docker.network=web"
       # Entrypoints configuration
@@ -37,12 +37,17 @@ services:
       - "traefik.http.routers.traefik.entrypoints=websecure"
       - "traefik.http.routers.traefik.tls.certresolver=myresolver"
       - "traefik.http.services.traefik.loadbalancer.server.port=8080"
-      # Basic auth middleware (change username:password as needed)
       - "traefik.http.middlewares.auth.basicauth.users=admin:$$apr1$$ruca84Hq$$dQIZkQR71ZMiqJMct6SyZ0"
       - "traefik.http.routers.traefik.middlewares=auth"
+    mem_limit: 256M
 
   frontend-dev:
-    build: ./Go-hope-app
+    build:
+      context: ./Go-hope-app
+      dockerfile: Dockerfile
+      args:
+        - NODE_ENV=development
+    restart: unless-stopped
     expose:
       - "80"
     env_file:
@@ -57,9 +62,15 @@ services:
       - "traefik.http.services.frontend-dev.loadbalancer.server.port=80"
     networks:
       - web
+    mem_limit: 256M
 
   backend-dev:
-    build: ./API
+    build:
+      context: ./API
+      dockerfile: Dockerfile
+      args:
+        - NODE_ENV=development
+    restart: unless-stopped
     expose:
       - "5000"
     volumes:
@@ -76,9 +87,15 @@ services:
       - "traefik.http.services.backend-dev.loadbalancer.server.port=5000"
     networks:
       - web
+    mem_limit: 512M
 
   frontend-prod:
-    build: ./Go-hope-app
+    build:
+      context: ./Go-hope-app
+      dockerfile: Dockerfile
+      args:
+        - NODE_ENV=production
+    restart: unless-stopped
     expose:
       - "80"
     env_file:
@@ -93,9 +110,21 @@ services:
       - "traefik.http.services.frontend-prod.loadbalancer.server.port=80"
     networks:
       - web
+    mem_limit: 256M
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:80"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
   backend-prod:
-    build: ./API
+    build:
+      context: ./API
+      dockerfile: Dockerfile
+      args:
+        - NODE_ENV=production
+    restart: unless-stopped
     expose:
       - "5000"
     volumes:
@@ -112,6 +141,13 @@ services:
       - "traefik.http.services.backend-prod.loadbalancer.server.port=5000"
     networks:
       - web
+    mem_limit: 512M
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:5000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
 networks:
   web:
