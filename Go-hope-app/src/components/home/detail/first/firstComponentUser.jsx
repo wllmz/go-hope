@@ -5,7 +5,7 @@ import MotriciteSection from "../../../tracking/sections/MotriciteSection";
 import DouleursSection from "../../../tracking/sections/DouleursSection";
 import Calendar from "../../../tracking/components/Calendar";
 import useSuivi from "../../../../hooks/suivi/useSuivi";
-import { format, startOfDay } from "date-fns";
+import { format, startOfDay, addDays, subDays, startOfWeek } from "date-fns";
 import TroublesCognitifsSection from "../../../tracking/sections/TroublesCognitifsSection";
 import FatigueSection from "../../../tracking/sections/FatigueSection";
 import HumeurSection from "../../../tracking/sections/HumeurSection";
@@ -34,44 +34,53 @@ const FirstComponentUser = () => {
     updateTroublesCognitifs,
     updateSensoriel,
     removeSensorielObject,
+    getDatesWithData,
+    loading,
   } = useSuivi();
+  const [currentWeekStart, setCurrentWeekStart] = useState(
+    startOfWeek(new Date(), { weekStartsOn: 1 })
+  );
 
-  useEffect(() => {
-    const fetchDatesWithData = async () => {
-      try {
-        const today = new Date();
-        const dates = [];
+  const loadWeekData = async (weekStart) => {
+    try {
+      const endDate = addDays(weekStart, 6);
 
-        for (let i = 0; i < 7; i++) {
-          const date = new Date(today);
-          date.setDate(date.getDate() - i);
-          const formattedDate = format(date, "yyyy-MM-dd");
-          const response = await getSuiviByDate(formattedDate);
+      console.log("Chargement des données pour la semaine:", {
+        début: format(weekStart, "yyyy-MM-dd"),
+        fin: format(endDate, "yyyy-MM-dd"),
+      });
 
-          if (
-            response?.suivi &&
-            (response.suivi.motricité?.length > 0 ||
-              response.suivi.douleurs?.length > 0 ||
-              response.suivi.sensoriel?.length > 0 ||
-              Object.keys(response.suivi.troublesCognitifs || {}).length > 0 ||
-              response.suivi.fatigue ||
-              response.suivi.humeur)
-          ) {
-            dates.push(formattedDate);
-          }
-        }
+      const response = await getDatesWithData(
+        format(weekStart, "yyyy-MM-dd"),
+        format(endDate, "yyyy-MM-dd")
+      );
 
-        setDatesWithData(dates);
-      } catch (error) {
-        console.error(
-          "Erreur lors de la récupération des dates avec données:",
-          error
-        );
+      if (response?.dates) {
+        setDatesWithData((prevDates) => {
+          const newDates = [...new Set([...prevDates, ...response.dates])];
+          return newDates;
+        });
       }
-    };
+    } catch (error) {
+      console.error("Erreur lors du chargement des données:", error);
+    }
+  };
 
-    fetchDatesWithData();
+  // Chargement initial
+  useEffect(() => {
+    loadWeekData(currentWeekStart);
   }, []);
+
+  // Gestionnaire pour la navigation dans le calendrier
+  const handleWeekChange = (direction) => {
+    const newWeekStart =
+      direction === "next"
+        ? addDays(currentWeekStart, 7)
+        : addDays(currentWeekStart, -7);
+
+    setCurrentWeekStart(newWeekStart);
+    loadWeekData(newWeekStart);
+  };
 
   const handleDateSelect = async (date) => {
     try {
@@ -461,6 +470,10 @@ const FirstComponentUser = () => {
         selectedDate={selectedDate}
         onDateSelect={handleDateSelect}
         datesWithData={datesWithData}
+        currentWeekStart={currentWeekStart}
+        onNextWeek={() => handleWeekChange("next")}
+        onPrevWeek={() => handleWeekChange("prev")}
+        isLoading={loading}
       />
 
       {!selectedDate && (

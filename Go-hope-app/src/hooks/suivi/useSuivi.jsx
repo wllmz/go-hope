@@ -222,6 +222,21 @@ const useSuivi = () => {
     }
   };
 
+  // Récupérer les dates avec données sur une période
+  const getDatesWithData = async (startDate, endDate) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const result = await suiviService.getDatesWithData(startDate, endDate);
+      setLoading(false);
+      return result;
+    } catch (err) {
+      setError(err.response?.data?.message || "Une erreur est survenue");
+      setLoading(false);
+      throw err;
+    }
+  };
+
   return {
     loading,
     error,
@@ -237,6 +252,7 @@ const useSuivi = () => {
     updateTroublesCognitifs,
     updateSensoriel,
     removeSensorielObject,
+    getDatesWithData,
   };
 };
 

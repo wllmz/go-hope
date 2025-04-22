@@ -144,21 +144,25 @@ const DataIndicator = styled(Box)(({ theme, hasData }) => ({
   },
 }));
 
-const Calendar = ({ selectedDate, onDateSelect, datesWithData = [] }) => {
-  const [currentWeekStart, setCurrentWeekStart] = React.useState(
-    startOfWeek(selectedDate || new Date(), { weekStartsOn: 1 })
-  );
-
+const Calendar = ({
+  selectedDate,
+  onDateSelect,
+  datesWithData = [],
+  currentWeekStart,
+  onNextWeek,
+  onPrevWeek,
+  isLoading,
+}) => {
   const dates = Array.from({ length: 7 }, (_, i) =>
     addDays(currentWeekStart, i)
   );
 
   const handlePrevious = () => {
-    setCurrentWeekStart((prevDate) => addDays(prevDate, -7));
+    if (!isLoading) onPrevWeek?.();
   };
 
   const handleNext = () => {
-    setCurrentWeekStart((prevDate) => addDays(prevDate, 7));
+    if (!isLoading) onNextWeek?.();
   };
 
   return (
@@ -182,7 +186,7 @@ const Calendar = ({ selectedDate, onDateSelect, datesWithData = [] }) => {
                 key={formattedDate}
                 isSelected={isSelected}
                 isFuture={isFuture}
-                onClick={() => !isFuture && onDateSelect(date)}
+                onClick={() => !isFuture && !isLoading && onDateSelect(date)}
               >
                 <DayNumber isSelected={isSelected} isFuture={isFuture}>
                   {format(date, "d")}
@@ -194,7 +198,7 @@ const Calendar = ({ selectedDate, onDateSelect, datesWithData = [] }) => {
                   hasData={hasData}
                   style={{ visibility: isFuture ? "hidden" : "visible" }}
                   onClick={(e) => {
-                    if (isSelected) {
+                    if (isSelected && !isLoading) {
                       e.stopPropagation();
                       onDateSelect(null);
                     }

@@ -1,8 +1,10 @@
-import React from "react";
-import bg from "../../../../assets/papillon-blanc.png";
+import React, { useState } from "react";
 import arrow from "../../../../assets/arrow.png";
+import PatientAidantModal from "./PatientAidantModal";
 
 const ThirdComponent = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   return (
     <div className="flex flex-col  items-center mb-6 mt-4 sm:mt-15 ">
       <div className="w-full text-center items-center mt-5 mb-5">
@@ -68,13 +70,18 @@ const ThirdComponent = () => {
         {/* Bouton en dessous */}
         <div className="flex justify-center mt-10">
           <button
-            // onClick={handleNextStep}
+            onClick={() => setIsModalOpen(true)}
             className="w-sm sm:w-[300px] bg-[#F5943A] hover:bg-[#F1731F] text-white font-semibold py-2 px-2 rounded-lg shadow-md transition duration-300 text-lg"
           >
             Devenir patient aidant
           </button>
         </div>
       </div>
+
+      <PatientAidantModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </div>
   );
 };

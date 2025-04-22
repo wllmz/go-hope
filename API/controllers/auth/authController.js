@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import { sendVerificationEmail } from "../../utils/emailUtils.js";
+import { sendResetPasswordEmail } from "../../utils/emailPassword.js";
 import crypto from "crypto";
 
 dotenv.config();
@@ -299,41 +300,6 @@ export const verifyEmail = async (req, res) => {
   }
 };
 
-// 8. Fonction pour réinitialiser le mot de passe
-export const resetPassword = async (req, res) => {
-  const token = req.cookies.resetToken;
-  const { newPassword } = req.body;
-
-  try {
-    if (!token) {
-      return res.status(400).json({ message: "Le jeton doit être fourni." });
-    }
-
-    const decoded = jwt.verify(token, JWT_RESET_PASSWORD_SECRET);
-    const { email } = decoded;
-
-    // Calculer le hash de l'email à partir de la valeur décodée
-    const emailHash = crypto.createHash("sha256").update(email).digest("hex");
-    const user = await Auth.findOne({ emailHash });
-    if (!user) {
-      return res.status(404).json({ message: "Utilisateur non trouvé." });
-    }
-
-    // Déchiffrer l'email pour confirmer que l'on travaille avec la valeur en clair
-    user.decryptFieldsSync();
-
-    user.password = await bcrypt.hash(newPassword, 10);
-    await user.save();
-
-    res.status(200).json({ message: "Mot de passe réinitialisé avec succès." });
-  } catch (error) {
-    console.error("Erreur lors de la réinitialisation du mot de passe:", error);
-    res
-      .status(500)
-      .json({ message: "Erreur lors de la réinitialisation du mot de passe." });
-  }
-};
-
 // 9. Fonction pour vérifier si l'email est déjà utilisé
 export const checkEmail = async (req, res) => {
   const { email } = req.body;
@@ -406,5 +372,79 @@ export const resendVerificationEmail = async (req, res) => {
     return res
       .status(500)
       .json({ message: "Erreur lors de l'envoi de l'email de vérification." });
+  }
+};
+
+// 8. Fonction pour réinitialiser le mot de passe
+export const resetPassword = async (req, res) => {
+  const { token } = req.query;
+  const { newPassword } = req.body;
+
+  try {
+    if (!token) {
+      return res.status(400).json({ message: "Le jeton doit être fourni." });
+    }
+
+    const decoded = jwt.verify(token, JWT_RESET_PASSWORD_SECRET);
+    const { email } = decoded;
+
+    // Calculer le hash de l'email pour la recherche
+    const emailHash = crypto.createHash("sha256").update(email).digest("hex");
+
+    // Rechercher l'utilisateur par emailHash
+    const user = await Auth.findOne({ emailHash });
+    if (!user) {
+      return res.status(404).json({ message: "Utilisateur non trouvé." });
+    }
+
+    user.password = await bcrypt.hash(newPassword, 10);
+    user.verifyEmail = true;
+    await user.save();
+
+    res.status(200).json({ message: "Mot de passe réinitialisé avec succès." });
+  } catch (error) {
+    console.error("Erreur lors de la réinitialisation du mot de passe:", error);
+    res
+      .status(500)
+      .json({ message: "Erreur lors de la réinitialisation du mot de passe." });
+  }
+};
+
+// 10. Fonction forgotPassword
+export const forgotPassword = async (req, res) => {
+  const { email } = req.body;
+  try {
+    // Calculer le hash de l'email pour la recherche
+    const emailHash = crypto.createHash("sha256").update(email).digest("hex");
+
+    // Rechercher l'utilisateur par emailHash
+    const user = await Auth.findOne({ emailHash });
+    if (!user) {
+      return res.status(200).json({
+        message:
+          "Si cet email existe, vous recevrez un email de réinitialisation.",
+      });
+    }
+
+    // Déchiffrer pour obtenir l'email en clair pour l'envoi
+    user.decryptFieldsSync();
+    const userEmail = user.email;
+
+    const token = jwt.sign({ email: userEmail }, JWT_RESET_PASSWORD_SECRET, {
+      expiresIn: "1h",
+    });
+
+    const resetURL = `${FRONTEND_URL}/reinitialiser-mot-de-passe?token=${token}`;
+    await sendResetPasswordEmail(userEmail, resetURL);
+
+    return res.status(200).json({
+      message:
+        "Si cet email existe, vous recevrez un email de réinitialisation.",
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      message: "Erreur lors de la demande de réinitialisation.",
+    });
   }
 };

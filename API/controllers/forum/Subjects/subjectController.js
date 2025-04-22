@@ -16,9 +16,9 @@ export const listAllSubjects = async (req, res) => {
   try {
     // On ne retourne que les sujets validés, c'est-à-dire ceux dont validated vaut "valider"
     const subjects = await Subject.find({ validated: "valider" })
-      .select("+favoris") // Inclut le champ favoris
+      .select("+favoris")
       .populate("categories", "categorie")
-      .populate("author", "username");
+      .populate("author", "username image");
 
     res.status(200).json(subjects);
   } catch (error) {
@@ -33,9 +33,9 @@ export const listAllSubjects = async (req, res) => {
 export const listAllSubjectsAdmin = async (req, res) => {
   try {
     const subjects = await Subject.find({})
-      .select("+favoris") // Inclut le champ favoris
+      .select("+favoris")
       .populate("categories", "categorie")
-      .populate("author", "username");
+      .populate("author", "username image");
 
     res.status(200).json(subjects);
   } catch (error) {
@@ -206,23 +206,21 @@ export const updateSubject = async (req, res) => {
  */
 export const getSubjectById = async (req, res) => {
   try {
-    // On recherche le sujet en s'assurant qu'il est validé (la valeur "valider" est utilisée)
     const subject = await Subject.findOne({
       _id: req.params.subjectId,
       validated: "valider",
     })
-      .select("+favoris") // Inclusion forcée du champ favoris
-      .populate("categories", "categorie") // Populate des catégories
-      .populate("author", "firstName"); // Populate de l'auteur
+      .select("+favoris")
+      .populate("categories", "categorie")
+      .populate("author", "username image");
 
     if (!subject) {
       return res.status(404).json({ message: "Sujet non trouvé." });
     }
 
-    // Récupérer les commentaires associés au sujet
     const comments = await Comment.find({ subject: subject._id }).populate(
       "author",
-      "firstName"
+      "username image"
     );
 
     res.status(200).json({ ...subject._doc, comments });
@@ -357,7 +355,7 @@ export const listAllSubjectsByUser = async (req, res) => {
     const subjects = await Subject.find({ author: req.user.id })
       .select("+validated")
       .populate("categories", "categorie")
-      .populate("author", "username");
+      .populate("author", "username image");
 
     res.status(200).json(subjects);
   } catch (error) {

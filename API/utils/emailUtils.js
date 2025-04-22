@@ -28,48 +28,59 @@ export const sendVerificationEmail = async (email) => {
   const mailOptions = {
     from: EMAIL_USER,
     to: EMAIL_USER,
-    subject: "Création de votre compte Flow Parents",
+    subject: "Création de votre compte Go Hope",
     html: `
     <!DOCTYPE html>
     <html lang="fr">
     <head>
       <meta charset="UTF-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <title>Création de compte Flow Parents</title>
+      <title>Création de compte Go Hope</title>
     </head>
     <body style="margin:0; padding:0; background-color: #f9f9f9; font-family: Arial, sans-serif;">
-      <table align="center" border="0" cellpadding="0" cellspacing="0" width="600" style="border-collapse: collapse; background-color: #ffffff;">
+      <table align="center" border="0" cellpadding="0" cellspacing="0" width="600" style="border-collapse: collapse; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
         <tr>
-          <td align="center" style="padding: 40px 0;">
-            <img src="https://flow-parents.com/wp-content/uploads/2024/12/Logo-FLOW-transparent-rogne.png" alt="Logo Flow Parents" width="200" style="display: block;" />
+          <td align="center" style="padding: 40px 0; background: linear-gradient(135deg, #0a3d64 0%, #1D5F84 100%);">
+            <img src="https://go-hope.fr/wp-content/uploads/2025/04/Calque_1-2.png" alt="Logo Go Hope" width="200" style="display: block;" />
           </td>
         </tr>
         <tr>
-          <td style="padding: 0 30px 40px 30px;">
-            <h1 style="color: #0a3d64; font-size: 24px; margin-bottom: 20px;">Bonjour,</h1>
-            <p style="color: #0a3d64; font-size: 16px; line-height: 24px; margin-bottom: 30px;">
-              Nous sommes très heureux de vous accueillir chez Flow Parents. Veuillez cliquer sur le bouton ci-dessous pour confirmer votre email.
+          <td style="padding: 40px 30px;">
+            <h1 style="color: #0a3d64; font-size: 28px; margin-bottom: 20px; font-weight: 600;">Bienvenue chez Go Hope !</h1>
+            <p style="color: #444444; font-size: 16px; line-height: 24px; margin-bottom: 30px;">
+              Nous sommes ravis de vous accueillir dans notre communauté. Pour commencer votre expérience, veuillez confirmer votre adresse email en cliquant sur le bouton ci-dessous.
             </p>
-            <div style="text-align: center; margin-bottom: 30px;">
-              <a href="${verificationLink}" style="background-color: #f9a825; color: #ffffff; padding: 12px 25px; text-decoration: none; font-size: 18px; border-radius: 4px;">
+            <div style="text-align: center; margin: 40px 0;">
+              <a href="${verificationLink}" 
+                 style="display: inline-block; 
+                        background-color: #F5943A; 
+                        color: #ffffff; 
+                        padding: 14px 30px; 
+                        text-decoration: none; 
+                        font-size: 18px; 
+                        border-radius: 6px;
+                        font-weight: 500;
+                        transition: background-color 0.3s ease;
+                        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
                 Vérifier mon email
               </a>
             </div>
-            <p style="color: #0a3d64; font-size: 14px; line-height: 20px; margin-bottom: 30px;">
-              Vous pouvez aussi copier-coller l'URL suivante dans votre navigateur Web :<br/>
-              <br>
-              <a href="${verificationLink}" style="color: #f9a825; text-decoration: none;">${verificationLink}</a>
+            <p style="color: #666666; font-size: 14px; line-height: 20px; margin-top: 30px; padding: 20px; background-color: #f8f9fa; border-radius: 6px;">
+              Si le bouton ne fonctionne pas, vous pouvez copier-coller le lien suivant dans votre navigateur :<br/>
+              <a href="${verificationLink}" style="color: #F5943A; text-decoration: none; word-break: break-all;">${verificationLink}</a>
             </p>
-            <p style="color: #0a3d64; font-size: 16px; line-height: 24px;">
-              Nous restons à votre disposition.<br/><br/>
-              L'équipe Flow Parents
-            </p>
+            <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee;">
+              <p style="color: #444444; font-size: 16px; line-height: 24px; margin: 0;">
+                À très bientôt,<br/>
+                <strong style="color: #0a3d64;">L'équipe Go Hope</strong>
+              </p>
+            </div>
           </td>
         </tr>
         <tr>
-          <td bgcolor="#0a3d64" style="padding: 30px; text-align: center;">
+          <td style="background: linear-gradient(135deg, #0a3d64 0%, #1D5F84 100%); padding: 30px; text-align: center;">
             <p style="color: #ffffff; font-size: 14px; margin: 0;">
-              &copy; 2025 Flow Parents. Tous droits réservés.
+              © 2025 Go Hope. Tous droits réservés.
             </p>
           </td>
         </tr>
@@ -98,11 +109,64 @@ export const sendInvitationEmail = async (email) => {
   const mailOptions = {
     from: EMAIL_USER,
     to: email,
-    subject: "Invitation à créer votre compte",
+    subject: "Invitation à rejoindre Go Hope",
     html: `
-      <p>Vous avez été invité à créer un compte.</p>
-      <p>Cliquez sur le lien suivant pour vérifier votre email et définir votre mot de passe :</p>
-      <a href="${resetLink}" style="display: inline-block; padding: 10px 20px; color: white; background-color: blue; text-decoration: none;">Définir mon mot de passe</a>
+    <!DOCTYPE html>
+    <html lang="fr">
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Invitation Go Hope</title>
+    </head>
+    <body style="margin:0; padding:0; background-color: #f9f9f9; font-family: Arial, sans-serif;">
+      <table align="center" border="0" cellpadding="0" cellspacing="0" width="600" style="border-collapse: collapse; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+        <tr>
+          <td align="center" style="padding: 40px 0; background: linear-gradient(135deg, #0a3d64 0%, #1D5F84 100%);">
+            <img src="https://flow-parents.com/wp-content/uploads/2024/12/Logo-FLOW-transparent-rogne.png" alt="Logo Go Hope" width="200" style="display: block;" />
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 40px 30px;">
+            <h1 style="color: #0a3d64; font-size: 28px; margin-bottom: 20px; font-weight: 600;">Vous êtes invité(e) !</h1>
+            <p style="color: #444444; font-size: 16px; line-height: 24px; margin-bottom: 30px;">
+              Vous avez été invité(e) à rejoindre la communauté Go Hope. Pour finaliser votre inscription, veuillez définir votre mot de passe en cliquant sur le bouton ci-dessous.
+            </p>
+            <div style="text-align: center; margin: 40px 0;">
+              <a href="${resetLink}" 
+                 style="display: inline-block; 
+                        background-color: #F5943A; 
+                        color: #ffffff; 
+                        padding: 14px 30px; 
+                        text-decoration: none; 
+                        font-size: 18px; 
+                        border-radius: 6px;
+                        font-weight: 500;
+                        transition: background-color 0.3s ease;
+                        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+                Créer mon compte
+              </a>
+            </div>
+            <p style="color: #666666; font-size: 14px; line-height: 20px; margin-top: 30px; padding: 20px; background-color: #f8f9fa; border-radius: 6px;">
+              Ce lien est valable pendant 1 heure. Si vous n'avez pas demandé cette invitation, vous pouvez ignorer cet email.
+            </p>
+            <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee;">
+              <p style="color: #444444; font-size: 16px; line-height: 24px; margin: 0;">
+                À très bientôt,<br/>
+                <strong style="color: #0a3d64;">L'équipe Go Hope</strong>
+              </p>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td style="background: linear-gradient(135deg, #0a3d64 0%, #1D5F84 100%); padding: 30px; text-align: center;">
+            <p style="color: #ffffff; font-size: 14px; margin: 0;">
+              © 2025 Go Hope. Tous droits réservés.
+            </p>
+          </td>
+        </tr>
+      </table>
+    </body>
+    </html>
     `,
   };
 
@@ -119,10 +183,54 @@ export const sendNotificationEmail = async (email, companyName) => {
   const mailOptions = {
     from: EMAIL_USER,
     to: email,
-    subject: "Notification de rôle admin",
+    subject: "Bienvenue en tant qu'administrateur Go Hope",
     html: `
-      <p>Vous avez été ajouté en tant qu'administrateur de l'entreprise ${companyName}.</p>
-      <p>Vous avez maintenant accès aux fonctionnalités d'administration.</p>
+    <!DOCTYPE html>
+    <html lang="fr">
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Notification administrateur Go Hope</title>
+    </head>
+    <body style="margin:0; padding:0; background-color: #f9f9f9; font-family: Arial, sans-serif;">
+      <table align="center" border="0" cellpadding="0" cellspacing="0" width="600" style="border-collapse: collapse; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+        <tr>
+          <td align="center" style="padding: 40px 0; background: linear-gradient(135deg, #0a3d64 0%, #1D5F84 100%);">
+            <img src="https://flow-parents.com/wp-content/uploads/2024/12/Logo-FLOW-transparent-rogne.png" alt="Logo Go Hope" width="200" style="display: block;" />
+          </td>
+        </tr>
+        <tr>
+          <td style="padding: 40px 30px;">
+            <h1 style="color: #0a3d64; font-size: 28px; margin-bottom: 20px; font-weight: 600;">Nouveau rôle administrateur</h1>
+            <p style="color: #444444; font-size: 16px; line-height: 24px; margin-bottom: 20px;">
+              Félicitations ! Vous avez été nommé(e) administrateur de l'entreprise <strong style="color: #0a3d64;">${companyName}</strong>.
+            </p>
+            <p style="color: #444444; font-size: 16px; line-height: 24px; margin-bottom: 30px;">
+              Vous avez maintenant accès à toutes les fonctionnalités d'administration de la plateforme.
+            </p>
+            <div style="background-color: #f8f9fa; padding: 20px; border-radius: 6px; margin-top: 30px;">
+              <p style="color: #666666; font-size: 14px; line-height: 20px; margin: 0;">
+                Pour des raisons de sécurité, nous vous recommandons de changer votre mot de passe si vous ne l'avez pas fait récemment.
+              </p>
+            </div>
+            <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee;">
+              <p style="color: #444444; font-size: 16px; line-height: 24px; margin: 0;">
+                Cordialement,<br/>
+                <strong style="color: #0a3d64;">L'équipe Go Hope</strong>
+              </p>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td style="background: linear-gradient(135deg, #0a3d64 0%, #1D5F84 100%); padding: 30px; text-align: center;">
+            <p style="color: #ffffff; font-size: 14px; margin: 0;">
+              © 2025 Go Hope. Tous droits réservés.
+            </p>
+          </td>
+        </tr>
+      </table>
+    </body>
+    </html>
     `,
   };
 

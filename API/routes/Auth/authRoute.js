@@ -6,6 +6,7 @@ import {
   logoutUser,
   verifyEmail,
   resetPassword,
+  forgotPassword,
   checkEmail,
   checkUsername,
   resendVerificationEmail,
@@ -30,6 +31,9 @@ router.get("/verify-email", verifyEmail);
 
 // Route pour réinitialiser le mot de passe
 router.post("/reset-password", resetPassword);
+
+// Route pour oublier le mot de passe
+router.post("/forgot-password", forgotPassword);
 
 // Route pour vérifier si un email est déjà utilisé
 router.post("/check-email", checkEmail);

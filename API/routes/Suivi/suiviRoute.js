@@ -12,6 +12,7 @@ import {
   updateTroublesCognitifs,
   updateSensoriel,
   removeSensorielObject,
+  getDatesWithData,
 } from "../../controllers/suivi/monSuiviController.js";
 import { verifyToken } from "../../middleware/jwtMiddleware.js";
 
@@ -25,6 +26,9 @@ router.get("/", verifyToken, getSuivi);
 
 // Route pour récupérer un suivi par date
 router.post("/date", verifyToken, getSuiviByDate);
+
+// Route pour récupérer les dates avec données
+router.post("/dates-with-data", verifyToken, getDatesWithData);
 
 // Route pour récupérer un suivi par ID
 router.get("/:suiviId", verifyToken, getSuiviById);
@@ -261,6 +265,51 @@ router.delete("/sensoriel/:objectId", verifyToken, removeSensorielObject);
  *     responses:
  *       200:
  *         description: Champ supprimé avec succès
+ */
+
+/**
+ * @swagger
+ * /api/suivi/dates-with-data:
+ *   post:
+ *     summary: Récupérer toutes les dates avec des données sur une période
+ *     tags: [Suivi]
+ *     security:
+ *       - cookieAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - startDate
+ *               - endDate
+ *             properties:
+ *               startDate:
+ *                 type: string
+ *                 format: date
+ *                 description: Date de début de la période (YYYY-MM-DD)
+ *               endDate:
+ *                 type: string
+ *                 format: date
+ *                 description: Date de fin de la période (YYYY-MM-DD)
+ *     responses:
+ *       200:
+ *         description: Dates récupérées avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Dates récupérées avec succès"
+ *                 dates:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                     format: date
+ *                     example: "2024-03-21"
  */
 
 export default router;

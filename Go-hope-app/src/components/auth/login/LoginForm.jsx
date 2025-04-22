@@ -97,6 +97,15 @@ const LoginForm = () => {
                   required
                   onChange={(e) => setPassword(e.target.value)}
                 />
+                <div className="text-right mt-2">
+                  <button
+                    type="button"
+                    onClick={() => navigate("/mot-de-passe-oublie")}
+                    className="text-[#1D5F84] text-sm hover:underline"
+                  >
+                    Mot de passe oublié ?
+                  </button>
+                </div>
               </div>
               {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
               {showSuccessMessage && (
