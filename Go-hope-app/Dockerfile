@@ -2,13 +2,17 @@
     FROM node:20-alpine AS builder
     WORKDIR /app
     
+    # 1) Manifests
     COPY package*.json ./
-    RUN npm ci --no-audit --no-fund     # installe *tout* (prod + dev)
+    RUN npm install --no-audit --no-fund          # installe prod + dev
     
+    # 2) Code source
     COPY . .
     
-    # Ici tu pourrais lancer des tests lint, etc.
+    # (facultatif) tests, linters, etc.
     # RUN npm test
+    
+    
     
     # ---------- runtime ----------
     FROM node:20-slim AS runtime
@@ -16,13 +20,13 @@
     ENV NODE_ENV=production \
         NODE_OPTIONS=--max-old-space-size=512
     
-    # Copie juste les manifests et installe les deps prod
+    # 1) Manifests + deps prod seulement
     COPY package*.json ./
-    RUN npm ci --production --no-audit --no-fund \
-     && npm cache clean --force
+    RUN npm install --production --no-audit --no-fund \
+     && npm cache clean --force                 # nettoie le cache npm
     
-    # Copie le code *sans* les node_modules dev-deps
-    COPY --from=builder --chown=node:node /app ./
+    # 2) Code sans node_modules dev-deps
+    COPY --from=builder --chown=node:node /app .
     
     USER node
     EXPOSE 5000

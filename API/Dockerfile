@@ -6,17 +6,17 @@ ENV NODE_ENV=production \
 
 WORKDIR /app
 
-# 1. On ne copie que les manifests : meilleure mise en cache
+# 1. Manifests (cache Docker sur package*.json)
 COPY package*.json ./
 
-RUN npm ci --production --no-audit --no-fund \
+RUN npm install --production --no-audit --no-fund \
  && npm cache clean --force \
- && rm -rf /root/.npm
+ && rm -rf /root/.npm                   # nettoie le cache npm
 
 # 2. Code source
 COPY . .
 
-# 3. Dossier uploads (et droits pour l’utilisateur non-root)
+# 3. Dossier uploads + droits
 RUN mkdir -p uploads && chown -R node:node /app
 
 USER node
