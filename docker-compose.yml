@@ -41,55 +41,7 @@ services:
       - "traefik.http.routers.traefik.middlewares=auth"
     mem_limit: 256M
 
-  frontend-dev:
-    build:
-      context: ./Go-hope-app
-      dockerfile: Dockerfile
-      args:
-        - NODE_ENV=development
-    restart: unless-stopped
-    expose:
-      - "80"
-    env_file:
-      - ./API/.env
-    environment:
-      - NODE_ENV=development
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.frontend-dev.rule=Host(`dev-app.go-hope.fr`)"
-      - "traefik.http.routers.frontend-dev.entrypoints=websecure"
-      - "traefik.http.routers.frontend-dev.tls.certresolver=myresolver"
-      - "traefik.http.services.frontend-dev.loadbalancer.server.port=80"
-    networks:
-      - web
-    mem_limit: 256M
-
-  backend-dev:
-    build:
-      context: ./API
-      dockerfile: Dockerfile
-      args:
-        - NODE_ENV=development
-    restart: unless-stopped
-    expose:
-      - "5000"
-    volumes:
-      - /var/www/Go-hope/uploads:/app/uploads
-    env_file:
-      - ./API/.env
-    environment:
-      - NODE_ENV=development
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.backend-dev.rule=Host(`dev-api.go-hope.fr`)"
-      - "traefik.http.routers.backend-dev.entrypoints=websecure"
-      - "traefik.http.routers.backend-dev.tls.certresolver=myresolver"
-      - "traefik.http.services.backend-dev.loadbalancer.server.port=5000"
-    networks:
-      - web
-    mem_limit: 512M
-
-  frontend-prod:
+  frontend:
     build:
       context: ./Go-hope-app
       dockerfile: Dockerfile
@@ -104,15 +56,15 @@ services:
       - NODE_ENV=production
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.frontend-prod.rule=Host(`app.go-hope.fr`)"
-      - "traefik.http.routers.frontend-prod.entrypoints=websecure"
-      - "traefik.http.routers.frontend-prod.tls.certresolver=myresolver"
-      - "traefik.http.services.frontend-prod.loadbalancer.server.port=80"
+      - "traefik.http.routers.frontend.rule=Host(`app.go-hope.fr`)"
+      - "traefik.http.routers.frontend.entrypoints=websecure"
+      - "traefik.http.routers.frontend.tls.certresolver=myresolver"
+      - "traefik.http.services.frontend.loadbalancer.server.port=80"
     networks:
       - web
     mem_limit: 256M
 
-  backend-prod:
+  backend:
     build:
       context: ./API
       dockerfile: Dockerfile
@@ -129,10 +81,10 @@ services:
       - NODE_ENV=production
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.backend-prod.rule=Host(`api.go-hope.fr`)"
-      - "traefik.http.routers.backend-prod.entrypoints=websecure"
-      - "traefik.http.routers.backend-prod.tls.certresolver=myresolver"
-      - "traefik.http.services.backend-prod.loadbalancer.server.port=5000"
+      - "traefik.http.routers.backend.rule=Host(`api.go-hope.fr`)"
+      - "traefik.http.routers.backend.entrypoints=websecure"
+      - "traefik.http.routers.backend.tls.certresolver=myresolver"
+      - "traefik.http.services.backend.loadbalancer.server.port=5000"
     networks:
       - web
     mem_limit: 512M
