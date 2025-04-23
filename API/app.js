@@ -60,16 +60,9 @@ app.set("trust proxy", 1);
 
 async function startServer() {
   try {
-    // Configuration CORS adaptée pour la production
+    // Configuration CORS adaptée pour la production - VERSION TEMPORAIRE DE DÉPANNAGE
     const corsOptions = {
-      origin:
-        process.env.NODE_ENV === "production"
-          ? [
-              "https://app.go-hope.fr",
-              "https://app.go-hope.fr:8443", // Ajout du port 8443
-              "https://app.go-hope.fr:443", // Port HTTPS standard
-            ]
-          : ["http://localhost:5173", "https://dev-app.go-hope.fr"],
+      origin: "*", // Accepte toutes les origines temporairement
       credentials: true,
       methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
       allowedHeaders: [
@@ -81,8 +74,6 @@ async function startServer() {
         "X-XSRF-TOKEN",
       ],
       exposedHeaders: ["X-CSRF-Token"],
-      preflightContinue: false,
-      optionsSuccessStatus: 204,
     };
 
     // IMPORTANT: placer CORS avant tous les autres middlewares
