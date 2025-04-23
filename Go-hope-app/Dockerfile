@@ -1,36 +1,30 @@
-# Étape 1 : Construction avec Node 20 pour compatibilité react-router
-FROM node:20-alpine AS builder
-
-WORKDIR /app
-
-# Copier package.json et package-lock.json pour un meilleur caching
-COPY package*.json ./
-
-# Installer les dépendances
-RUN npm install --no-audit --no-fund
-
-# Copier les fichiers source
-COPY . .
-
-# Construire l'application pour la production
-RUN npm run build
-
-# Étape 2 : Image légère pour l'exécution
-FROM node:20-alpine
-
-WORKDIR /app
-
-# Installer serve de façon optimisée
-RUN npm install -g serve --no-audit --no-fund
-
-# Copier uniquement les fichiers de build
-COPY --from=builder /app/dist /app/dist
-
-# Ajouter configuration pour SPA directement
-RUN echo '{"rewrites":[{"source":"/**","destination":"/index.html"}],"trailingSlash":false}' > /app/dist/serve.json
-
-# Exposer le port 80
-EXPOSE 80
-
-# Lancer le serveur pour les SPA
-CMD ["serve", "-s", "dist", "-l", "80", "--single"]
+# ---------- builder ----------
+    FROM node:20-alpine AS builder
+    WORKDIR /app
+    
+    COPY package*.json ./
+    RUN npm ci --no-audit --no-fund     # installe *tout* (prod + dev)
+    
+    COPY . .
+    
+    # Ici tu pourrais lancer des tests lint, etc.
+    # RUN npm test
+    
+    # ---------- runtime ----------
+    FROM node:20-slim AS runtime
+    WORKDIR /app
+    ENV NODE_ENV=production \
+        NODE_OPTIONS=--max-old-space-size=512
+    
+    # Copie juste les manifests et installe les deps prod
+    COPY package*.json ./
+    RUN npm ci --production --no-audit --no-fund \
+     && npm cache clean --force
+    
+    # Copie le code *sans* les node_modules dev-deps
+    COPY --from=builder --chown=node:node /app ./
+    
+    USER node
+    EXPOSE 5000
+    CMD ["node", "app.js"]
+    
