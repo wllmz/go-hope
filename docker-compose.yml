@@ -1,24 +1,19 @@
-version: "3.9"
+# docker-compose.yml — PROD uniquement
 services:
   traefik:
     image: "traefik:v3.3"
     container_name: "traefik"
     restart: always
     command:
-      # API and dashboard configuration
       - "--api.dashboard=false"
-      # Log configuration
       - "--log.level=INFO"
-      # Docker provider configuration
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
       - "--providers.docker.network=web"
-      # Entrypoints configuration
       - "--entrypoints.web.address=:8080"
       - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
       - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
       - "--entrypoints.websecure.address=:8443"
-      # Let's Encrypt configuration
       - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
       - "--certificatesresolvers.myresolver.acme.email=contact.gohope@gmail.com"
       - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
@@ -40,54 +35,6 @@ services:
       - "traefik.http.middlewares.auth.basicauth.users=admin:$$apr1$$ruca84Hq$$dQIZkQR71ZMiqJMct6SyZ0"
       - "traefik.http.routers.traefik.middlewares=auth"
     mem_limit: 256M
-
-  frontend-dev:
-    build:
-      context: ./Go-hope-app
-      dockerfile: Dockerfile
-      args:
-        - NODE_ENV=development
-    restart: unless-stopped
-    expose:
-      - "80"
-    env_file:
-      - ./API/.env
-    environment:
-      - NODE_ENV=development
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.frontend-dev.rule=Host(`dev-app.go-hope.fr`)"
-      - "traefik.http.routers.frontend-dev.entrypoints=websecure"
-      - "traefik.http.routers.frontend-dev.tls.certresolver=myresolver"
-      - "traefik.http.services.frontend-dev.loadbalancer.server.port=80"
-    networks:
-      - web
-    mem_limit: 256M
-
-  backend-dev:
-    build:
-      context: ./API
-      dockerfile: Dockerfile
-      args:
-        - NODE_ENV=development
-    restart: unless-stopped
-    expose:
-      - "5000"
-    volumes:
-      - /var/www/Go-hope/uploads:/app/uploads
-    env_file:
-      - ./API/.env
-    environment:
-      - NODE_ENV=development
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.backend-dev.rule=Host(`dev-api.go-hope.fr`)"
-      - "traefik.http.routers.backend-dev.entrypoints=websecure"
-      - "traefik.http.routers.backend-dev.tls.certresolver=myresolver"
-      - "traefik.http.services.backend-dev.loadbalancer.server.port=5000"
-    networks:
-      - web
-    mem_limit: 512M
 
   frontend-prod:
     build:
@@ -111,12 +58,6 @@ services:
     networks:
       - web
     mem_limit: 256M
-    healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:80"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
 
   backend-prod:
     build:
