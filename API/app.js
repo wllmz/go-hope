@@ -124,9 +124,9 @@ async function startServer() {
     // 8. Session config
     app.use(session(sessionConfig));
 
-    // Application de la protection CSRF uniquement sur les routes protégées
-    app.use(protectedRoutes, csrfProtection);
-    app.use(protectedRoutes, setCsrfToken);
+    // Application de la protection CSRF globalement
+    app.use(csrfProtection);
+    app.use(setCsrfToken);
 
     // Rate limiters
     app.use("/api/auth", authLimiter);
