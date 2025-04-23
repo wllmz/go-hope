@@ -1,31 +1,40 @@
-name: Deploy to VPS
+name: Deploy to VPS (prod only)
 
 on:
   push:
     branches:
-      - dev
+      - main # déploiement auto uniquement sur main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
-      - name: Deploy to VPS
+      - name: Déploiement SSH
         uses: appleboy/ssh-action@v0.1.5
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USERNAME }}
           key: ${{ secrets.VPS_SSH_KEY }}
+          script_timeout: 30m
+          envs: GITHUB_SHA
           script: |
-            cd /var/www/Mylizy
-            git pull origin dev
-            cd /var/www/Mylizy
+            set -e
 
-            docker-compose down
-            docker-compose pull
-            docker-compose build --no-cache
-            docker-compose up -d --remove-orphans
-            echo "Déploiement avec Docker terminé avec succès."
+            echo "=> Connexion au serveur — déploiement commit $GITHUB_SHA"
+            cd /var/www/go-hope
+
+            # Pull les sources
+            git fetch origin main
+            git reset --hard origin/main
+
+            # Build + up des services prod uniquement
+            export DOCKER_BUILDKIT=1
+            docker compose stop frontend-prod backend-prod || true
+            docker compose rm -f frontend-prod backend-prod || true
+            docker compose build frontend-prod backend-prod
+            docker compose up -d --remove-orphans frontend-prod backend-prod
+
+            echo "✅ Déploiement terminé"

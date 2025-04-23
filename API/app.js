@@ -32,32 +32,44 @@ import ficheRoute from "./routes/Fiche/ficheRoute.js";
 import articleFicheRoute from "./routes/Fiche/articleRoute.js";
 import suiviRoute from "./routes/Suivi/suiviRoute.js";
 import waitlistRoutes from "./routes/waitingList/waitingRoute.js";
+import uploadRoute from "./routes/uploads/uploadRoute.js";
+import path from "path";
 
 dotenv.config();
 
+// Définition des URLs en fonction de l'environnement
+const API_URL =
+  process.env.NODE_ENV === "production"
+    ? process.env.API_PROD_URL || "https://api.go-hope.fr"
+    : process.env.API_DEV_URL || "https://dev-api.go-hope.fr";
+
+const FRONTEND_URL =
+  process.env.NODE_ENV === "production"
+    ? process.env.FRONTEND_PROD_URL || "https://app.go-hope.fr"
+    : process.env.FRONTEND_DEV_URL || "https://dev-app.go-hope.fr";
+
+const MONGO_URI =
+  process.env.NODE_ENV === "production"
+    ? process.env.MONGOURI_PROD
+    : process.env.MONGOURI_DEV;
+
 const app = express();
 
+// Configuration pour les proxys
 app.set("trust proxy", 1);
 
 async function startServer() {
   try {
-    // Middleware de sécurité pour les en-têtes HTTP
-    app.use(helmet());
-
-    setupSwagger(app);
-
-    // Middleware pour le logging des requêtes
-    app.use(morgan("tiny"));
-
-    // Middleware pour le parsing JSON
-    app.use(express.json());
-
-    // Middleware pour gérer les cookies
-    app.use(cookieParser());
-
-    // Configuration CORS
+    // Configuration CORS adaptée pour la production
     const corsOptions = {
-      origin: "http://localhost:5173",
+      origin:
+        process.env.NODE_ENV === "production"
+          ? [
+              "https://app.go-hope.fr",
+              "https://app.go-hope.fr:8443", // Ajout du port 8443
+              "https://app.go-hope.fr:443", // Port HTTPS standard
+            ]
+          : ["http://localhost:5173", "https://dev-app.go-hope.fr"],
       credentials: true,
       methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
       allowedHeaders: [
@@ -73,8 +85,54 @@ async function startServer() {
       optionsSuccessStatus: 204,
     };
 
-    // L'ordre est TRÈS important
+    // IMPORTANT: placer CORS avant tous les autres middlewares
     app.use(cors(corsOptions));
+
+    // Middleware pour le logging des requêtes (adapté à l'environnement)
+    app.use(
+      morgan(process.env.NODE_ENV === "production" ? "combined" : "tiny")
+    );
+
+    // Middleware pour le parsing JSON avec limite
+    app.use(express.json({ limit: "10mb" }));
+    app.use(express.urlencoded({ extended: true }));
+    app.use(cookieParser());
+
+    // Configuration Swagger uniquement en développement
+    if (process.env.NODE_ENV !== "production") {
+      setupSwagger(app);
+    }
+
+    // Configuration Helmet pour la sécurité
+    app.use(
+      helmet({
+        contentSecurityPolicy: {
+          directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+            styleSrc: ["'self'", "'unsafe-inline'", "https:"],
+            imgSrc: ["'self'", "data:", "https:"],
+            connectSrc: [
+              "'self'",
+              "https://app.go-hope.fr",
+              "https://api.go-hope.fr",
+            ],
+            fontSrc: ["'self'", "https:"],
+            objectSrc: ["'none'"],
+            mediaSrc: ["'self'"],
+            frameSrc: ["'self'"],
+          },
+        },
+        xssFilter: true,
+        noSniff: true,
+        referrerPolicy: { policy: "strict-origin-when-cross-origin" },
+      })
+    );
+
+    // Servir les fichiers statiques
+    app.use("/uploads", express.static(path.resolve("uploads")));
+
+    // Session et protection CSRF
     app.use(session(sessionConfig));
     app.use(csrfProtection);
     app.use(setCsrfToken);
@@ -87,25 +145,23 @@ async function startServer() {
 
     // Connexion à MongoDB
     console.log("Connexion à MongoDB...");
-    await connectMongoDb();
+    await connectMongoDb(MONGO_URI);
     console.log("Connexion à MongoDB réussie !");
 
-    // Middleware pour le parsing des données de formulaire
-    app.use(express.urlencoded({ extended: true }));
-
-    // Logs pour diagnostiquer les requêtes entrantes
-    app.use((req, res, next) => {
-      console.log(`Requête reçue : ${req.method} ${req.url}`);
-      next();
-    });
-
-    // Logs des en-têtes envoyés
-    app.use((req, res, next) => {
-      res.on("finish", () => {
-        console.log("En-têtes envoyés :", res.getHeaders()["set-cookie"]);
+    // Logs conditionels pour le développement uniquement
+    if (process.env.NODE_ENV !== "production") {
+      app.use((req, res, next) => {
+        console.log(`Requête reçue : ${req.method} ${req.url}`);
+        next();
       });
-      next();
-    });
+
+      app.use((req, res, next) => {
+        res.on("finish", () => {
+          console.log("En-têtes envoyés :", res.getHeaders()["set-cookie"]);
+        });
+        next();
+      });
+    }
 
     // Routes publiques qui ne nécessitent pas de CSRF
     app.post("/api/auth/login", (req, res, next) => {
@@ -130,8 +186,9 @@ async function startServer() {
     app.use("/api/fiches-articles", articleFicheRoute);
     app.use("/api/suivi", suiviRoute);
     app.use("/api/waitlist", waitlistRoutes);
+    app.use("/api/uploads", uploadRoute);
 
-    // Gestion des erreurs améliorée
+    // Gestion des erreurs
     app.use((err, req, res, next) => {
       console.error("Erreur middleware:", err);
 
@@ -148,10 +205,13 @@ async function startServer() {
       });
     });
 
-    // Déclaration du PORT
+    // Démarrage du serveur
     const PORT = process.env.PORT || 5000;
     app.listen(PORT, () => {
       console.log(`Serveur démarré sur http://localhost:${PORT}`);
+      console.log(`Environnement: ${process.env.NODE_ENV || "development"}`);
+      console.log(`Frontend URL: ${FRONTEND_URL}`);
+      console.log(`API URL: ${API_URL}`);
     });
   } catch (err) {
     console.error("Erreur au démarrage du serveur :", err);
