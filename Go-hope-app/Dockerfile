@@ -1,36 +1,36 @@
-# Utiliser Node.js 20 Alpine pour une image plus légère
-FROM node:20-alpine
+# Étape 1 : Construction avec Node 20 pour compatibilité react-router
+FROM node:20-alpine AS builder
 
-# Définir l'environnement de production dès le début
-ENV NODE_ENV=production
-ENV NODE_OPTIONS="--max-old-space-size=512"
-
-# Créer un répertoire de travail
 WORKDIR /app
 
-# Copier uniquement les fichiers de dépendances pour un meilleur caching
+# Copier package.json et package-lock.json pour un meilleur caching
 COPY package*.json ./
 
-# Installer les dépendances de façon optimisée pour la production
-# Utiliser 'install' au lieu de 'ci' puisqu'il n'y a pas de package-lock.json
-RUN npm install --only=production --no-audit --no-fund
+# Installer les dépendances
+RUN npm install --no-audit --no-fund
 
-# Copier le reste du code source
+# Copier les fichiers source
 COPY . .
 
-# Créer et configurer le dossier uploads
-RUN mkdir -p /app/uploads && chmod 755 /app/uploads
+# Construire l'application pour la production
+RUN npm run build
 
-# Optimisation supplémentaire: supprimer cache npm et fichiers inutiles
-RUN npm cache clean --force && \
-    rm -rf /tmp/* && \
-    rm -rf /root/.npm
+# Étape 2 : Image légère pour l'exécution
+FROM node:20-alpine
 
-# Exposer le port 5000
-EXPOSE 5000
+WORKDIR /app
 
-# Utiliser un utilisateur non-root pour plus de sécurité
-USER node
+# Installer serve de façon optimisée
+RUN npm install -g serve --no-audit --no-fund
 
-# Commande pour démarrer l'application
-CMD ["node", "app.js"]
+# Copier uniquement les fichiers de build
+COPY --from=builder /app/dist /app/dist
+
+# Ajouter configuration pour SPA directement
+RUN echo '{"rewrites":[{"source":"/**","destination":"/index.html"}],"trailingSlash":false}' > /app/dist/serve.json
+
+# Exposer le port 80
+EXPOSE 80
+
+# Lancer le serveur pour les SPA
+CMD ["serve", "-s", "dist", "-l", "80", "--single"]
