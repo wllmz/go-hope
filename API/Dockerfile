@@ -12,7 +12,8 @@ WORKDIR /app
 COPY package*.json ./
 
 # Installer les dépendances de façon optimisée pour la production
-RUN npm ci --only=production --no-audit --no-fund --prefer-offline
+# Utiliser 'install' au lieu de 'ci' puisqu'il n'y a pas de package-lock.json
+RUN npm install --only=production --no-audit --no-fund
 
 # Copier le reste du code source
 COPY . .

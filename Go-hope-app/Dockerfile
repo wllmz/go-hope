@@ -6,8 +6,8 @@ WORKDIR /app
 # Copier package.json et package-lock.json pour un meilleur caching
 COPY package*.json ./
 
-# Installation optimisée des dépendances
-RUN npm ci --no-audit --no-fund --prefer-offline
+# Installer les dépendances
+RUN npm install --no-audit --no-fund
 
 # Copier les fichiers source
 COPY . .
@@ -26,11 +26,11 @@ RUN npm install -g serve --no-audit --no-fund
 # Copier uniquement les fichiers de build
 COPY --from=builder /app/dist /app/dist
 
-# Ajouter configuration pour SPA directement (sans besoin de serve.json séparé)
+# Ajouter configuration pour SPA directement
 RUN echo '{"rewrites":[{"source":"/**","destination":"/index.html"}],"trailingSlash":false}' > /app/dist/serve.json
 
 # Exposer le port 80
 EXPOSE 80
 
-# Lancer le serveur avec le mode --single pour SPA
+# Lancer le serveur pour les SPA
 CMD ["serve", "-s", "dist", "-l", "80", "--single"]
