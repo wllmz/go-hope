@@ -11,6 +11,7 @@ const isProduction = process.env.NODE_ENV === "production";
 const excludedPaths = [
   "/api/auth/login",
   "/api/auth/register",
+  "/api/auth/me",
   "/api/suivi/date",
   "/api/suivi",
   "/api/auth/verify-email",
@@ -25,6 +26,7 @@ const excludedPaths = [
   "/api/auth/check-email",
   "/api/auth/check-username",
   "/api/auth/reset-password",
+  "/api/auth/logout",
   "/api/auth/forgot-password",
 ];
 
@@ -55,57 +57,50 @@ export const highTrafficLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-// Configuration de la session optimisée pour la production
+// Configuration de la session optimisée
 export const sessionConfig = {
-  secret: process.env.SESSION_SECRET,
+  secret: process.env.SESSION_SECRET || "secret-de-secours",
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: true, // true en production, false en développement
+    secure: true,
     httpOnly: true,
-    sameSite: isProduction ? "none" : "lax", // none en production (avec secure: true)
-    maxAge: 24 * 60 * 60 * 1000, // 24 heures
+    sameSite: "none", // Toujours none pour CORS avec credentials
+    maxAge: 24 * 60 * 60 * 1000,
     path: "/",
-    domain: isProduction ? process.env.COOKIE_DOMAIN : undefined, // Domaine en production si défini
   },
 };
 
-// Configuration CSRF améliorée pour la production
+// Configuration CSRF simplifiée
 export const csrfProtection = (req, res, next) => {
-  // Skip pour OPTIONS
-  if (req.method === "OPTIONS") {
+  // Skip pour OPTIONS et les routes exclues
+  if (
+    req.method === "OPTIONS" ||
+    excludedPaths.some((path) => req.path.includes(path))
+  ) {
     return next();
   }
 
-  // Skip pour les routes exclues
-  if (excludedPaths.some((path) => req.path.includes(path))) {
+  // Pour les GET, on génère juste un token et on continue
+  if (req.method === "GET") {
+    const token = Math.random().toString(36).slice(2);
+    res.cookie("XSRF-TOKEN", token, {
+      httpOnly: false,
+      secure: true,
+      sameSite: "none",
+      path: "/",
+    });
     return next();
   }
 
-  // Vérification manuelle du token
+  // Vérification du token pour les autres méthodes
   const cookieToken = req.cookies["XSRF-TOKEN"];
   const headerToken = req.headers["x-csrf-token"];
 
-  // Si les tokens correspondent, on passe
   if (cookieToken && headerToken && cookieToken === headerToken) {
     return next();
   }
 
-  // Sinon, on génère un nouveau token
-  const token = Math.random().toString(36).slice(2);
-  res.cookie("XSRF-TOKEN", token, {
-    httpOnly: false, // Doit être false pour être accessible au JavaScript
-    secure: isProduction,
-    sameSite: isProduction ? "none" : "lax",
-    path: "/",
-  });
-
-  // Si c'est une requête GET, on passe
-  if (req.method === "GET") {
-    return next();
-  }
-
-  // Pour les autres méthodes, on vérifie le token
   return res.status(403).json({
     message: "Erreur de sécurité CSRF",
     error: "invalid csrf token",
@@ -114,23 +109,6 @@ export const csrfProtection = (req, res, next) => {
 
 // Middleware pour ajouter le token CSRF
 export const setCsrfToken = (req, res, next) => {
-  if (
-    excludedPaths.some((path) => req.path.includes(path)) ||
-    req.method === "OPTIONS"
-  ) {
-    return next();
-  }
-
-  try {
-    const token = req.csrfToken();
-    res.cookie("XSRF-TOKEN", token, {
-      httpOnly: false, // Doit être false pour être accessible au JavaScript
-      secure: isProduction,
-      sameSite: isProduction ? "none" : "lax",
-      path: "/",
-    });
-  } catch (error) {
-    console.log("Skip CSRF token generation");
-  }
+  // Déjà couvert par csrfProtection
   next();
 };
