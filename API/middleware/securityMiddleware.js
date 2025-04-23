@@ -1,5 +1,4 @@
 import rateLimit from "express-rate-limit";
-import csrf from "csurf";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -7,27 +6,21 @@ dotenv.config();
 // Détection de l'environnement
 const isProduction = process.env.NODE_ENV === "production";
 
-// Liste des routes à exclure de la protection CSRF
+// Liste des routes à exclure de la protection CSRF - nettoyée des duplications
 const excludedPaths = [
   "/api/auth/login",
   "/api/auth/register",
   "/api/auth/me",
+  "/api/auth/refresh-token", // Ajout chemin manquant
+  "/api/auth/verify-email",
+  "/api/auth/resend-verification-email",
+  "/api/auth/check-email",
+  "/api/auth/check-username",
+  "/api/auth/reset-password",
+  "/api/auth/logout",
+  "/api/auth/forgot-password",
   "/api/suivi/date",
   "/api/suivi",
-  "/api/auth/verify-email",
-  "/api/auth/resend-verification-email",
-  "/api/auth/check-email",
-  "/api/auth/check-username",
-  "/api/auth/reset-password",
-  "/api/auth/logout",
-  "/api/auth/forgot-password",
-  "/api/auth/verify-email",
-  "/api/auth/resend-verification-email",
-  "/api/auth/check-email",
-  "/api/auth/check-username",
-  "/api/auth/reset-password",
-  "/api/auth/logout",
-  "/api/auth/forgot-password",
 ];
 
 // Rate limiting pour les routes d'authentification (plus strict pour la production)
@@ -84,6 +77,8 @@ export const csrfProtection = (req, res, next) => {
   // Pour les GET, on génère juste un token et on continue
   if (req.method === "GET") {
     const token = Math.random().toString(36).slice(2);
+
+    // Configuration cookie alignée avec CORS
     res.cookie("XSRF-TOKEN", token, {
       httpOnly: false,
       secure: true,
@@ -100,6 +95,14 @@ export const csrfProtection = (req, res, next) => {
   if (cookieToken && headerToken && cookieToken === headerToken) {
     return next();
   }
+
+  // Log pour le débogage
+  console.log(
+    "CSRF check failed: Cookie token =",
+    cookieToken,
+    "Header token =",
+    headerToken
+  );
 
   return res.status(403).json({
     message: "Erreur de sécurité CSRF",
