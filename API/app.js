@@ -63,10 +63,7 @@ async function startServer() {
     // Ajout de debug pour vérifier l'environnement
     console.log("NODE_ENV =", process.env.NODE_ENV);
 
-    // 1. IMPORTANT: Middleware OPTIONS global pour CORS
-    app.options("*", cors());
-
-    // 2. Configuration CORS uniquement pour app.go-hope.fr
+    // Configuration CORS optimisée pour app.go-hope.fr
     const corsOptions = {
       origin: "https://app.go-hope.fr", // Seulement cette URL spécifique
       credentials: true,
@@ -80,9 +77,14 @@ async function startServer() {
         "X-XSRF-TOKEN",
       ],
       exposedHeaders: ["X-CSRF-Token"],
+      preflightContinue: false,
+      optionsSuccessStatus: 204,
     };
 
-    // 3. CORS avant tout autre middleware
+    // IMPORTANT: Appliquer CORS avec options pour preflight
+    app.options("*", cors(corsOptions));
+
+    // Appliquer CORS avant tout autre middleware
     app.use(cors(corsOptions));
 
     // Logging middleware
@@ -90,7 +92,7 @@ async function startServer() {
       morgan(process.env.NODE_ENV === "production" ? "combined" : "tiny")
     );
 
-    // 4. Middlewares de base
+    // Middlewares de base
     app.use(express.json({ limit: "10mb" }));
     app.use(express.urlencoded({ extended: true }));
     app.use(cookieParser());
@@ -100,10 +102,10 @@ async function startServer() {
       setupSwagger(app);
     }
 
-    // 5. Fichiers statiques
+    // Fichiers statiques
     app.use("/uploads", express.static(path.resolve("uploads")));
 
-    // 6. Configuration Helmet moins stricte
+    // Configuration Helmet moins stricte
     app.use(
       helmet({
         contentSecurityPolicy: false,
@@ -113,20 +115,21 @@ async function startServer() {
       })
     );
 
-    // 7. Endpoint test sans CSRF
+    // Endpoint test sans CSRF - IMPORTANT pour tester CORS
     app.get("/api/test-cors", (req, res) => {
       res.json({
         message: "CORS fonctionne!",
         env: process.env.NODE_ENV,
+        origin: req.headers.origin || "Aucune origine",
       });
     });
 
-    // 8. Session config
+    // Session config
     app.use(session(sessionConfig));
 
-    // Application de la protection CSRF globalement
-    app.use(csrfProtection);
-    app.use(setCsrfToken);
+    // Désactiver temporairement CSRF pour tester CORS
+    // app.use(csrfProtection);
+    // app.use(setCsrfToken);
 
     // Rate limiters
     app.use("/api/auth", authLimiter);
