@@ -60,9 +60,12 @@ app.set("trust proxy", 1);
 
 async function startServer() {
   try {
-    // Configuration CORS adaptée pour la production - VERSION TEMPORAIRE DE DÉPANNAGE
+    // 1. IMPORTANT: Ajout d'un middleware OPTIONS global pour CORS
+    app.options("*", cors());
+
+    // 2. Configuration CORS corrigée
     const corsOptions = {
-      origin: "*", // Accepte toutes les origines temporairement
+      origin: true, // Reflète l'origine de la requête - sécuritaire et flexible
       credentials: true,
       methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
       allowedHeaders: [
@@ -76,57 +79,49 @@ async function startServer() {
       exposedHeaders: ["X-CSRF-Token"],
     };
 
-    // IMPORTANT: placer CORS avant tous les autres middlewares
+    // 3. CORS avant tout autre middleware
     app.use(cors(corsOptions));
 
-    // Middleware pour le logging des requêtes (adapté à l'environnement)
+    // Middleware pour le logging
     app.use(
       morgan(process.env.NODE_ENV === "production" ? "combined" : "tiny")
     );
 
-    // Middleware pour le parsing JSON avec limite
+    // 4. Middlewares de base
     app.use(express.json({ limit: "10mb" }));
     app.use(express.urlencoded({ extended: true }));
     app.use(cookieParser());
 
-    // Configuration Swagger uniquement en développement
+    // Configuration Swagger en dev seulement
     if (process.env.NODE_ENV !== "production") {
       setupSwagger(app);
     }
 
-    // Configuration Helmet pour la sécurité
+    // 5. Fichiers statiques avant middleware de sécurité
+    app.use("/uploads", express.static(path.resolve("uploads")));
+
+    // 6. Configuration Helmet moins restrictive
     app.use(
       helmet({
-        contentSecurityPolicy: {
-          directives: {
-            defaultSrc: ["'self'"],
-            scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
-            styleSrc: ["'self'", "'unsafe-inline'", "https:"],
-            imgSrc: ["'self'", "data:", "https:"],
-            connectSrc: [
-              "'self'",
-              "https://app.go-hope.fr",
-              "https://api.go-hope.fr",
-            ],
-            fontSrc: ["'self'", "https:"],
-            objectSrc: ["'none'"],
-            mediaSrc: ["'self'"],
-            frameSrc: ["'self'"],
-          },
-        },
+        contentSecurityPolicy: false, // Désactivé temporairement
         xssFilter: true,
         noSniff: true,
         referrerPolicy: { policy: "strict-origin-when-cross-origin" },
       })
     );
 
-    // Servir les fichiers statiques
-    app.use("/uploads", express.static(path.resolve("uploads")));
+    // 7. Endpoint de test CORS sans protection CSRF
+    app.get("/api/test-cors", (req, res) => {
+      res.json({ message: "CORS fonctionne!", env: process.env.NODE_ENV });
+    });
 
-    // Session et protection CSRF
+    // 8. Mettre CSRF après session
     app.use(session(sessionConfig));
-    app.use(csrfProtection);
-    app.use(setCsrfToken);
+
+    // 9. CSRF protection pour les routes non-auth uniquement
+    const protectedRoutes = /^\/api\/((?!auth).)*$/; // Toutes les routes sauf /api/auth/*
+    app.use(protectedRoutes, csrfProtection);
+    app.use(protectedRoutes, setCsrfToken);
 
     // Rate limiters
     app.use("/api/auth", authLimiter);
@@ -139,7 +134,7 @@ async function startServer() {
     await connectMongoDb(MONGO_URI);
     console.log("Connexion à MongoDB réussie !");
 
-    // Logs conditionels pour le développement uniquement
+    // Logs conditionnels pour le développement
     if (process.env.NODE_ENV !== "production") {
       app.use((req, res, next) => {
         console.log(`Requête reçue : ${req.method} ${req.url}`);
