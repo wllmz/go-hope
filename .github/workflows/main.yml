@@ -1,89 +1,40 @@
-name: Deploy to VPSs
+name: Deploy to VPS (prod only)
 
 on:
   push:
     branches:
-      - dev
-      - main
+      - main # déploiement auto uniquement sur main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3 # Mise à jour vers v3
+      - uses: actions/checkout@v3
 
-      - name: Deploy to VPS
+      - name: Déploiement SSH
         uses: appleboy/ssh-action@v0.1.5
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USERNAME }}
           key: ${{ secrets.VPS_SSH_KEY }}
-          script_timeout: 60m # Augmenté à 60 minutes pour éviter les timeouts
-          command_timeout: 60m # Timeout pour chaque commande individuelle
+          script_timeout: 30m
+          envs: GITHUB_SHA
           script: |
+            set -e
+
+            echo "=> Connexion au serveur — déploiement commit $GITHUB_SHA"
             cd /var/www/go-hope
 
-            # Désactiver BuildKit pour éviter le bug ContainerConfig
-            export DOCKER_BUILDKIT=0
+            # Pull les sources
+            git fetch origin main
+            git reset --hard origin/main
 
-            # Récupère la branche qui a déclenché le workflow
-            echo "Branche déclenchante : ${{ github.ref }}"
+            # Build + up des services prod uniquement
+            export DOCKER_BUILDKIT=1
+            docker compose stop frontend-prod backend-prod || true
+            docker compose rm -f frontend-prod backend-prod || true
+            docker compose build frontend-prod backend-prod
+            docker compose up -d --remove-orphans frontend-prod backend-prod
 
-            # Nettoyer l'espace pour éviter les problèmes de build
-            docker system prune -f
-
-            # Libérer de l'espace disque supplémentaire
-            docker image prune -f
-
-            # Créer un volume pour le cache npm si non existant
-            docker volume create npm-cache
-
-            if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
-              echo "Déploiement production (frontend-prod et backend-prod)"
-              git pull origin main
-              
-              # D'abord déployer le backend (plus rapide)
-              echo "Déploiement du backend-prod..."
-              docker-compose stop backend-prod
-              docker-compose rm -f backend-prod
-              docker-compose build --no-cache backend-prod
-              docker-compose up -d backend-prod
-              
-              # Puis déployer le frontend avec optimisations
-              echo "Déploiement du frontend-prod..."
-              docker-compose stop frontend-prod
-              docker-compose rm -f frontend-prod
-              
-              # Utiliser des options de mémoire pour npm
-              echo "Building frontend avec optimisations..."
-              docker-compose build --no-cache --build-arg NODE_OPTIONS="--max_old_space_size=1024" frontend-prod
-              docker-compose up -d frontend-prod
-              
-            elif [[ "${{ github.ref }}" == "refs/heads/dev" ]]; then
-              echo "Déploiement développement (frontend-dev et backend-dev)"
-              git pull origin dev
-              
-              # D'abord déployer le backend (plus rapide)
-              echo "Déploiement du backend-dev..."
-              docker-compose stop backend-dev
-              docker-compose rm -f backend-dev
-              docker-compose build --no-cache backend-dev
-              docker-compose up -d backend-dev
-              
-              # Puis déployer le frontend avec optimisations
-              echo "Déploiement du frontend-dev..."
-              docker-compose stop frontend-dev
-              docker-compose rm -f frontend-dev
-              
-              # Utiliser des options de mémoire pour npm
-              echo "Building frontend avec optimisations..."
-              docker-compose build --no-cache --build-arg NODE_OPTIONS="--max_old_space_size=1024" frontend-dev
-              docker-compose up -d frontend-dev
-            else
-              echo "Branche non reconnue: ${{ github.ref }}"
-              exit 1
-            fi
-
-            echo "Déploiement avec Docker terminé avec succès."
+            echo "✅ Déploiement terminé"

@@ -37,100 +37,105 @@ import path from "path";
 
 dotenv.config();
 
-//--------------------------------------------------
+// --------------------------------------------------
 // ENV & CONST
-//--------------------------------------------------
+// --------------------------------------------------
 const env = process.env.NODE_ENV || "development";
 
 const API_URL =
   env === "production" ? process.env.API_PROD_URL : process.env.API_DEV_URL;
-const FRONTEND_URL = (
+const FRONTEND_URL =
   env === "production"
     ? process.env.FRONTEND_PROD_URL
-    : process.env.FRONTEND_DEV_URL
-)?.replace(/\/$/, ""); // retire "/" final si présent
+    : process.env.FRONTEND_DEV_URL;
 const MONGO_URI =
   env === "production" ? process.env.MONGOURI_PROD : process.env.MONGOURI_DEV;
 
-//--------------------------------------------------
+// --------------------------------------------------
 // APP INIT
-//--------------------------------------------------
+// --------------------------------------------------
 const app = express();
 app.set("trust proxy", 1);
 
-//--------------------------------------------------
-// 1. CORS (tout en haut)
-//--------------------------------------------------
-const allowedOrigins = new Set([
+// --------------------------------------------------
+// 1. CORS – DOIT ÊTRE EN TÊTE DE CHAÎNE
+// --------------------------------------------------
+const allowedOrigins = [
   FRONTEND_URL,
   `${FRONTEND_URL}:8443`,
   "https://app.go-hope.fr",
   "https://app.go-hope.fr:8443",
-  "https://dev-app.go-hope.fr",
-  "https://dev-app.go-hope.fr:8443",
-  "http://localhost:5173",
-]);
+];
 
-function isOriginAllowed(origin) {
-  if (!origin) return true; // ex: cURL, Postman
-  const clean = origin.replace(/\/$/, "");
-  return allowedOrigins.has(clean);
-}
-
-app.use((req, res, next) => {
-  // Laisse passer immédiatement tout pré‑vol OPTIONS
-  if (req.method === "OPTIONS") {
-    if (isOriginAllowed(req.headers.origin)) {
-      res.setHeader("Access-Control-Allow-Origin", req.headers.origin || "*");
-      res.setHeader("Access-Control-Allow-Credentials", "true");
-      res.setHeader(
-        "Access-Control-Allow-Methods",
-        "GET,POST,PUT,PATCH,DELETE,OPTIONS"
-      );
-      res.setHeader(
-        "Access-Control-Allow-Headers",
-        "Content-Type, Authorization, X-CSRF-Token, Cache-Control, XSRF-TOKEN, X-XSRF-TOKEN"
-      );
-      return res.sendStatus(204);
+const corsOptions = {
+  origin(origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      return callback(null, true);
     }
-    return res.sendStatus(403);
-  }
-  next();
-});
+    console.log("CORS – Origin refusée :", origin);
+    return callback(new Error("Not allowed by CORS"));
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+  allowedHeaders: [
+    "Content-Type",
+    "Authorization",
+    "X-CSRF-Token",
+    "Cache-Control",
+    "XSRF-TOKEN",
+    "X-XSRF-TOKEN",
+  ],
+  exposedHeaders: ["X-CSRF-Token"],
+  optionsSuccessStatus: 204,
+};
 
-app.use(
-  cors({
-    origin: (origin, cb) =>
-      isOriginAllowed(origin)
-        ? cb(null, true)
-        : cb(new Error("Origin refusée")),
-    credentials: true,
-    exposedHeaders: ["X-CSRF-Token"],
-  })
-);
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions)); // pré-vol global
 
-//--------------------------------------------------
+// --------------------------------------------------
 // 2. SÉCURITÉ & UTILS
-//--------------------------------------------------
+// --------------------------------------------------
 app.use(
   helmet({
-    contentSecurityPolicy: false, // simplifié pour éviter CSP sur websockets
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+        styleSrc: ["'self'", "'unsafe-inline'", "https:"],
+        imgSrc: ["'self'", "data:", "https:"],
+        connectSrc: ["'self'", API_URL, FRONTEND_URL],
+        fontSrc: ["'self'", "https:"],
+        objectSrc: ["'none'"],
+        mediaSrc: ["'self'"],
+        frameSrc: ["'self'"],
+      },
+    },
+    xssFilter: true,
+    noSniff: true,
+    referrerPolicy: { policy: "strict-origin-when-cross-origin" },
+    hsts:
+      env === "production"
+        ? { maxAge: 15552000, includeSubDomains: true, preload: true }
+        : undefined,
+    frameguard: { action: "deny" },
+    permittedCrossDomainPolicies: { permittedPolicies: "none" },
   })
 );
+
 app.use(morgan(env === "production" ? "combined" : "tiny"));
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(session(sessionConfig));
 
-//--------------------------------------------------
-// 3. ROUTE LOGIN (pas de CSRF)
-//--------------------------------------------------
-app.post("/api/auth/login", (req, res, next) => next());
+// --------------------------------------------------
+// 3. ROUTES PUBLIQUES (PAS DE CSRF)
+// --------------------------------------------------
+app.post("/api/auth/login", cors(corsOptions), (req, res, next) => next());
 
-//--------------------------------------------------
-// 4. CSRF + LIMITERS
-//--------------------------------------------------
+// --------------------------------------------------
+// 4. PROTECTION CSRF + RATE LIMITERS
+// --------------------------------------------------
 app.use(csrfProtection);
 app.use(setCsrfToken);
 app.use("/api/auth", authLimiter);
@@ -138,14 +143,14 @@ app.use("/api/articles", highTrafficLimiter);
 app.use("/api/forum", highTrafficLimiter);
 app.use("/api", apiLimiter);
 
-//--------------------------------------------------
-// 5. STATIC
-//--------------------------------------------------
+// --------------------------------------------------
+// 5. STATIC FILES
+// --------------------------------------------------
 app.use("/uploads", express.static(path.resolve("uploads")));
 
-//--------------------------------------------------
+// --------------------------------------------------
 // 6. ROUTES API
-//--------------------------------------------------
+// --------------------------------------------------
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/admin", adminRoute);
@@ -165,36 +170,46 @@ app.use("/api/suivi", suiviRoute);
 app.use("/api/waitlist", waitlistRoutes);
 app.use("/api/uploads", uploadRoute);
 
-//--------------------------------------------------
-// 7. ERREURS (assure l’en‑tête CORS dans TOUTES les réponses)
-//--------------------------------------------------
+// --------------------------------------------------
+// 7. ERREURS
+// --------------------------------------------------
 app.use((err, req, res, next) => {
   console.error(err);
-  if (isOriginAllowed(req.headers.origin)) {
-    res.setHeader("Access-Control-Allow-Origin", req.headers.origin || "*");
-    res.setHeader("Access-Control-Allow-Credentials", "true");
-  }
+
   if (err.code === "EBADCSRFTOKEN") {
     return res.status(403).json({ message: "CSRF token invalide" });
   }
-  if (err.message && err.message.startsWith("Origin")) {
+
+  if (err.message === "Not allowed by CORS") {
     return res.status(403).json({ message: "Origin bloquée par CORS" });
   }
+
   res.status(500).json({ message: "Erreur interne" });
 });
 
-//--------------------------------------------------
+// --------------------------------------------------
 // 8. DÉMARRAGE
-//--------------------------------------------------
-(async () => {
+// --------------------------------------------------
+async function startServer() {
   try {
+    console.log("Connexion à MongoDB…");
     await connectMongoDb(MONGO_URI);
+    console.log("MongoDB OK");
+
+    if (env !== "production") {
+      setupSwagger(app);
+    }
+
     const PORT = process.env.PORT || 5000;
     app.listen(PORT, () => {
-      console.log(`API prête sur :${PORT}`);
+      console.log(`API en ${env} sur :${PORT}`);
+      console.log(`Frontend URL : ${FRONTEND_URL}`);
+      console.log(`API URL      : ${API_URL}`);
     });
   } catch (e) {
     console.error("Impossible de démarrer le serveur :", e);
     process.exit(1);
   }
-})();
+}
+
+startServer();
