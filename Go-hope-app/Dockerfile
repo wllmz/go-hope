@@ -1,34 +1,36 @@
-# Étape 1 : Construction de l'application React avec Vite
-FROM node:18 AS builder
+# Étape 1 : Construction avec Node 20 pour compatibilité react-router
+FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Copier package.json et installer les dépendances
+# Copier package.json et package-lock.json pour un meilleur caching
 COPY package*.json ./
-RUN npm install
 
-# Copier tout le code source
+# Installation optimisée des dépendances
+RUN npm ci --no-audit --no-fund --prefer-offline
+
+# Copier les fichiers source
 COPY . .
 
 # Construire l'application pour la production
-RUN npm run build  
+RUN npm run build
 
-# Étape 2 : Utiliser un serveur Node.js pour servir les fichiers construits
-FROM node:18-slim
+# Étape 2 : Image légère pour l'exécution
+FROM node:20-alpine
 
 WORKDIR /app
 
-# Installer le serveur pour servir les fichiers de manière statique
-RUN npm install -g serve
+# Installer serve de façon optimisée
+RUN npm install -g serve --no-audit --no-fund
 
-# Copier le dossier 'dist' depuis l'étape précédente
-COPY --from=builder /app/dist /app/dist  
+# Copier uniquement les fichiers de build
+COPY --from=builder /app/dist /app/dist
 
-# Copier le fichier de configuration serve.json
-COPY serve.json /app/dist/serve.json
+# Ajouter configuration pour SPA directement (sans besoin de serve.json séparé)
+RUN echo '{"rewrites":[{"source":"/**","destination":"/index.html"}],"trailingSlash":false}' > /app/dist/serve.json
 
 # Exposer le port 80
 EXPOSE 80
 
-# Lancer le serveur pour servir les fichiers statiques
-CMD ["serve", "-s", "dist", "-l", "80"]
+# Lancer le serveur avec le mode --single pour SPA
+CMD ["serve", "-s", "dist", "-l", "80", "--single"]
