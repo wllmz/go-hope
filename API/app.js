@@ -60,12 +60,15 @@ app.set("trust proxy", 1);
 
 async function startServer() {
   try {
-    // 1. IMPORTANT: Ajout d'un middleware OPTIONS global pour CORS
+    // Ajout de debug pour vérifier l'environnement
+    console.log("NODE_ENV =", process.env.NODE_ENV);
+
+    // 1. IMPORTANT: Middleware OPTIONS global pour CORS
     app.options("*", cors());
 
-    // 2. Configuration CORS corrigée
+    // 2. Configuration CORS uniquement pour app.go-hope.fr
     const corsOptions = {
-      origin: true, // Reflète l'origine de la requête - sécuritaire et flexible
+      origin: "https://app.go-hope.fr", // Seulement cette URL spécifique
       credentials: true,
       methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
       allowedHeaders: [
@@ -82,7 +85,7 @@ async function startServer() {
     // 3. CORS avant tout autre middleware
     app.use(cors(corsOptions));
 
-    // Middleware pour le logging
+    // Logging middleware
     app.use(
       morgan(process.env.NODE_ENV === "production" ? "combined" : "tiny")
     );
@@ -92,34 +95,36 @@ async function startServer() {
     app.use(express.urlencoded({ extended: true }));
     app.use(cookieParser());
 
-    // Configuration Swagger en dev seulement
+    // Swagger en dev uniquement
     if (process.env.NODE_ENV !== "production") {
       setupSwagger(app);
     }
 
-    // 5. Fichiers statiques avant middleware de sécurité
+    // 5. Fichiers statiques
     app.use("/uploads", express.static(path.resolve("uploads")));
 
-    // 6. Configuration Helmet moins restrictive
+    // 6. Configuration Helmet moins stricte
     app.use(
       helmet({
-        contentSecurityPolicy: false, // Désactivé temporairement
+        contentSecurityPolicy: false,
         xssFilter: true,
         noSniff: true,
         referrerPolicy: { policy: "strict-origin-when-cross-origin" },
       })
     );
 
-    // 7. Endpoint de test CORS sans protection CSRF
+    // 7. Endpoint test sans CSRF
     app.get("/api/test-cors", (req, res) => {
-      res.json({ message: "CORS fonctionne!", env: process.env.NODE_ENV });
+      res.json({
+        message: "CORS fonctionne!",
+        env: process.env.NODE_ENV,
+      });
     });
 
-    // 8. Mettre CSRF après session
+    // 8. Session config
     app.use(session(sessionConfig));
 
-    // 9. CSRF protection pour les routes non-auth uniquement
-    const protectedRoutes = /^\/api\/((?!auth).)*$/; // Toutes les routes sauf /api/auth/*
+    // Application de la protection CSRF uniquement sur les routes protégées
     app.use(protectedRoutes, csrfProtection);
     app.use(protectedRoutes, setCsrfToken);
 
@@ -129,28 +134,18 @@ async function startServer() {
     app.use("/api/forum", highTrafficLimiter);
     app.use("/api", apiLimiter);
 
-    // Connexion à MongoDB
+    // Connexion MongoDB
     console.log("Connexion à MongoDB...");
     await connectMongoDb(MONGO_URI);
     console.log("Connexion à MongoDB réussie !");
 
-    // Logs conditionnels pour le développement
-    if (process.env.NODE_ENV !== "production") {
-      app.use((req, res, next) => {
-        console.log(`Requête reçue : ${req.method} ${req.url}`);
-        next();
-      });
-
-      app.use((req, res, next) => {
-        res.on("finish", () => {
-          console.log("En-têtes envoyés :", res.getHeaders()["set-cookie"]);
-        });
-        next();
-      });
-    }
-
-    // Routes publiques qui ne nécessitent pas de CSRF
-    app.post("/api/auth/login", (req, res, next) => {
+    // Logs pour debug
+    app.use((req, res, next) => {
+      console.log(
+        `[${new Date().toISOString()}] ${req.method} ${req.url} - Origin: ${
+          req.headers.origin
+        }`
+      );
       next();
     });
 
