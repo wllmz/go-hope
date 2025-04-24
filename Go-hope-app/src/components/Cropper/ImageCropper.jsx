@@ -13,23 +13,59 @@ const ImageCropper = ({ closeModal, updateAvatar, initialImage }) => {
   const [crop, setCrop] = useState();
   const [completedCrop, setCompletedCrop] = useState(null);
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   // Gestion de la sélection de fichier
   const onSelectFile = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const validTypes = ["image/jpeg", "image/png", "image/gif"];
-    if (!validTypes.includes(file.type)) {
-      setError("Seuls les fichiers JPEG, PNG ou GIF sont autorisés.");
+    const validTypes = ["image/jpeg", "image/png", "image/gif", "image/heic"];
+
+    // Vérifier l'extension du fichier aussi (pour les fichiers HEIC d'iPhone)
+    const fileName = file.name.toLowerCase();
+    const isValidExtension = validTypes.some(
+      (type) =>
+        fileName.endsWith(type.split("/")[1]) ||
+        (type === "image/jpeg" &&
+          (fileName.endsWith("jpg") || fileName.endsWith("heic")))
+    );
+
+    if (!isValidExtension && !validTypes.includes(file.type)) {
+      setError("Format non supporté. Utilisez JPEG, PNG ou GIF.");
       return;
     }
+
     setError("");
+    setIsLoading(true);
+
     const reader = new FileReader();
+
     reader.addEventListener("load", () => {
+      // Créer une image pour vérifier que le chargement fonctionne
+      const img = new Image();
       const imageUrl = reader.result?.toString() || "";
-      setImgSrc(imageUrl);
+
+      img.onload = () => {
+        setImgSrc(imageUrl);
+        setIsLoading(false);
+      };
+
+      img.onerror = () => {
+        setError(
+          "Impossible de charger l'image. Veuillez réessayer avec une autre image."
+        );
+        setIsLoading(false);
+      };
+
+      img.src = imageUrl;
     });
+
+    reader.onerror = () => {
+      setError("Erreur lors de la lecture du fichier. Veuillez réessayer.");
+      setIsLoading(false);
+    };
+
     reader.readAsDataURL(file);
   };
 
@@ -42,73 +78,129 @@ const ImageCropper = ({ closeModal, updateAvatar, initialImage }) => {
 
   // Lorsque l'image se charge dans ReactCrop, on calcule un crop centré par défaut
   const onImageLoad = (e) => {
-    const { width, height } = e.currentTarget;
-    const cropWidthInPercent = (MIN_DIMENSION / width) * 100;
+    try {
+      const { width, height } = e.currentTarget;
+      const cropWidthInPercent = (MIN_DIMENSION / width) * 100;
 
-    const defaultCrop = centerCrop(
-      makeAspectCrop(
-        { unit: "%", width: cropWidthInPercent },
-        ASPECT_RATIO,
+      const defaultCrop = centerCrop(
+        makeAspectCrop(
+          { unit: "%", width: cropWidthInPercent },
+          ASPECT_RATIO,
+          width,
+          height
+        ),
         width,
         height
-      ),
-      width,
-      height
-    );
-    setCrop(defaultCrop);
-    setCompletedCrop(defaultCrop);
+      );
+      setCrop(defaultCrop);
+      setCompletedCrop(defaultCrop);
+    } catch (err) {
+      console.error("Erreur lors du chargement de l'image:", err);
+      setError("Erreur lors du calcul des dimensions de l'image.");
+    }
     return false;
   };
 
   // Met à jour le canvas pour générer l'image recadrée avec clipping circulaire
   useEffect(() => {
     if (!completedCrop || !previewCanvasRef.current || !imgRef.current) return;
-    const image = imgRef.current;
-    const canvas = previewCanvasRef.current;
-    const ctx = canvas.getContext("2d");
 
-    const scaleX = image.naturalWidth / image.width;
-    const scaleY = image.naturalHeight / image.height;
-    const pixelCrop = {
-      x: completedCrop.x * scaleX,
-      y: completedCrop.y * scaleY,
-      width: completedCrop.width * scaleX,
-      height: completedCrop.height * scaleY,
-    };
+    try {
+      const image = imgRef.current;
+      const canvas = previewCanvasRef.current;
+      const ctx = canvas.getContext("2d");
 
-    canvas.width = pixelCrop.width;
-    canvas.height = pixelCrop.height;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+      if (!ctx) {
+        setError("Erreur lors de la création du contexte de dessin.");
+        return;
+      }
 
-    // Clipping circulaire
-    const centerX = canvas.width / 2;
-    const centerY = canvas.height / 2;
-    const radius = Math.min(centerX, centerY);
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
-    ctx.clip();
+      const scaleX = image.naturalWidth / image.width;
+      const scaleY = image.naturalHeight / image.height;
 
-    ctx.drawImage(
-      image,
-      pixelCrop.x,
-      pixelCrop.y,
-      pixelCrop.width,
-      pixelCrop.height,
-      0,
-      0,
-      pixelCrop.width,
-      pixelCrop.height
-    );
-    ctx.restore();
+      if (isNaN(scaleX) || isNaN(scaleY) || scaleX <= 0 || scaleY <= 0) {
+        console.error("Dimensions invalides:", {
+          scaleX,
+          scaleY,
+          naturalWidth: image.naturalWidth,
+          width: image.width,
+        });
+        return;
+      }
+
+      const pixelCrop = {
+        x: completedCrop.x * scaleX,
+        y: completedCrop.y * scaleY,
+        width: completedCrop.width * scaleX,
+        height: completedCrop.height * scaleY,
+      };
+
+      // S'assurer que les dimensions sont positives et valides
+      if (pixelCrop.width <= 0 || pixelCrop.height <= 0) {
+        console.error("Crop dimensions invalides:", pixelCrop);
+        return;
+      }
+
+      canvas.width = pixelCrop.width;
+      canvas.height = pixelCrop.height;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Clipping circulaire
+      const centerX = canvas.width / 2;
+      const centerY = canvas.height / 2;
+      const radius = Math.min(centerX, centerY);
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+      ctx.clip();
+
+      ctx.drawImage(
+        image,
+        pixelCrop.x,
+        pixelCrop.y,
+        pixelCrop.width,
+        pixelCrop.height,
+        0,
+        0,
+        pixelCrop.width,
+        pixelCrop.height
+      );
+      ctx.restore();
+    } catch (err) {
+      console.error("Erreur lors du recadrage:", err);
+      setError("Erreur lors du traitement de l'image.");
+    }
   }, [completedCrop]);
 
   // Lors du clic sur "Valider"
   const handleCrop = () => {
-    if (!previewCanvasRef.current) return;
-    const dataUrl = previewCanvasRef.current.toDataURL("image/png");
-    updateAvatar(dataUrl); // On transmet la data URL au parent
-    closeModal();
+    try {
+      if (!previewCanvasRef.current) {
+        setError("Impossible de générer l'image. Veuillez réessayer.");
+        return;
+      }
+
+      // Vérifier que le canvas est valide avec des dimensions
+      if (
+        previewCanvasRef.current.width <= 0 ||
+        previewCanvasRef.current.height <= 0
+      ) {
+        setError("L'image recadrée est invalide. Veuillez réessayer.");
+        return;
+      }
+
+      const dataUrl = previewCanvasRef.current.toDataURL("image/png");
+      if (!dataUrl || !dataUrl.startsWith("data:image/")) {
+        setError("Erreur lors de la génération de l'image.");
+        return;
+      }
+
+      updateAvatar(dataUrl); // On transmet la data URL au parent
+      closeModal();
+    } catch (err) {
+      console.error("Erreur lors de la validation:", err);
+      setError("Erreur lors de la validation de l'image. Veuillez réessayer.");
+    }
   };
 
   return (
@@ -117,41 +209,126 @@ const ImageCropper = ({ closeModal, updateAvatar, initialImage }) => {
       <input
         ref={fileInputRef}
         type="file"
-        accept="image/*"
+        accept="image/*,image/heic"
+        capture="environment"
         onChange={onSelectFile}
         className="hidden"
       />
 
       {/* Si aucune image n'est présente, on affiche le champ de sélection */}
       {!imgSrc && (
-        <div className="flex flex-col items-center gap-4 mb-6 w-full max-w-md p-8 rounded-xl bg-gradient-to-b from-[#B3D7EC]/30 to-white">
-          <p className="text-[#0E3043] text-center font-medium">
-            Sélectionnez une image pour votre profil
-          </p>
+        <div className="flex flex-col items-center gap-6 mb-6 w-full max-w-md p-8 pt-12 pb-12 rounded-xl bg-gradient-to-b from-[#B3D7EC]/30 to-white shadow-sm">
+          <div className="flex flex-col items-center">
+            <div className="w-24 h-24 rounded-full bg-[#F5943A]/10 flex items-center justify-center mb-4">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-12 w-12 text-[#F5943A]"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                />
+              </svg>
+            </div>
+            <p className="text-[#0E3043] text-center font-medium mb-2">
+              Sélectionnez une image pour votre profil
+            </p>
+            <p className="text-gray-500 text-sm text-center mb-4">
+              Formats acceptés: JPEG, PNG, GIF
+            </p>
+          </div>
           <button
             onClick={triggerFileInput}
-            className="inline-flex items-center justify-center py-2.5 px-5 border border-transparent shadow-md text-sm md:text-base font-medium rounded-full text-white bg-[#F5943A] hover:bg-[#F1731F] transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#F1731F]"
+            className="inline-flex items-center justify-center py-2.5 px-8 border border-transparent shadow-md text-sm md:text-base font-medium rounded-full text-white bg-[#F5943A] hover:bg-[#F1731F] transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#F1731F]"
+            disabled={isLoading}
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 mr-2"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-              />
-            </svg>
-            Choisir une image
+            {isLoading ? (
+              <>
+                <svg
+                  className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+                Chargement...
+              </>
+            ) : (
+              <>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 mr-2"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                  />
+                </svg>
+                Parcourir
+              </>
+            )}
           </button>
         </div>
       )}
 
-      {error && <p className="text-red-500 text-sm mt-2 mb-4">{error}</p>}
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg mb-4 max-w-md">
+          <p className="font-medium text-sm">{error}</p>
+          <p className="text-xs mt-1">
+            Si le problème persiste, essayez d'enregistrer votre photo dans la
+            galerie et de la sélectionner depuis celle-ci.
+          </p>
+        </div>
+      )}
+
+      {isLoading && !imgSrc && (
+        <div className="text-center py-4">
+          <svg
+            className="animate-spin h-8 w-8 text-[#F5943A] mx-auto"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="4"
+            ></circle>
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            ></path>
+          </svg>
+          <p className="mt-2 text-[#0E3043]">Traitement de l'image...</p>
+        </div>
+      )}
 
       {imgSrc && (
         <div className="w-full max-w-3xl">
@@ -175,43 +352,50 @@ const ImageCropper = ({ closeModal, updateAvatar, initialImage }) => {
                 alt="À recadrer"
                 style={{ maxHeight: "60vh", margin: "0 auto" }}
                 onLoad={onImageLoad}
+                onError={() => setError("Erreur lors du chargement de l'image")}
                 className="max-w-full h-auto"
+                crossOrigin="anonymous"
               />
             </ReactCrop>
 
             {/* Bouton pour changer d'image */}
-            <button
-              onClick={triggerFileInput}
-              className="absolute top-3 right-3 bg-white/90 text-[#1D5F84] rounded-full p-2.5 shadow-md hover:bg-white focus:outline-none focus:ring-2 focus:ring-[#1D5F84] transition-all duration-300 flex items-center"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
+            <div className="flex justify-center mt-5">
+              <button
+                onClick={triggerFileInput}
+                className="inline-flex items-center justify-center py-2 px-4 rounded-full bg-white text-[#1D5F84] border border-[#B3D7EC] shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#1D5F84] transition-all duration-300"
+                disabled={isLoading}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
-                />
-              </svg>
-              <span className="ml-1.5 text-xs hidden sm:inline">Changer</span>
-            </button>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4 mr-1.5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
+                  />
+                </svg>
+                <span className="text-sm">Changer l'image</span>
+              </button>
+            </div>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center mt-6">
             <button
               className="order-2 sm:order-1 py-2.5 px-6 border border-[#B3D7EC] shadow-sm text-sm md:text-base font-medium rounded-full text-[#1D5F84] bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#B3D7EC] transition-colors duration-300"
               onClick={closeModal}
+              disabled={isLoading}
             >
               Annuler
             </button>
             <button
               className="order-1 sm:order-2 py-2.5 px-6 border border-transparent shadow-sm text-sm md:text-base font-medium rounded-full text-white bg-[#F5943A] hover:bg-[#F1731F] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#F1731F] transition-colors duration-300"
               onClick={handleCrop}
+              disabled={!completedCrop || isLoading}
             >
               Valider
             </button>
