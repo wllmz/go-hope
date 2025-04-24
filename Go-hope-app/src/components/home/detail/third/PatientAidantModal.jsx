@@ -55,10 +55,10 @@ const PatientAidantModal = ({ isOpen, onClose }) => {
     >
       {/* Header avec retour et papillon */}
       <div className="p-3 sm:p-4 md:p-6 w-full bg-[#B3D7EC] z-10">
-        <div className="flex justify-between items-center max-w-7xl mx-auto">
+        <div className="flex justify-between  max-w-7xl mx-auto">
           <button
             onClick={onClose}
-            className="flex items-center text-[#0E3043] hover:text-[#F5943A] transition-colors group"
+            className="flex text-[#0E3043] hover:text-[#F5943A] transition-colors group"
           >
             <IoArrowBack className="text-lg sm:text-xl md:text-2xl mr-1 sm:mr-2 transform group-hover:-translate-x-1 transition-transform" />
             <span className="text-base sm:text-lg md:text-xl font-medium">
@@ -74,16 +74,16 @@ const PatientAidantModal = ({ isOpen, onClose }) => {
       </div>
 
       {/* Contenu principal */}
-      <div className="flex-grow flex items-center justify-center px-3 sm:px-4 md:px-6 py-4 sm:py-6 md:py-10 overflow-y-auto">
+      <div className="h-[calc(100vh-56px)] sm:h-[calc(100vh-64px)] overflow-auto">
         <div className="w-full max-w-5xl">
           {!showForm ? (
             <div className="text-center mx-auto pt-4 md:pt-0">
               <div className="transform transition-all duration-700 delay-300 translate-y-0 opacity-100">
-                <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl text-[#0E3043] mb-4 sm:mb-6 md:mb-8 leading-relaxed">
+                <p className="font-semibold text-[#0E3043] mb-4 sm:mb-6 md:mb-8 leading-relaxed">
                   Vous souhaitez rejoindre l'équipe GoHope{" "}
                   <br className="hidden sm:block" />
                   et devenir patient aidant ?
-                </h3>
+                </p>
                 <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-[#0E3043] leading-relaxed max-w-3xl mx-auto mb-6 sm:mb-8 md:mb-10">
                   Faites nous part de votre demande et de votre parcours.
                   <br className="hidden sm:block" />
@@ -102,7 +102,7 @@ const PatientAidantModal = ({ isOpen, onClose }) => {
             <div className="w-full sm:max-w-md mx-auto py-2 sm:py-4">
               <form
                 onSubmit={handleSubmit}
-                className="space-y-4 sm:space-y-5 bg-white bg-opacity-75 p-4 sm:p-6 rounded-xl shadow-sm"
+                className="space-y-4 sm:space-y-5 bg-opacity-75 p-4 sm:p-6 rounded-xl shadow-sm"
               >
                 <div>
                   <label className="block text-[#0E3043] text-sm sm:text-base md:text-lg mb-1 sm:mb-2">
