@@ -4,7 +4,7 @@ const CategoryList = ({ categories, onCategoryClick, subjectCounts }) => {
   return (
     <>
       <div className="flex justify-between items-center mb-4">
-        <h2>Sujets populaires</h2>
+        <h2>Liste des Catégories</h2>
       </div>
       {categories && categories.length > 0 ? (
         <ul className="grid grid-cols-3 gap-3 mb-8">
@@ -30,7 +30,7 @@ const CategoryList = ({ categories, onCategoryClick, subjectCounts }) => {
 
               {/* Contenu texte */}
               <div className="absolute inset-x-0 bottom-0 p-2 sm:p-3 md:p-5 text-white">
-                <h3 className="text-sm sm:text-lg md:text-xl uppercase font-bold tracking-wide mb-0 sm:mb-1 line-clamp-2">
+                <h3 className="text-xs sm:text-lg md:text-xl uppercase font-bold tracking-wide mb-0 sm:mb-1 line-clamp-2">
                   {categorie.categorie || "Titre non défini"}
                 </h3>
                 <p className="text-xs sm:text-sm font-medium">
