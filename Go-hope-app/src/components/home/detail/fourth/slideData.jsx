@@ -4,6 +4,8 @@
  */
 
 import famille from "../../../../assets/famille.png";
+import partenaire from "../../../../assets/partenaire.png";
+import sante from "../../../../assets/sante.png";
 
 export const slideData = [
   {
@@ -19,7 +21,7 @@ export const slideData = [
     textColor: "text-[#0E3043]",
   },
   {
-    image: famille,
+    image: partenaire,
     title: "Les news de nos partenaires",
     description:
       "Restez à jour sur les actualités, événements et informations de nos partenaires.",
@@ -31,7 +33,7 @@ export const slideData = [
     textColor: "text-[#0E3043]",
   },
   {
-    image: famille,
+    image: sante,
     title: "Les news santé",
     description:
       "Suivez l’actualité santé et recevez chaque jour conseils et infos clés.",
