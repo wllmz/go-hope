@@ -116,7 +116,7 @@ const LoginForm = () => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full sm:w-[300px] bg-[#1D5F84] hover:bg-[#1D5F84] text-white py-2 px-2 rounded-lg font-semibold text-lg"
+                  className="w-full sm:w-[300px] bg-[#1D5F84] hover:bg-[#1D5F84] text-white py-2 px-2 rounded-lg text-lg"
                 >
                   {loading ? "Vérification..." : "Connexion"}
                 </button>
