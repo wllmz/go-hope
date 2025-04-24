@@ -75,7 +75,7 @@ const Step2 = ({
             />
             <span className="ml-2 text-sm text-gray-700">
               J’accepte de recevoir les e-mails m’informant des nouveautés de
-              Flow.
+              GoHope.
             </span>
           </label>
         </div>

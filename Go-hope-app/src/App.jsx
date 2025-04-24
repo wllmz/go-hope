@@ -49,13 +49,21 @@ import MentionsLegales from "./pages/footer/mentions-legale";
 import PolitiqueConfidentialite from "./pages/footer/politique-confidentialite";
 import ConditionsGenerales from "./pages/footer/conditions-generales";
 import Cookies from "./pages/footer/cookies";
+import ScrollToTop from "./utils/ScrollToTop";
 
 // Composant qui décide si le footer doit être affiché
 const AppContent = () => {
   const location = useLocation();
 
   // Liste des chemins où le footer ne doit pas être affiché
-  const noFooterPaths = [];
+  const noFooterPaths = [
+    "/",
+    "/inscription",
+    "/connexion",
+    "/verification",
+    "/mot-de-passe-oublie",
+    "/reinitialiser-mot-de-passe",
+  ];
 
   // Vérifier si le chemin actuel est dans la liste des pages sans footer
   const shouldShowFooter = !noFooterPaths.includes(location.pathname);
@@ -315,6 +323,7 @@ const AppContent = () => {
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       <AuthProvider>
         <AppContent />
       </AuthProvider>
