@@ -128,20 +128,20 @@ const PatientAidantModal = ({ isOpen, onClose }) => {
         <div className="w-full max-w-5xl mx-auto">
           {!showForm ? (
             <div className="mx-auto pt-4 md:pt-0 p-4">
-              <div className="transform transition-all duration-700 delay-300 translate-y-0 opacity-100">
-                <p className="font-semibold text-[#0E3043] mb-4 sm:mb-6 md:mb-8 leading-relaxed">
+              <div className="transform transition-all duration-700 delay-300 translate-y-0 opacity-100 flex flex-col items-center">
+                <p className="font-semibold text-[#0E3043] mb-4 sm:mb-6 md:mb-8 leading-relaxed text-center">
                   Vous souhaitez rejoindre l'équipe GoHope{" "}
                   <br className="hidden sm:block" />
                   et devenir patient aidant ?
                 </p>
-                <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-[#0E3043] leading-relaxed max-w-3xl mx-auto mb-6 sm:mb-8 md:mb-10">
+                <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-[#0E3043] leading-relaxed max-w-3xl mx-auto mb-6 sm:mb-8 md:mb-10 text-center">
                   Faites nous part de votre demande et de votre parcours. Nous
                   serions ravis d'examiner votre demande !
                 </p>
 
                 <button
                   onClick={handleNext}
-                  className="w-[300px] px-4 sm:px-6 py-2 sm:py-3 bg-[#F5943A] hover:bg-[#F1731F] text-white text-base sm:text-lg md:text-xl font-medium rounded-lg shadow-md transition-colors duration-300 sm:w-auto"
+                  className="w-full sm:w-96 md:w-80 px-4 sm:px-6 py-2 sm:py-3 bg-[#F5943A] hover:bg-[#F1731F] text-white text-base sm:text-lg md:text-xl font-medium rounded-lg shadow-md transition-colors duration-300"
                 >
                   Suivant
                 </button>
@@ -288,11 +288,11 @@ const PatientAidantModal = ({ isOpen, onClose }) => {
                       </div>
                     )}
 
-                    <div className="pt-4 sm:flex sm:justify-end">
+                    <div className="pt-4 flex justify-center">
                       <button
                         type="submit"
                         disabled={loading || isUploading}
-                        className={`w-[300px] sm:w-auto px-5 py-2.5 bg-[#F5943A] text-white rounded-lg font-mediumransition-colors duration-300 ${
+                        className={`w-full sm:w-96 md:w-80 py-2.5 bg-[#F5943A] text-white rounded-lg font-medium transition-colors duration-300 hover:bg-[#F1731F] ${
                           loading || isUploading
                             ? "opacity-50 cursor-not-allowed"
                             : ""
