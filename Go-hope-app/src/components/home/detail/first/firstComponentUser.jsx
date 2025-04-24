@@ -514,9 +514,7 @@ const FirstComponentUser = () => {
               sx={{
                 width: { xs: 60, sm: 80 },
                 height: { xs: 60, sm: 80 },
-                border: profileUpdateSuccess
-                  ? "3px solid #4CAF50"
-                  : "3px solid",
+                border: profileUpdateSuccess,
                 boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
               }}
             />
