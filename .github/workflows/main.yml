@@ -30,15 +30,16 @@ jobs:
             git fetch origin main
             git reset --hard origin/main
 
-            # Afficher les services disponibles pour debug
-            echo "Services disponibles:"
-            docker compose config --services
+            # Option 1: Arrêter et supprimer les conteneurs par leur nom
+            docker stop go-hope-frontend-1 go-hope-backend-1 || true
+            docker rm go-hope-frontend-1 go-hope-backend-1 || true
 
-            # Build + up des services (utilisez les noms exacts des services dans docker-compose.yml)
+            # Option 2: Ou utiliser docker-compose down qui arrête et supprime tout
+            # docker compose down
+
+            # Build et démarrer les services (en utilisant les noms de services)
             export DOCKER_BUILDKIT=1
-            docker compose stop frontend backend || true
-            docker compose rm -f frontend backend || true
             docker compose build frontend backend
-            docker compose up -d --remove-orphans frontend backend
+            docker compose up -d frontend backend
 
             echo "✅ Déploiement terminé"
