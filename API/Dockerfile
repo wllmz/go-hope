@@ -18,8 +18,6 @@ RUN npm install --only=production --no-audit --no-fund
 # Copier le reste du code source
 COPY . .
 
-# Créer et configurer le dossier uploads
-RUN mkdir -p /app/uploads && chmod 755 /app/uploads
 
 # Optimisation supplémentaire: supprimer cache npm et fichiers inutiles
 RUN npm cache clean --force && \

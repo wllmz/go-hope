@@ -32,9 +32,9 @@ jobs:
 
             # Build + up des services prod uniquement
             export DOCKER_BUILDKIT=1
-            docker compose stop frontend-prod backend-prod || true
-            docker compose rm -f frontend-prod backend-prod || true
-            docker compose build frontend-prod backend-prod
-            docker compose up -d --remove-orphans frontend-prod backend-prod
+            docker compose stop go-hope-frontend go-hope-backend || true
+            docker compose rm -f go-hope-frontend go-hope-backend || true
+            docker compose build go-hope-frontend go-hope-backend
+            docker compose up -d --remove-orphans go-hope-frontend go-hope-backend
 
             echo "✅ Déploiement terminé"
