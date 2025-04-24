@@ -3,6 +3,7 @@ import { IoArrowBack } from "react-icons/io5";
 import OrangePappilon from "../../../../assets/orange-papillon.png";
 import { usePatient } from "../../../../hooks/patient/usePatient";
 import { AuthContext } from "../../../../context/authContext";
+import useUploads from "../../../../hooks/uploads/useUploads";
 
 const PatientAidantModal = ({ isOpen, onClose }) => {
   const [showForm, setShowForm] = useState(false);
@@ -15,6 +16,11 @@ const PatientAidantModal = ({ isOpen, onClose }) => {
   });
   const { createRequest, loading, error } = usePatient();
   const { user } = useContext(AuthContext);
+  const {
+    isLoading: isUploading,
+    error: uploadError,
+    handleImageUpload,
+  } = useUploads();
 
   const handleNext = () => {
     setShowForm(true);
@@ -26,6 +32,24 @@ const PatientAidantModal = ({ isOpen, onClose }) => {
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }));
+  };
+
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      try {
+        const uploadResult = await handleImageUpload(file);
+        if (uploadResult) {
+          setFormData((prev) => ({
+            ...prev,
+            certificateUrl:
+              uploadResult.url || uploadResult.path || uploadResult,
+          }));
+        }
+      } catch (err) {
+        console.error("Erreur lors du téléchargement du certificat:", err);
+      }
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -101,7 +125,7 @@ const PatientAidantModal = ({ isOpen, onClose }) => {
             <div className="w-full sm:max-w-md mx-auto py-2 sm:py-4">
               <form
                 onSubmit={handleSubmit}
-                className="space-y-4 sm:space-y-5 bg-opacity-75 p-4 sm:p-6 rounded-xl shadow-sm"
+                className="space-y-4 sm:space-y-5 p-4 sm:p-6"
               >
                 <div>
                   <label className="block text-[#0E3043] text-sm sm:text-base md:text-lg mb-1 sm:mb-2">
@@ -134,7 +158,32 @@ const PatientAidantModal = ({ isOpen, onClose }) => {
                     <option value="false">Non</option>
                   </select>
                   {formData.hasCertification === "true" && (
-                    <div className="mt-2">
+                    <div className="mt-2 space-y-2">
+                      <label className="block text-[#0E3043] text-sm sm:text-base md:text-lg">
+                        Téléchargez votre certificat
+                      </label>
+                      <input
+                        type="file"
+                        onChange={handleFileUpload}
+                        className="w-full px-2 sm:px-3 md:px-4 py-2 sm:py-2.5 md:py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#F5943A] focus:border-transparent bg-white text-sm sm:text-base"
+                        accept=".jpg,.jpeg,.png,.pdf"
+                      />
+                      {isUploading && (
+                        <p className="text-blue-500 text-xs">
+                          Téléchargement en cours...
+                        </p>
+                      )}
+                      {uploadError && (
+                        <p className="text-red-500 text-xs">{uploadError}</p>
+                      )}
+                      {formData.certificateUrl && (
+                        <p className="text-green-500 text-xs">
+                          Document téléchargé avec succès
+                        </p>
+                      )}
+                      <p className="text-xs text-gray-500">
+                        Ou saisissez l'URL du certificat manuellement
+                      </p>
                       <input
                         type="text"
                         name="certificateUrl"
@@ -186,9 +235,11 @@ const PatientAidantModal = ({ isOpen, onClose }) => {
                 <div className="pt-2 sm:pt-4">
                   <button
                     type="submit"
-                    disabled={loading}
+                    disabled={loading || isUploading}
                     className={`w-full bg-[#0E3043] text-white py-2 sm:py-3 rounded-lg font-medium hover:bg-[#0a2432] transition-colors duration-300 text-sm sm:text-base ${
-                      loading ? "opacity-50 cursor-not-allowed" : ""
+                      loading || isUploading
+                        ? "opacity-50 cursor-not-allowed"
+                        : ""
                     }`}
                   >
                     {loading ? "Envoi en cours..." : "Envoyer"}

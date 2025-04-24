@@ -55,14 +55,7 @@ const AppContent = () => {
   const location = useLocation();
 
   // Liste des chemins où le footer ne doit pas être affiché
-  const noFooterPaths = [
-    "/",
-    "/inscription",
-    "/connexion",
-    "/verification",
-    "/mot-de-passe-oublie",
-    "/reinitialiser-mot-de-passe",
-  ];
+  const noFooterPaths = [];
 
   // Vérifier si le chemin actuel est dans la liste des pages sans footer
   const shouldShowFooter = !noFooterPaths.includes(location.pathname);
