@@ -80,7 +80,6 @@ const AllArticle = () => {
               onClick={handleNavigateToAllArticles}
               className="text-[#F1731F] hover:text-[#1D5F84] transition-colors flex items-center gap-1"
             >
-              <span>Voir tous les articles</span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-5 w-5"
