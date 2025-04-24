@@ -18,7 +18,7 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USERNAME }}
           key: ${{ secrets.VPS_SSH_KEY }}
-          script_timeout: 30m
+          command_timeout: 30m
           envs: GITHUB_SHA
           script: |
             set -e
@@ -30,11 +30,15 @@ jobs:
             git fetch origin main
             git reset --hard origin/main
 
-            # Build + up des services prod uniquement
+            # Afficher les services disponibles pour debug
+            echo "Services disponibles:"
+            docker compose config --services
+
+            # Build + up des services (utilisez les noms exacts des services dans docker-compose.yml)
             export DOCKER_BUILDKIT=1
-            docker compose stop go-hope-frontend go-hope-backend || true
-            docker compose rm -f go-hope-frontend go-hope-backend || true
-            docker compose build go-hope-frontend go-hope-backend
-            docker compose up -d --remove-orphans go-hope-frontend go-hope-backend
+            docker compose stop frontend backend || true
+            docker compose rm -f frontend backend || true
+            docker compose build frontend backend
+            docker compose up -d --remove-orphans frontend backend
 
             echo "✅ Déploiement terminé"
