@@ -84,7 +84,7 @@ const ThirdComponent = () => {
         <div className="flex justify-center mt-6 sm:mt-10">
           <button
             onClick={() => setIsModalOpen(true)}
-            className="w-full sm:w-auto sm:min-w-[200px] bg-[#F5943A] hover:bg-[#F1731F] text-white font-semibold py-2 px-4 sm:px-6 rounded-lg shadow-md transition duration-300 text-base sm:text-lg"
+            className="w-full sm:w-auto sm:min-w-[200px] bg-[#F5943A] hover:bg-[#F1731F] text-white py-2 px-4 sm:px-6 rounded-lg shadow-md transition duration-300 text-base sm:text-lg"
           >
             Devenir patient aidant
           </button>
