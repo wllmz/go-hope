@@ -125,7 +125,7 @@ const PatientAidantModal = ({ isOpen, onClose }) => {
             <div className="w-full sm:max-w-md mx-auto py-2 sm:py-4">
               <form
                 onSubmit={handleSubmit}
-                className="space-y-4 sm:space-y-5 p-4 sm:p-6"
+                className="space-y-4 sm:space-y-5 bg-opacity-75 p-4 sm:p-6 rounded-xl shadow-sm"
               >
                 <div>
                   <label className="block text-[#0E3043] text-sm sm:text-base md:text-lg mb-1 sm:mb-2">
@@ -181,17 +181,6 @@ const PatientAidantModal = ({ isOpen, onClose }) => {
                           Document téléchargé avec succès
                         </p>
                       )}
-                      <p className="text-xs text-gray-500">
-                        Ou saisissez l'URL du certificat manuellement
-                      </p>
-                      <input
-                        type="text"
-                        name="certificateUrl"
-                        value={formData.certificateUrl}
-                        onChange={handleInputChange}
-                        placeholder="URL du certificat"
-                        className="w-full px-2 sm:px-3 md:px-4 py-2 sm:py-2.5 md:py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#F5943A] focus:border-transparent bg-white text-sm sm:text-base"
-                      />
                     </div>
                   )}
                 </div>
