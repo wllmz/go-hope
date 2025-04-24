@@ -1,11 +1,19 @@
 // MobileCarousel.jsx
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import useSlider from "../../../../utils/form/slider"; // Adaptez le chemin
 import SlideCard from "./SlideCard"; // Adaptez le chemin
 import { slideData } from "./slideData"; // Adaptez le chemin
 
 const MobileCarousel = () => {
   const { containerRef, currentIndex, scrollToSlide } = useSlider();
+  const navigate = useNavigate();
+
+  // Fonction pour naviguer et scroller vers le haut
+  const handleNavigate = (path) => {
+    navigate(path);
+    window.scrollTo(0, 0);
+  };
 
   return (
     <div className="w-full max-w-screen-xl mx-auto mt-4 lg:hidden overflow-hidden">
@@ -18,7 +26,7 @@ const MobileCarousel = () => {
             key={index}
             className="flex-shrink-0 w-full snap-start px-2 flex justify-center"
           >
-            <SlideCard slide={slide} />
+            <SlideCard slide={slide} onNavigate={handleNavigate} />
           </div>
         ))}
       </div>

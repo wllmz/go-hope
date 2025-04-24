@@ -1,42 +1,39 @@
-name: Deploy to VPS (prod only)
+name: Deploy to Production
 
 on:
   push:
     branches:
-      - main # déploiement auto uniquement sur main
+      - main # Seulement déploiement depuis main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      - name: Déploiement SSH
+      - name: Deploy to VPS
         uses: appleboy/ssh-action@v0.1.5
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USERNAME }}
           key: ${{ secrets.VPS_SSH_KEY }}
           command_timeout: 30m
-          envs: GITHUB_SHA
           script: |
-            set -e
-
-            echo "=> Connexion au serveur — déploiement commit $GITHUB_SHA"
             cd /var/www/go-hope
 
-            # Pull les sources
+            # Pull les sources du projet
             git fetch origin main
             git reset --hard origin/main
 
-            # Option 1: Arrêter et supprimer les conteneurs par leur nom
-            docker stop go-hope-frontend-1 go-hope-backend-1 || true
-            docker rm go-hope-frontend-1 go-hope-backend-1 || true
-
-            # Build et démarrer les services (en utilisant les noms de services)
+            # Activer BuildKit pour des builds plus rapides
             export DOCKER_BUILDKIT=1
-            docker compose build frontend backend
-            docker compose up -d frontend backend
 
-            echo "✅ Déploiement terminé"
+            # Nettoyage et redémarrage des conteneurs
+            docker compose stop frontend backend
+            docker compose rm -f frontend backend
+            docker compose build --no-cache frontend backend
+            docker compose up -d --remove-orphans frontend backend
+
+            echo "Déploiement terminé avec succès."

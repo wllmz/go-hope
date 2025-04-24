@@ -156,35 +156,52 @@ const UserProfileForm = ({ user, onProfileChange, onEditImage }) => {
 
         {/* Champs de saisie */}
         <div className="space-y-4">
-          <div className="relative">
-            <FormInput
-              label="Nom d'utilisateur"
-              value={profile.username}
-              placeholder="Prénom Nom"
-              onChange={(e) => handleChange("username", e.target.value)}
-              className="w-full border border-gray-300 rounded-md p-2 pl-10"
-            />
-            <FiUser className="absolute left-3 top-1/2 transform -translate-y-1/4 text-gray-400" />
+          {/* Nom d'utilisateur - garder le style en colonnes */}
+          <div className="flex items-center">
+            <div className="w-10 h-10 flex items-center justify-center bg-[#EDF6FC] rounded-l-md border-l border-t border-b border-gray-300">
+              <FiUser className="text-[#1D5F84] w-5 h-5" />
+            </div>
+            <div className="flex-1">
+              <input
+                type="text"
+                value={profile.username}
+                placeholder="Prénom Nom"
+                onChange={(e) => handleChange("username", e.target.value)}
+                className="w-full h-10 border-l-0 border-r border-t border-b border-gray-300 rounded-r-md p-2 focus:outline-none focus:ring-1 focus:ring-[#F5943A]"
+              />
+            </div>
           </div>
 
-          <div className="relative">
-            <FormInput
-              label="Date de naissance"
-              type="date"
-              value={
-                profile.dateBirth
-                  ? new Date(profile.dateBirth).toISOString().split("T")[0]
-                  : ""
-              }
-              max={today}
-              placeholder="jj/mm/aaaa"
-              onChange={(e) => handleChange("dateBirth", e.target.value)}
-              className="w-full border border-gray-300 rounded-md p-2 pl-10"
-            />
-            <FiCalendar className="absolute left-3 top-1/2 transform -translate-y-1/4 text-gray-400" />
+          {/* Date de naissance - avec pseudo-placeholder */}
+          <div className="flex items-center">
+            <div className="w-10 h-10 flex items-center justify-center bg-[#EDF6FC] rounded-l-md border-l border-t border-b border-gray-300">
+              <FiCalendar className="text-[#1D5F84] w-5 h-5" />
+            </div>
+            <div className="flex-1 relative">
+              {!profile.dateBirth && (
+                <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none">
+                  jj/mm/aaaa
+                </div>
+              )}
+              <input
+                type="date"
+                value={
+                  profile.dateBirth
+                    ? new Date(profile.dateBirth).toISOString().split("T")[0]
+                    : ""
+                }
+                max={today}
+                onChange={(e) => handleChange("dateBirth", e.target.value)}
+                className="w-full h-10 border-l-0 border-r border-t border-b border-gray-300 rounded-r-md p-2 focus:outline-none focus:ring-1 focus:ring-[#F5943A] appearance-none"
+                style={{ minHeight: "40px", minWidth: "100%" }}
+              />
+            </div>
           </div>
-          {dateError && <p className="text-red-500 text-sm">{dateError}</p>}
+          {dateError && (
+            <p className="text-red-500 text-sm ml-10">{dateError}</p>
+          )}
 
+          {/* Email - revenir au style d'origine */}
           <FormInput
             label="Email"
             type="email"
@@ -194,6 +211,7 @@ const UserProfileForm = ({ user, onProfileChange, onEditImage }) => {
             className="w-full border border-gray-300 rounded-md p-2"
           />
 
+          {/* Téléphone - revenir au style d'origine */}
           <SplitPhoneInput
             value={profile.phone}
             onChange={(value) => handleChange("phone", value)}
@@ -201,6 +219,7 @@ const UserProfileForm = ({ user, onProfileChange, onEditImage }) => {
             className="w-full"
           />
 
+          {/* Genre - revenir au style d'origine */}
           <FormSelect
             value={profile.gender}
             onChange={(e) => handleChange("gender", e.target.value)}
@@ -213,7 +232,7 @@ const UserProfileForm = ({ user, onProfileChange, onEditImage }) => {
             className="w-full"
           />
 
-          {/* Bouton pour ouvrir la popup de modification du mot de passe */}
+          {/* Bouton de mot de passe - inchangé */}
           <button
             type="button"
             onClick={openPasswordModal}

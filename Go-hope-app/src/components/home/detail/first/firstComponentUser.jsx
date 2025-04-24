@@ -16,13 +16,21 @@ import useUploads from "../../../../hooks/uploads/useUploads";
 import ImageCropper from "../../../Cropper/ImageCropper";
 import Modal from "../../../../utils/form/modal";
 import papillonBleu from "../../../../assets/papillon-bleu.png";
+import { toast } from "react-toastify";
+import { useUpsertUser } from "../../../../hooks/user/useUpdateInfo";
 
 const FirstComponentUser = () => {
-  const { user, updateUserProfile } = useUserInfo();
+  const {
+    upsertUserData,
+    loading: upsertLoading,
+    error: upsertError,
+  } = useUpsertUser();
+  const { user, updateUserProfile, isUpdating } = useUserInfo();
   const [activeTab, setActiveTab] = useState("motricite");
   const [selectedDate, setSelectedDate] = useState(null);
   const [datesWithData, setDatesWithData] = useState([]);
   const [showImageCropperModal, setShowImageCropperModal] = useState(false);
+  const [profileUpdateSuccess, setProfileUpdateSuccess] = useState(false);
   const [data, setData] = useState({
     motricite: [],
     douleurs: [],
@@ -57,11 +65,40 @@ const FirstComponentUser = () => {
 
   // Effet pour mettre à jour l'image du profil après un upload réussi
   useEffect(() => {
-    if (uploadedImage && uploadedImage.filePath && updateUserProfile) {
-      updateUserProfile({ image: uploadedImage.filePath });
-      setShowImageCropperModal(false);
+    if (uploadedImage && uploadedImage.filePath && !isUpdating) {
+      const updateProfile = async () => {
+        try {
+          console.log(
+            "Mise à jour du profil avec la nouvelle image:",
+            uploadedImage.filePath
+          );
+
+          // Utiliser upsertUserData au lieu de updateUserProfile
+          const imageData = {
+            image: uploadedImage.filePath,
+          };
+          await upsertUserData(imageData);
+
+          setProfileUpdateSuccess(true);
+          toast?.success("Photo de profil mise à jour avec succès");
+        } catch (error) {
+          console.error("Erreur lors de la mise à jour du profil:", error);
+          toast?.error("Erreur lors de la mise à jour de la photo");
+        } finally {
+          setShowImageCropperModal(false);
+        }
+      };
+
+      updateProfile();
     }
-  }, [uploadedImage]);
+  }, [uploadedImage, isUpdating]);
+
+  // Réinitialiser l'état de succès quand on ouvre la modale
+  useEffect(() => {
+    if (showImageCropperModal) {
+      setProfileUpdateSuccess(false);
+    }
+  }, [showImageCropperModal]);
 
   const loadWeekData = async (weekStart) => {
     try {
@@ -109,8 +146,11 @@ const FirstComponentUser = () => {
 
         // Upload du fichier
         await handleImageUpload(file);
+        console.log("Image uploadée, en attente de mise à jour du profil...");
       } catch (err) {
         console.error("Erreur lors de l'upload:", err);
+        toast?.error("Erreur lors de l'upload de l'image");
+        setShowImageCropperModal(false);
       }
     };
 
@@ -478,7 +518,9 @@ const FirstComponentUser = () => {
               sx={{
                 width: { xs: 60, sm: 80 },
                 height: { xs: 60, sm: 80 },
-                border: "3px solid white",
+                border: profileUpdateSuccess
+                  ? "3px solid #4CAF50"
+                  : "3px solid white",
                 boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
               }}
             />
@@ -520,6 +562,24 @@ const FirstComponentUser = () => {
                 Chargement...
               </Box>
             )}
+            {isUpdating && (
+              <Box
+                sx={{
+                  position: "absolute",
+                  width: "100%",
+                  height: "100%",
+                  top: 0,
+                  left: 0,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  backgroundColor: "rgba(255,255,255,0.7)",
+                  borderRadius: "50%",
+                }}
+              >
+                Mise à jour...
+              </Box>
+            )}
           </Box>
           <Box
             sx={{
@@ -542,7 +602,7 @@ const FirstComponentUser = () => {
             <Box
               sx={{
                 fontSize: { xs: "14px", sm: "16px" },
-                color: "#1D5F84",
+                color: "#7F8C8D",
                 fontWeight: 400,
               }}
             >

@@ -34,7 +34,7 @@ export const slideData = [
     title: "Regardez des contenus multimédia",
     description: "Masterclass, vidéo-conférences pour aider nos patient·e·s.",
     buttonText: "Fiches",
-    link: "/fiches",
+    link: "/la-sep",
     cardColor: "bg-[#FFF6ED]",
     borderKey: "orange",
     buttonColor: "bg-[#F1731F] hover:bg-[#F1731F]",
