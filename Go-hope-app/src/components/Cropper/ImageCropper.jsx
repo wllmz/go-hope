@@ -8,12 +8,13 @@ const MIN_DIMENSION = 150;
 const ImageCropper = ({ closeModal, updateAvatar, initialImage }) => {
   const imgRef = useRef(null);
   const previewCanvasRef = useRef(null);
+  const fileInputRef = useRef(null); // Référence pour l'input de fichier
   const [imgSrc, setImgSrc] = useState(initialImage || "");
   const [crop, setCrop] = useState();
   const [completedCrop, setCompletedCrop] = useState(null);
   const [error, setError] = useState("");
 
-  // Si aucune image n'est fournie en prop, on peut aussi gérer la sélection ici
+  // Gestion de la sélection de fichier
   const onSelectFile = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -30,6 +31,13 @@ const ImageCropper = ({ closeModal, updateAvatar, initialImage }) => {
       setImgSrc(imageUrl);
     });
     reader.readAsDataURL(file);
+  };
+
+  // Fonction pour déclencher le sélecteur de fichier
+  const triggerFileInput = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
   };
 
   // Lorsque l'image se charge dans ReactCrop, on calcule un crop centré par défaut
@@ -95,7 +103,7 @@ const ImageCropper = ({ closeModal, updateAvatar, initialImage }) => {
     ctx.restore();
   }, [completedCrop]);
 
-  // Lors du clic sur "Crop Image"
+  // Lors du clic sur "Valider"
   const handleCrop = () => {
     if (!previewCanvasRef.current) return;
     const dataUrl = previewCanvasRef.current.toDataURL("image/png");
@@ -105,45 +113,79 @@ const ImageCropper = ({ closeModal, updateAvatar, initialImage }) => {
 
   return (
     <div className="flex flex-col items-center">
+      {/* Input de fichier caché */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        onChange={onSelectFile}
+        className="hidden"
+      />
+
       {/* Si aucune image n'est présente, on affiche le champ de sélection */}
       {!imgSrc && (
-        <label className="block mb-3 w-fit">
-          <input
-            type="file"
-            accept="image/*"
-            onChange={onSelectFile}
-            className="block w-full text-sm text-slate-500 file:mr-4 file:py-1 file:px-2 file:rounded-full file:border-0 file:text-xs file:bg-gray-700 file:text-sky-300 hover:file:bg-gray-600"
-          />
-        </label>
+        <div className="flex flex-col items-center gap-4 mb-6">
+          <p className="text-gray-600 text-sm text-center">
+            Sélectionnez une image pour votre profil
+          </p>
+          <button
+            onClick={triggerFileInput}
+            className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-[#87BBDF] hover:bg-[#1D5F84] focus:outline-none"
+          >
+            Choisir une image
+          </button>
+        </div>
       )}
-      {error && <p className="text-red-400 text-xs">{error}</p>}
+
+      {error && <p className="text-red-400 text-xs mb-4">{error}</p>}
+
       {imgSrc && (
         <>
-          <ReactCrop
-            crop={crop}
-            onChange={(c) => setCrop(c)}
-            onComplete={(c) => setCompletedCrop(c)}
-            circularCrop
-            keepSelection
-            aspect={ASPECT_RATIO}
-            minWidth={MIN_DIMENSION}
-          >
-            <img
-              ref={imgRef}
-              src={imgSrc}
-              alt="À recadrer"
-              style={{ maxHeight: "80vh" }}
-              onLoad={onImageLoad}
-            />
-          </ReactCrop>
-          <button
-            className=" mt-6 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-[#f79862] focus:outline-none"
-            onClick={handleCrop}
-          >
-            Valider
-          </button>
+          <div className="relative w-full">
+            <ReactCrop
+              crop={crop}
+              onChange={(c) => setCrop(c)}
+              onComplete={(c) => setCompletedCrop(c)}
+              circularCrop
+              keepSelection
+              aspect={ASPECT_RATIO}
+              minWidth={MIN_DIMENSION}
+            >
+              <img
+                ref={imgRef}
+                src={imgSrc}
+                alt="À recadrer"
+                style={{ maxHeight: "60vh", margin: "0 auto" }}
+                onLoad={onImageLoad}
+              />
+            </ReactCrop>
+
+            {/* Bouton pour changer d'image */}
+            <button
+              onClick={triggerFileInput}
+              className="absolute top-2 right-2 bg-white bg-opacity-80 text-gray-700 rounded-full p-2 shadow hover:bg-opacity-100 focus:outline-none text-xs"
+            >
+              Changer l'image
+            </button>
+          </div>
+
+          <div className="flex gap-4 mt-6">
+            <button
+              className="py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none"
+              onClick={closeModal}
+            >
+              Annuler
+            </button>
+            <button
+              className="py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-[#f79862] hover:bg-[#e78852] focus:outline-none"
+              onClick={handleCrop}
+            >
+              Valider
+            </button>
+          </div>
         </>
       )}
+
       {/* Canvas caché pour générer l'image finale */}
       <canvas
         ref={previewCanvasRef}

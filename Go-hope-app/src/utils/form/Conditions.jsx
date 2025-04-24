@@ -13,7 +13,7 @@ const Conditions = () => {
         <FontAwesomeIcon icon={faShieldAlt} className="text-green-500 mr-2" />
         <p className="text-[#737373] text-sm">
           Seules les données personnelles strictement nécessaires au
-          fonctionnement de Flow et de ses services seront récoltées.
+          fonctionnement de GoHope et de ses services seront récoltées.
         </p>
       </div>
       <div

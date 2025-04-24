@@ -110,3 +110,10 @@ ol {
 .animate-slideInUp {
   animation: slideInUp 0.5s ease-out;
 }
+
+#step1-title {
+  font-size: 18px !important;
+  @media (min-width: 640px) {
+    font-size: 30px !important;
+  }
+}

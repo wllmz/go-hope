@@ -46,7 +46,7 @@ const ReadProgress = ({ readCount, totalCount }) => {
             y="50%"
             dominantBaseline="middle"
             textAnchor="middle"
-            className="text-xl font-bold text-gray-800"
+            className="text-xl text-gray-800"
           >
             {readCount}/{totalCount}
           </text>
