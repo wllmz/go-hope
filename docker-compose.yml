@@ -74,7 +74,7 @@ services:
     expose:
       - "5000"
     volumes:
-      - /var/www/Go-hope/uploads:/app/uploads
+      - /var/www/go-hope/uploads:/app/uploads
     env_file:
       - ./API/.env
     environment:
