@@ -5,7 +5,7 @@ const ConditionsGenerales = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Menu />
-      <div className="container mx-auto px-4 py-8 flex-grow">
+      <div className="container mx-auto px-8 py-8 flex-grow">
         <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-md p-6 sm:p-8">
           <h1 className="text-3xl font-bold text-[#1D5F84] mb-6">
             Conditions Générales d'Utilisation
