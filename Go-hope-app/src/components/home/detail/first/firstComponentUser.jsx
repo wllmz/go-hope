@@ -16,7 +16,6 @@ import useUploads from "../../../../hooks/uploads/useUploads";
 import ImageCropper from "../../../Cropper/ImageCropper";
 import Modal from "../../../../utils/form/modal";
 import papillonBleu from "../../../../assets/papillon-bleu.png";
-import { toast } from "react-toastify";
 import { useUpsertUser } from "../../../../hooks/user/useUpdateInfo";
 
 const FirstComponentUser = () => {
@@ -80,10 +79,8 @@ const FirstComponentUser = () => {
           await upsertUserData(imageData);
 
           setProfileUpdateSuccess(true);
-          toast?.success("Photo de profil mise à jour avec succès");
         } catch (error) {
           console.error("Erreur lors de la mise à jour du profil:", error);
-          toast?.error("Erreur lors de la mise à jour de la photo");
         } finally {
           setShowImageCropperModal(false);
         }
@@ -149,7 +146,6 @@ const FirstComponentUser = () => {
         console.log("Image uploadée, en attente de mise à jour du profil...");
       } catch (err) {
         console.error("Erreur lors de l'upload:", err);
-        toast?.error("Erreur lors de l'upload de l'image");
         setShowImageCropperModal(false);
       }
     };

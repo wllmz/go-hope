@@ -1,9 +1,9 @@
-name: Deploy to Production
+name: Deploy to VPS
 
 on:
   push:
     branches:
-      - main # Seulement déploiement depuis main
+      - main
 
 jobs:
   deploy:
@@ -19,21 +19,24 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USERNAME }}
           key: ${{ secrets.VPS_SSH_KEY }}
-          command_timeout: 30m
           script: |
             cd /var/www/go-hope
 
-            # Pull les sources du projet
-            git fetch origin main
-            git reset --hard origin/main
+            # Désactiver BuildKit pour éviter le bug ContainerConfig
+            export DOCKER_BUILDKIT=0
 
-            # Activer BuildKit pour des builds plus rapides
-            export DOCKER_BUILDKIT=1
+            echo "Déploiement production (frontend et backend)"
+            git pull origin main
 
-            # Nettoyage et redémarrage des conteneurs
-            docker compose stop frontend backend
-            docker compose rm -f frontend backend
-            docker compose build --no-cache frontend backend
-            docker compose up -d --remove-orphans frontend backend
+            # Nettoyage des conteneurs existants
+            docker-compose stop frontend backend
+            docker-compose rm -f frontend backend
 
-            echo "Déploiement terminé avec succès."
+            # Libération d'espace disque
+            docker system prune -f
+
+            # Construction et démarrage des services
+            docker-compose build --no-cache frontend backend
+            docker-compose up -d --remove-orphans frontend backend
+
+            echo "Déploiement avec Docker terminé avec succès."
