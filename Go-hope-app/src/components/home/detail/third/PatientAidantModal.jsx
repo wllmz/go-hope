@@ -134,7 +134,7 @@ const PatientAidantModal = ({ isOpen, onClose }) => {
                   <br className="hidden sm:block" />
                   et devenir patient aidant ?
                 </p>
-                <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-[#0E3043] leading-relaxed max-w-3xl mx-auto mb-6 sm:mb-8 md:mb-10 text-center">
+                <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-[#0E3043] leading-relaxed max-w-3xl mx-auto mb-6 sm:mb-8 md:mb-10 ">
                   Faites nous part de votre demande et de votre parcours. Nous
                   serions ravis d'examiner votre demande !
                 </p>
