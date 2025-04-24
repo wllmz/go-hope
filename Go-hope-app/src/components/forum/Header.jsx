@@ -11,9 +11,9 @@ const Header = () => {
 
   return (
     <header className="w-full pt-8 pb-4 bg-gradient-to-b from-[#B3D7EC] to-white">
-      <div className="mx-auto max-w-4xl px-4">
-        <h1 className="mb-6 pl-2 sm:pl-32">Forum</h1>
-        <div className="pb-2">
+      <div className="mx-auto max-w-6xl px-4">
+        <h1 className="mb-6 pl-2 sm:pl-0">Forum</h1>
+        <div className="p-4">
           <SearchBar />
         </div>
         {isForumPage && !isCategoriesPage && (

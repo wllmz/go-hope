@@ -181,7 +181,7 @@ const PartenaireDetail = () => {
   return (
     <header className="w-full pt-8 pb-4 bg-gradient-to-b from-[#B3D7EC] to-white">
       <div className="flex flex-col max-w-7xl mx-auto p-5">
-        <div className="container mx-auto px-4 py-6">
+        <div className="container mx-auto py-6">
           {/* En-tête avec flèche de retour et titre */}
           <div className="flex items-center gap-2 text-[#1D5F84] mb-6">
             <button
