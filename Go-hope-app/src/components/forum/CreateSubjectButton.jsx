@@ -150,7 +150,9 @@ const CreateSubjectButton = ({ onSubjectCreated }) => {
         className="w-11 h-11 bg-orange-500 rounded-full flex items-center justify-center shadow-md cursor-pointer hover:bg-orange-600 transition-colors"
         onClick={handleOpenModal}
       >
-        <span className="text-white text-[45px]">+</span>
+        <span className="text-white text-[36px] font-light leading-none flex items-center justify-center pb-1">
+          +
+        </span>
       </div>
 
       {/* Popup de création de post */}
