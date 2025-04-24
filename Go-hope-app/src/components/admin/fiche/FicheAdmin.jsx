@@ -101,7 +101,7 @@ const FicheAdmin = () => {
       : fiches.filter((fiche) => fiche.categorie === activeCategory);
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-8 py-8">
       <h1 className="text-2xl font-bold text-[#1D5F84] mb-6">
         Gestion des fiches et articles
       </h1>
