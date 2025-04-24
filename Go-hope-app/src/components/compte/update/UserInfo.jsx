@@ -35,6 +35,8 @@ const UserProfileUpdate = () => {
   const [successMessage, setSuccessMessage] = useState("");
   // Référence pour le timer du message de succès
   const successTimerRef = useRef(null);
+  // Indique si l'image a été modifiée
+  const [imageChanged, setImageChanged] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -66,6 +68,16 @@ const UserProfileUpdate = () => {
     }
   }, [upsertError]);
 
+  // Effet pour sauvegarder automatiquement lorsque l'image change
+  useEffect(() => {
+    if (imageChanged && profileData.image) {
+      // Sauvegarder le profil automatiquement quand l'image change
+      handleSaveImage();
+      // Réinitialiser le flag
+      setImageChanged(false);
+    }
+  }, [imageChanged, profileData.image]);
+
   // Effet pour faire disparaître le message de succès après un délai
   useEffect(() => {
     // Si un message de succès est présent, programmer sa disparition
@@ -90,10 +102,36 @@ const UserProfileUpdate = () => {
   }, [successMessage]);
 
   const handleProfileChange = (updatedProfile) => {
+    // Vérifier si l'image a changé
+    if (updatedProfile.image !== profileData.image) {
+      setImageChanged(true);
+    }
+
     setProfileData(updatedProfile);
     // Réinitialiser les messages quand l'utilisateur modifie les données
     setErrorMessage("");
     setSuccessMessage("");
+  };
+
+  // Fonction pour sauvegarder uniquement l'image
+  const handleSaveImage = async () => {
+    setErrorMessage("");
+
+    try {
+      // Envoyer juste les données nécessaires pour l'image
+      const imageData = {
+        _id: user._id,
+        image: profileData.image,
+      };
+
+      const result = await upsertUserData(imageData);
+      setSuccessMessage("Photo de profil mise à jour avec succès !");
+      // Rafraîchir les infos utilisateur après la mise à jour
+      await fetchUserInfo();
+    } catch (err) {
+      console.error("Erreur lors de la mise à jour de l'image:", err);
+      // La gestion des erreurs est déjà faite par le useEffect
+    }
   };
 
   const handleSave = async (e) => {
