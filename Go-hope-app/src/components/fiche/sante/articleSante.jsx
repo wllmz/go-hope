@@ -7,23 +7,37 @@ import ArticleList from "../../articles/ArticleList";
 const AllArticle = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [selectedMediaType, setSelectedMediaType] = useState("Fiche");
+  const [selectedMediaType, setSelectedMediaType] = useState(null); // Pas de filtre par défaut
 
   const {
     articles,
     loading: articlesLoading,
     error: articlesError,
-    getAllArticlesSante,
+    fetchAllArticlesSante,
   } = useArticles();
 
   const { user, loading: userLoading, error: userError } = useUserInfo();
 
   useEffect(() => {
     const fetchData = async () => {
-      await getAllArticlesSante();
+      console.log("Chargement des articles santé...");
+      await fetchAllArticlesSante();
     };
     fetchData();
-  }, [getAllArticlesSante]);
+  }, [fetchAllArticlesSante]);
+
+  // Ajouter un effet pour déboguer les articles récupérés
+  useEffect(() => {
+    if (articles && articles.length > 0) {
+      console.log("Articles récupérés:", articles.length);
+      console.log("Types d'articles (mediaType):", [
+        ...new Set(articles.map((a) => a.mediaType)),
+      ]);
+      console.log("Genres d'articles:", [
+        ...new Set(articles.map((a) => a.genre)),
+      ]);
+    }
+  }, [articles]);
 
   if (articlesLoading || userLoading) {
     return <div className="text-center py-4">Chargement...</div>;
@@ -45,16 +59,36 @@ const AllArticle = () => {
     );
   }
 
-  // Filtrer les articles par type (uniquement Fiche)
-  const filteredArticles = articles.filter(
-    (article) => article.mediaType === selectedMediaType
-  );
+  // Vérifier si des articles existent
+  if (!articles || articles.length === 0) {
+    console.log("Aucun article n'a été trouvé");
+    return (
+      <div className="text-center py-4 text-gray-500">
+        Aucun article trouvé. Veuillez vérifier que des articles sont associés à
+        la catégorie santé.
+      </div>
+    );
+  }
+
+  // Filtrer les articles par mediaType seulement si un type est sélectionné
+  let filteredArticles = [...articles];
+  if (selectedMediaType) {
+    filteredArticles = articles.filter(
+      (article) => article.mediaType === selectedMediaType
+    );
+    console.log(
+      `Articles filtrés par mediaType '${selectedMediaType}':`,
+      filteredArticles.length
+    );
+  }
 
   // Appliquer le slice uniquement si on est sur la page principale
   const isSantePage = location.pathname.includes("sante");
   const displayedArticles = isSantePage
     ? filteredArticles.slice(0, 4)
     : filteredArticles;
+
+  console.log("Articles à afficher:", displayedArticles.length);
 
   const handleArticleClick = (articleId) => {
     navigate(`/la-sep/${articleId}`);
@@ -72,10 +106,13 @@ const AllArticle = () => {
         <div className="flex items-center justify-between text-[#1D5F84] mb-6">
           <div className="flex items-center gap-2">
             <h2 className="text-[#1D5F84] font-medium">
-              Articles liés à la santé
+              Articles liés à la santé{" "}
+              {displayedArticles.length > 0
+                ? `(${displayedArticles.length})`
+                : ""}
             </h2>
           </div>
-          {isSantePage && (
+          {isSantePage && displayedArticles.length > 0 && (
             <button
               onClick={handleNavigateToAllArticles}
               className="text-[#F1731F] hover:text-[#1D5F84] transition-colors flex items-center gap-1"
@@ -98,15 +135,21 @@ const AllArticle = () => {
           )}
         </div>
 
-        <ArticleList
-          articles={displayedArticles}
-          selectedMediaType={selectedMediaType}
-          onArticleClick={handleArticleClick}
-          onNavigateToAllArticles={
-            isSantePage ? handleNavigateToAllArticles : undefined
-          }
-          onFavoritesUpdate={getAllArticlesSante}
-        />
+        {displayedArticles.length > 0 ? (
+          <ArticleList
+            articles={displayedArticles}
+            selectedMediaType={selectedMediaType}
+            onArticleClick={handleArticleClick}
+            onNavigateToAllArticles={
+              isSantePage ? handleNavigateToAllArticles : undefined
+            }
+            onFavoritesUpdate={fetchAllArticlesSante}
+          />
+        ) : (
+          <div className="text-center py-8 text-gray-500">
+            Aucun article santé à afficher.
+          </div>
+        )}
       </div>
     </div>
   );

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import useFiche from "../../../hooks/fiche/useFiche";
 import Article from "./articleSante";
+import useArticles from "../../../hooks/article/useArticles";
 
 const SanteDetail = () => {
   const { id } = useParams();
@@ -9,10 +10,24 @@ const SanteDetail = () => {
   const [sante, setSante] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { fetchAllArticlesSante } = useArticles();
 
   console.log("ID de l'article santé depuis les paramètres:", id);
 
   const { fetchFichesByCategory } = useFiche();
+
+  // Précharger les articles liés à la santé
+  useEffect(() => {
+    const loadArticles = async () => {
+      try {
+        await fetchAllArticlesSante();
+        console.log("Articles santé préchargés");
+      } catch (err) {
+        console.error("Erreur lors du préchargement des articles santé:", err);
+      }
+    };
+    loadArticles();
+  }, [fetchAllArticlesSante]);
 
   useEffect(() => {
     console.log("useEffect déclenché avec id:", id);
@@ -132,7 +147,7 @@ const SanteDetail = () => {
   return (
     <header className="w-full pt-8 pb-4 bg-gradient-to-b from-[#B3D7EC] to-[#FDFDFD]">
       <div className="flex flex-col max-w-7xl mx-auto p-5">
-        <div className="container mx-auto  py-6">
+        <div className="container mx-auto px-4 py-6">
           {/* En-tête avec flèche de retour et titre */}
           <div className="flex items-center gap-2 text-[#1D5F84] mb-6">
             <button
@@ -161,7 +176,7 @@ const SanteDetail = () => {
           {sante.image && (
             <div className="mb-6 flex justify-center">
               <img
-                src={sante.image}
+                src={sante.article.image}
                 alt={sante.titre}
                 className="max-w-full h-auto rounded-lg"
               />
@@ -182,7 +197,14 @@ const SanteDetail = () => {
             </div>
           )}
         </div>
-        <Article />
+
+        {/* Section des articles liés */}
+        <div className="mt-10 border-t border-gray-200 pt-8">
+          <h2 className="text-xl font-semibold text-[#1D5F84] mb-6">
+            Découvrez aussi d'autres articles sur la santé
+          </h2>
+          <Article />
+        </div>
       </div>
     </header>
   );
