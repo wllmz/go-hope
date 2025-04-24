@@ -135,7 +135,7 @@ const PolitiqueConfidentialite = () => {
                   <strong>Développement et recherche</strong> : analyser les
                   tendances d'utilisation, conduire des enquêtes et des
                   recherches pour améliorer nos services et notre compréhension
-                  de la SEP (toujours sous forme anonymisée).
+                  de la S.E.P (toujours sous forme anonymisée).
                 </li>
                 <li>
                   <strong>Sécurité et conformité légale</strong> : protéger nos
