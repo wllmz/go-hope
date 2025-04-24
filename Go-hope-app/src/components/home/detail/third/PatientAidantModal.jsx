@@ -141,7 +141,7 @@ const PatientAidantModal = ({ isOpen, onClose }) => {
 
                 <button
                   onClick={handleNext}
-                  className="w-[300px] px-4 sm:px-6 py-2 sm:py-3 bg-[#F5943A] hover:bg-[#F1731F] text-white text-base sm:text-lg md:text-xl font-medium rounded-lg shadow-md transition-colors duration-300 w-full sm:w-auto"
+                  className="w-[300px] px-4 sm:px-6 py-2 sm:py-3 bg-[#F5943A] hover:bg-[#F1731F] text-white text-base sm:text-lg md:text-xl font-medium rounded-lg shadow-md transition-colors duration-300 sm:w-auto"
                 >
                   Suivant
                 </button>
