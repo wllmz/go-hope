@@ -58,7 +58,7 @@ const Menu = () => {
                 }
                 onClick={() => navigateAndScrollTop("/la-sep")}
               >
-                La SEP
+                La S.E.P
               </NavLink>
             </li>
             <li>
@@ -146,7 +146,7 @@ const Menu = () => {
                     className="w-6 h-6"
                     style={{ fill: isActive ? "#F5943A" : "white" }}
                   />
-                  <span className="text-xs mt-1">La SEP</span>
+                  <span className="text-xs mt-1">La S.E.P</span>
                 </>
               )}
             </NavLink>

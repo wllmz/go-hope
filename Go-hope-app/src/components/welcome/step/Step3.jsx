@@ -20,7 +20,7 @@ const Step3 = ({ handleNextStep, handlePreviousStep }) => {
         <img src={welcome} alt="Bienvenue" className="w-full max-w-55 h-auto" />
       </div>
       <h1 className="text-[20px] sm:text-3xl font-bold text-[#0E3043] text-center mb-4">
-        Accédez à des informations sur la SEP
+        Accédez à des informations sur la S.E.P
       </h1>
       <p className="text-[16px] sm:text-xl text-[#0E3043] text-center mb-5 mt-4">
         Réalisez et/ou regardez des contenus multimédia, Masterclass,

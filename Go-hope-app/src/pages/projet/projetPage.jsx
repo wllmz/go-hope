@@ -73,7 +73,7 @@ const ProjetPage = () => {
               {/* Première colonne : titre, centré verticalement */}
               <div className="min-w-fit xl:w-1/3 flex flex-col items-center xl:items-start justify-center xl:pr-8">
                 <h2 className="text-3xl xl:text-4xl text-[#F1731F] font-confiteria mt-2 mb-6 text-left">
-                  La Sep <p className="mt-1">en quelques chiffres</p>
+                  La S.E.P <p className="mt-1">en quelques chiffres</p>
                 </h2>
               </div>
               {/* Deuxième colonne : trois paires alignées en une seule ligne chacune */}

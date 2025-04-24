@@ -65,7 +65,7 @@ const PolitiqueConfidentialite = () => {
                   </li>
                   <li>
                     Données de profil (photo, âge, sexe, situation personnelle
-                    liée à la SEP)
+                    liée à la S.E.P)
                   </li>
                   <li>
                     Contenu que vous publiez (messages, commentaires,
