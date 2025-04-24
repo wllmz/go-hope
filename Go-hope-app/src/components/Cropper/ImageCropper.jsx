@@ -80,11 +80,18 @@ const ImageCropper = ({ closeModal, updateAvatar, initialImage }) => {
   const onImageLoad = (e) => {
     try {
       const { width, height } = e.currentTarget;
-      const cropWidthInPercent = (MIN_DIMENSION / width) * 100;
+
+      // Si l'image est plus petite que la dimension minimale, ajustez le crop
+      const minSize = Math.min(width, height);
+      const cropSize = Math.max(MIN_DIMENSION, minSize * 0.8);
+      const cropWidthInPercent = (cropSize / width) * 100;
+
+      // Assurez-vous que le crop n'est pas trop grand
+      const adjustedWidthPercent = Math.min(cropWidthInPercent, 90);
 
       const defaultCrop = centerCrop(
         makeAspectCrop(
-          { unit: "%", width: cropWidthInPercent },
+          { unit: "%", width: adjustedWidthPercent },
           ASPECT_RATIO,
           width,
           height
@@ -141,9 +148,15 @@ const ImageCropper = ({ closeModal, updateAvatar, initialImage }) => {
         return;
       }
 
-      canvas.width = pixelCrop.width;
-      canvas.height = pixelCrop.height;
+      // Utiliser une taille fixe pour le canvas final
+      const size = Math.max(150, pixelCrop.width, pixelCrop.height);
+      canvas.width = size;
+      canvas.height = size;
+
+      // Effacer le canvas
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "white";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       // Clipping circulaire
       const centerX = canvas.width / 2;
@@ -154,14 +167,18 @@ const ImageCropper = ({ closeModal, updateAvatar, initialImage }) => {
       ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
       ctx.clip();
 
+      // Calculer la position pour centrer l'image recadrée
+      const drawX = (canvas.width - pixelCrop.width) / 2;
+      const drawY = (canvas.height - pixelCrop.height) / 2;
+
       ctx.drawImage(
         image,
         pixelCrop.x,
         pixelCrop.y,
         pixelCrop.width,
         pixelCrop.height,
-        0,
-        0,
+        drawX,
+        drawY,
         pixelCrop.width,
         pixelCrop.height
       );
@@ -209,8 +226,7 @@ const ImageCropper = ({ closeModal, updateAvatar, initialImage }) => {
       <input
         ref={fileInputRef}
         type="file"
-        accept="image/*,image/heic"
-        capture="environment"
+        accept="image/*"
         onChange={onSelectFile}
         className="hidden"
       />
@@ -242,55 +258,63 @@ const ImageCropper = ({ closeModal, updateAvatar, initialImage }) => {
               Formats acceptés: JPEG, PNG, GIF
             </p>
           </div>
-          <button
-            onClick={triggerFileInput}
-            className="inline-flex items-center justify-center py-2.5 px-8 border border-transparent shadow-md text-sm md:text-base font-medium rounded-full text-white bg-[#F5943A] hover:bg-[#F1731F] transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#F1731F]"
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <>
-                <svg
-                  className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
+          <div className="flex flex-col sm:flex-row gap-3 w-full max-w-xs justify-center">
+            <button
+              onClick={triggerFileInput}
+              className="inline-flex items-center justify-center py-2.5 px-6 border border-transparent shadow-md text-sm md:text-base font-medium rounded-full text-white bg-[#F5943A] hover:bg-[#F1731F] transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#F1731F]"
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <>
+                  <svg
+                    className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                  Chargement...
+                </>
+              ) : (
+                <>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5 mr-2"
+                    fill="none"
+                    viewBox="0 0 24 24"
                     stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
-                </svg>
-                Chargement...
-              </>
-            ) : (
-              <>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 mr-2"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                  />
-                </svg>
-                Parcourir
-              </>
-            )}
-          </button>
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
+                    />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
+                    />
+                  </svg>
+                  Galerie
+                </>
+              )}
+            </button>
+          </div>
         </div>
       )}
 
@@ -336,27 +360,36 @@ const ImageCropper = ({ closeModal, updateAvatar, initialImage }) => {
             <div className="text-[#1D5F84] font-medium text-center mb-4 text-sm md:text-base">
               Recadrez votre photo de profil
             </div>
-            <ReactCrop
-              crop={crop}
-              onChange={(c) => setCrop(c)}
-              onComplete={(c) => setCompletedCrop(c)}
-              circularCrop
-              keepSelection
-              aspect={ASPECT_RATIO}
-              minWidth={MIN_DIMENSION}
-              className="max-w-full mx-auto border border-[#B3D7EC]/50 rounded-lg overflow-hidden"
-            >
-              <img
-                ref={imgRef}
-                src={imgSrc}
-                alt="À recadrer"
-                style={{ maxHeight: "60vh", margin: "0 auto" }}
-                onLoad={onImageLoad}
-                onError={() => setError("Erreur lors du chargement de l'image")}
-                className="max-w-full h-auto"
-                crossOrigin="anonymous"
-              />
-            </ReactCrop>
+            <div className="max-w-md mx-auto">
+              <ReactCrop
+                crop={crop}
+                onChange={(c) => setCrop(c)}
+                onComplete={(c) => setCompletedCrop(c)}
+                circularCrop
+                keepSelection
+                aspect={ASPECT_RATIO}
+                minWidth={MIN_DIMENSION}
+                className="mx-auto border border-[#B3D7EC]/50 rounded-lg overflow-hidden"
+              >
+                <img
+                  ref={imgRef}
+                  src={imgSrc}
+                  alt="À recadrer"
+                  style={{ maxHeight: "70vh", margin: "0 auto" }}
+                  onLoad={onImageLoad}
+                  onError={() =>
+                    setError("Erreur lors du chargement de l'image")
+                  }
+                  className="max-w-full h-auto"
+                  crossOrigin="anonymous"
+                />
+              </ReactCrop>
+            </div>
+
+            {/* Instructions de recadrage */}
+            <p className="text-gray-500 text-xs text-center mt-3">
+              Déplacez et redimensionnez le cercle pour recadrer votre photo
+            </p>
 
             {/* Bouton pour changer d'image */}
             <div className="flex justify-center mt-5">
@@ -399,6 +432,19 @@ const ImageCropper = ({ closeModal, updateAvatar, initialImage }) => {
             >
               Valider
             </button>
+          </div>
+
+          {/* Aperçu du recadrage (facultatif) */}
+          <div className="flex justify-center mt-4">
+            <div className="w-16 h-16 bg-gray-100 rounded-full overflow-hidden hidden sm:block">
+              {completedCrop && (
+                <canvas
+                  ref={previewCanvasRef}
+                  className="w-full h-full"
+                  style={{ display: "none" }}
+                />
+              )}
+            </div>
           </div>
         </div>
       )}
