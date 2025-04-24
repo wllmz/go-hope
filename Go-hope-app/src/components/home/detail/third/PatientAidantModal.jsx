@@ -77,7 +77,7 @@ const PatientAidantModal = ({ isOpen, onClose }) => {
       <div className="h-[calc(100vh-56px)] sm:h-[calc(100vh-64px)] overflow-auto">
         <div className="w-full max-w-5xl">
           {!showForm ? (
-            <div className="text-center mx-auto pt-4 md:pt-0">
+            <div className="mx-auto pt-4 md:pt-0 p-4">
               <div className="transform transition-all duration-700 delay-300 translate-y-0 opacity-100">
                 <p className="font-semibold text-[#0E3043] mb-4 sm:mb-6 md:mb-8 leading-relaxed">
                   Vous souhaitez rejoindre l'équipe GoHope{" "}
@@ -85,9 +85,8 @@ const PatientAidantModal = ({ isOpen, onClose }) => {
                   et devenir patient aidant ?
                 </p>
                 <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-[#0E3043] leading-relaxed max-w-3xl mx-auto mb-6 sm:mb-8 md:mb-10">
-                  Faites nous part de votre demande et de votre parcours.
-                  <br className="hidden sm:block" />
-                  Nous serions ravis d'examiner votre demande !
+                  Faites nous part de votre demande et de votre parcours. Nous
+                  serions ravis d'examiner votre demande !
                 </p>
 
                 <button
