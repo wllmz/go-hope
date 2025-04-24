@@ -34,9 +34,6 @@ jobs:
             docker stop go-hope-frontend-1 go-hope-backend-1 || true
             docker rm go-hope-frontend-1 go-hope-backend-1 || true
 
-            # Option 2: Ou utiliser docker-compose down qui arrête et supprime tout
-            # docker compose down
-
             # Build et démarrer les services (en utilisant les noms de services)
             export DOCKER_BUILDKIT=1
             docker compose build frontend backend
