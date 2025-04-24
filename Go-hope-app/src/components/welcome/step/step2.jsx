@@ -33,7 +33,7 @@ const Step2 = ({ handleNextStep, handlePreviousStep }) => {
       <div className="flex flex-col sm:flex-row gap-4 justify-center mt-5 w-full p-5">
         <button
           onClick={handleNextStep}
-          className="w-full sm:w-lg bg-[#F1731F] hover:bg-[#F1731F] text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-300"
+          className="w-full sm:w-lg bg-[#F1731F] hover:bg-[#F1731F] text-white  py-3 px-6 rounded-lg shadow-md transition duration-300"
         >
           Suivant
         </button>
