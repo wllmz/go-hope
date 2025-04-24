@@ -117,3 +117,20 @@ ol {
     font-size: 30px !important;
   }
 }
+
+/* Assure que la page commence toujours en haut lors du rechargement ou de la navigation */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  scroll-padding-top: 0;
+  overflow-anchor: none;
+}
+
+/* Réinitialiser la position de défilement pour toutes les routes */
+html,
+body {
+  scroll-top: 0;
+  overflow-x: hidden;
+}

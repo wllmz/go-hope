@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { FaThumbsUp, FaRegThumbsUp, FaArrowLeft } from "react-icons/fa";
+import { FaThumbsUp, FaRegThumbsUp } from "react-icons/fa";
 import useSubjectsForum from "../../../hooks/forum/useSubject";
 import { useUserInfo } from "../../../hooks/user/useUserInfo";
 import { useSubjectFavorites } from "../../../hooks/forum/useActionSubject";
@@ -107,14 +107,13 @@ const SubjectById = () => {
     <div className="min-h-screen bg-gradient-to-b from-[#B3D7EC] to-white">
       <div className="w-full max-w-3xl mx-auto pb-6 px-3 sm:px-4 md:px-5">
         {/* Header avec bouton retour */}
-        <div className="flex items-center p-3 sm:p-4 top-0 z-10 md:rounded-t-xl sticky md:static">
+        <div className="flex items-center p-3 sm:p-4 md:rounded-t-xl">
           <button
             onClick={handleBackClick}
-            className="flex items-center text-gray-600 hover:text-gray-800 transition-colors"
+            className="text-2xl font-bold text-[#0E3043] hover:opacity-80 transition-opacity"
             title="Retour"
           >
-            <FaArrowLeft className="mr-2" />
-            <span className="text-base font-medium">Voir les posts</span>
+            &lt;
           </button>
         </div>
 
@@ -142,7 +141,7 @@ const SubjectById = () => {
             <h1 className="text-base font-medium text-gray-900 mb-2 sm:mb-3 md:text-lg lg:text-xl">
               {currentSubject.title}
             </h1>
-            <p className="text-sm text-[#1d5f84] mb-4 sm:mb-6 whitespace-pre-line md:text-base md:leading-relaxed">
+            <p className="text-sm text-gray-700 mb-4 sm:mb-6 whitespace-pre-line md:text-base md:leading-relaxed">
               {currentSubject.content}
             </p>
 
