@@ -147,15 +147,15 @@ const CreateSubjectButton = ({ onSubjectCreated }) => {
     <>
       {/* Bouton déclencheur de la popup de création */}
       <div
-        className="w-9 h-9 bg-orange-500 rounded-full flex items-center justify-center shadow-md cursor-pointer hover:bg-orange-600 transition-colors"
+        className="w-11 h-11 bg-orange-500 rounded-full flex items-center justify-center shadow-md cursor-pointer hover:bg-orange-600 transition-colors"
         onClick={handleOpenModal}
       >
-        <span className="text-white text-xl">+</span>
+        <span className="text-white text-[45px]">+</span>
       </div>
 
       {/* Popup de création de post */}
       <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
-        <div>
+        <div className="mr-[5px]">
           <h2 className="mb-4">Créer un post</h2>
 
           {/* Affichage du message d'erreur de manière bien visible */}

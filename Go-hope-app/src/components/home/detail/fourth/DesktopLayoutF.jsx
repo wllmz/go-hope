@@ -33,7 +33,7 @@ const DesktopLayout = () => {
             <div className="flex justify-center mt-auto">
               <button
                 onClick={() => navigate(slide.link)}
-                className={`w-full sm:w-[200px] ${slide.buttonColor} text-white font-semibold py-2 px-2 rounded-lg shadow-md transition duration-300 text-base`}
+                className={`w-full sm:w-[200px] ${slide.buttonColor} text-white py-2 px-2 rounded-lg shadow-md transition duration-300 text-base`}
               >
                 {slide.buttonText}
               </button>

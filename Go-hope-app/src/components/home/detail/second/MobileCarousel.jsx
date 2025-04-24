@@ -69,7 +69,7 @@ const MobileLayout = () => {
               <div className="flex justify-center">
                 <button
                   onClick={() => navigate(slide.link)}
-                  className="w-[200px] bg-[#F5943A] hover:bg-[#F1731F] text-white font-semibold py-2 px-2 rounded-lg shadow-md transition duration-300 text-base"
+                  className="w-[200px] bg-[#F1731F] hover:bg-[#F1731F] text-white py-2 px-2 rounded-lg shadow-md transition duration-300 text-base"
                 >
                   {slide.buttonText}
                 </button>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FiEdit2, FiLock } from "react-icons/fi";
+import { FiEdit2, FiLock, FiUser, FiCalendar } from "react-icons/fi";
 import FormInput from "../../../utils/form/FormInput";
 import FormSelect from "../../../utils/form/FormSelect";
 import SplitPhoneInput from "../../../utils/form/SplitPhoneInput";
@@ -156,27 +156,33 @@ const UserProfileForm = ({ user, onProfileChange, onEditImage }) => {
 
         {/* Champs de saisie */}
         <div className="space-y-4">
-          <FormInput
-            label="Nom d'utilisateur"
-            value={profile.username}
-            placeholder="Prénom Nom"
-            onChange={(e) => handleChange("username", e.target.value)}
-            className="w-full border border-gray-300 rounded-md p-2"
-          />
+          <div className="relative">
+            <FormInput
+              label="Nom d'utilisateur"
+              value={profile.username}
+              placeholder="Prénom Nom"
+              onChange={(e) => handleChange("username", e.target.value)}
+              className="w-full border border-gray-300 rounded-md p-2 pl-10"
+            />
+            <FiUser className="absolute left-3 top-1/2 transform -translate-y-1/4 text-gray-400" />
+          </div>
 
-          <FormInput
-            label="Date de naissance"
-            type="date"
-            value={
-              profile.dateBirth
-                ? new Date(profile.dateBirth).toISOString().split("T")[0]
-                : ""
-            }
-            max={today}
-            placeholder="jj/mm/aaaa"
-            onChange={(e) => handleChange("dateBirth", e.target.value)}
-            className="w-full border border-gray-300 rounded-md p-2"
-          />
+          <div className="relative">
+            <FormInput
+              label="Date de naissance"
+              type="date"
+              value={
+                profile.dateBirth
+                  ? new Date(profile.dateBirth).toISOString().split("T")[0]
+                  : ""
+              }
+              max={today}
+              placeholder="jj/mm/aaaa"
+              onChange={(e) => handleChange("dateBirth", e.target.value)}
+              className="w-full border border-gray-300 rounded-md p-2 pl-10"
+            />
+            <FiCalendar className="absolute left-3 top-1/2 transform -translate-y-1/4 text-gray-400" />
+          </div>
           {dateError && <p className="text-red-500 text-sm">{dateError}</p>}
 
           <FormInput

@@ -7,10 +7,10 @@ const Step3 = ({ handleNextStep, handlePreviousStep }) => {
   return (
     <div className="flex flex-col min-h-screen items-center justify-center relative p-5 ">
       {/* Flèche de retour en haut à gauche */}
-      <div className="absolute top-4 left-0">
+      <div className="absolute top-16 left-0">
         <button
           onClick={handlePreviousStep}
-          className="text-2xl text-blue-500 hover:text-blue-600 ml-4"
+          className="text-2xl text-[#1D5F84] hover:text-[#164c6d] ml-4"
         >
           <FaArrowLeft />
         </button>

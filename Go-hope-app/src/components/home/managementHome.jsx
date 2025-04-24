@@ -13,10 +13,7 @@ const Home = () => {
   const { user } = useUserInfo();
 
   return (
-    <div className="w-full flex flex-col h-full">
-      {/* Background gradient fixe */}
-      <div className="fixed inset-0 bg-gradient-to-b from-[#B3D7EC] from-0% via-[#E8F3F9] via-50% to-[#fff] to-100% -z-10" />
-
+    <div className="w-full flex flex-col h-full bg-gradient-to-b from-[#B3D7EC] from-0% via-[#E8F3F9] via-50% to-[#fff] to-100%">
       {/* Menu principal */}
       <Menu />
 

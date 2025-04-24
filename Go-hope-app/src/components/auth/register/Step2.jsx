@@ -107,7 +107,7 @@ const Step2 = ({
           <div className="flex flex-col gap-4 justify-center mt-10 w-full p-5 items-center">
             <button
               type="submit"
-              className="w-full sm:w-[300px] bg-[#1D5F84] hover:bg-[#1D5F84] text-white py-2 px-2 rounded-lg font-semibold text-lg"
+              className="w-full sm:w-[300px] bg-[#1D5F84] hover:bg-[#1D5F84] text-white py-2 px-2 rounded-lg text-lg"
             >
               Créer mon profil
             </button>

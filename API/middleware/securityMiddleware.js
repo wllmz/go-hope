@@ -35,7 +35,7 @@ export const authLimiter = rateLimit({
 // Rate limiting pour les routes API générales (ajusté pour la production)
 export const apiLimiter = rateLimit({
   windowMs: 5 * 60 * 1000, // 5 minutes
-  max: isProduction ? 200 : 800, // 200 requêtes en production, 800 en développement
+  max: isProduction ? 2000 : 8000, // 200 requêtes en production, 800 en développement
   message: "Trop de requêtes, veuillez réessayer plus tard.",
   standardHeaders: true,
   legacyHeaders: false,
@@ -44,7 +44,7 @@ export const apiLimiter = rateLimit({
 // Rate limiting pour les routes qui nécessitent beaucoup d'appels (ajusté pour la production)
 export const highTrafficLimiter = rateLimit({
   windowMs: 1 * 60 * 1000, // 1 minute
-  max: isProduction ? 100 : 300, // 100 requêtes en production, 300 en développement
+  max: isProduction ? 3000 : 10000, // 100 requêtes en production, 300 en développement
   message: "Limite de requêtes atteinte.",
   standardHeaders: true,
   legacyHeaders: false,

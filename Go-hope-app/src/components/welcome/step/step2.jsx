@@ -6,10 +6,10 @@ import { FaArrowLeft } from "react-icons/fa";
 const Step2 = ({ handleNextStep, handlePreviousStep }) => {
   return (
     <div className="flex flex-col min-h-screen items-center justify-center relative p-5 ">
-      <div className="absolute top-4 left-0">
+      <div className="absolute top-16 left-0">
         <button
           onClick={handlePreviousStep}
-          className="text-2xl text-blue-500 hover:text-blue-600 ml-4"
+          className="text-2xl text-[#1D5F84] hover:text-[#164c6d] ml-4"
         >
           <FaArrowLeft />
         </button>
@@ -33,7 +33,7 @@ const Step2 = ({ handleNextStep, handlePreviousStep }) => {
       <div className="flex flex-col sm:flex-row gap-4 justify-center mt-5 w-full p-5">
         <button
           onClick={handleNextStep}
-          className="w-full sm:w-lg bg-[#F5943A] hover:bg-[#F1731F] text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-300"
+          className="w-full sm:w-lg bg-[#F1731F] hover:bg-[#F1731F] text-white font-semibold py-3 px-6 rounded-lg shadow-md transition duration-300"
         >
           Suivant
         </button>

@@ -29,7 +29,7 @@ const Option = styled(Box)({
 });
 
 const ZONES = [
-  { id: "jambes", label: "Jambes" },
+  { id: "jambes", label: "Jambe" },
   { id: "bras", label: "Bras" },
   { id: "pied", label: "Pied" },
   { id: "main", label: "Main" },
