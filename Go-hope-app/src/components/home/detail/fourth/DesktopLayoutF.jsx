@@ -6,6 +6,12 @@ import { slideData } from "./slideData";
 const DesktopLayout = () => {
   const navigate = useNavigate();
 
+  // Fonction pour naviguer et scroller vers le haut
+  const handleNavigate = (path) => {
+    navigate(path);
+    window.scrollTo(0, 0);
+  };
+
   return (
     // Ce conteneur s'affiche uniquement sur desktop (lg et plus)
     <div className="hidden lg:block w-full p-4 mt-4  overflow-hidden">
@@ -32,8 +38,8 @@ const DesktopLayout = () => {
             </p>
             <div className="flex justify-center mt-auto">
               <button
-                onClick={() => navigate(slide.link)}
-                className={`w-full sm:w-[200px] ${slide.buttonColor} text-white py-2 px-2 rounded-lg shadow-md transition duration-300 text-base`}
+                onClick={() => handleNavigate(slide.link)}
+                className={`w-full sm:w-[200px] ${slide.buttonColor} text-white font-semibold py-2 px-2 rounded-lg shadow-md transition duration-300 text-base`}
               >
                 {slide.buttonText}
               </button>
