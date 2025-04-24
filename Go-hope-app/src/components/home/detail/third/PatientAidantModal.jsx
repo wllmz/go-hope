@@ -129,7 +129,7 @@ const PatientAidantModal = ({ isOpen, onClose }) => {
           {!showForm ? (
             <div className="mx-auto pt-4 md:pt-0 p-4">
               <div className="transform transition-all duration-700 delay-300 translate-y-0 opacity-100 flex flex-col items-center">
-                <p className="font-semibold text-[#0E3043] mb-4 sm:mb-6 md:mb-8 leading-relaxed text-center">
+                <p className="font-semibold text-[#0E3043] mb-4 sm:mb-6 md:mb-8 leading-relaxed">
                   Vous souhaitez rejoindre l'équipe GoHope{" "}
                   <br className="hidden sm:block" />
                   et devenir patient aidant ?
