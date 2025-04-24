@@ -156,9 +156,9 @@ const UserProfileForm = ({ user, onProfileChange, onEditImage }) => {
 
         {/* Champs de saisie */}
         <div className="space-y-4">
-          {/* Nom d'utilisateur - garder le style en colonnes */}
+          {/* Nom d'utilisateur - avec fond blanc */}
           <div className="flex items-center">
-            <div className="w-10 h-10 flex items-center justify-center bg-[#EDF6FC] rounded-l-md border-l border-t border-b border-gray-300">
+            <div className="w-10 h-10 flex items-center justify-center bg-white rounded-l-md border-l border-t border-b border-gray-300">
               <FiUser className="text-[#1D5F84] w-5 h-5" />
             </div>
             <div className="flex-1">
@@ -167,14 +167,14 @@ const UserProfileForm = ({ user, onProfileChange, onEditImage }) => {
                 value={profile.username}
                 placeholder="Prénom Nom"
                 onChange={(e) => handleChange("username", e.target.value)}
-                className="w-full h-10 border-l-0 border-r border-t border-b border-gray-300 rounded-r-md p-2 focus:outline-none focus:ring-1 focus:ring-[#F5943A]"
+                className="w-full h-10 border-l-0 border-r border-t border-b border-gray-300 rounded-r-md p-2 focus:outline-none focus:ring-1 focus:ring-[#F5943A] bg-white"
               />
             </div>
           </div>
 
-          {/* Date de naissance - avec pseudo-placeholder */}
+          {/* Date de naissance - avec fond blanc */}
           <div className="flex items-center">
-            <div className="w-10 h-10 flex items-center justify-center bg-[#EDF6FC] rounded-l-md border-l border-t border-b border-gray-300">
+            <div className="w-10 h-10 flex items-center justify-center bg-white rounded-l-md border-l border-t border-b border-gray-300">
               <FiCalendar className="text-[#1D5F84] w-5 h-5" />
             </div>
             <div className="flex-1 relative">
@@ -192,7 +192,7 @@ const UserProfileForm = ({ user, onProfileChange, onEditImage }) => {
                 }
                 max={today}
                 onChange={(e) => handleChange("dateBirth", e.target.value)}
-                className="w-full h-10 border-l-0 border-r border-t border-b border-gray-300 rounded-r-md p-2 focus:outline-none focus:ring-1 focus:ring-[#F5943A] appearance-none"
+                className="w-full h-10 border-l-0 border-r border-t border-b border-gray-300 rounded-r-md p-2 focus:outline-none focus:ring-1 focus:ring-[#F5943A] appearance-none bg-white"
                 style={{ minHeight: "40px", minWidth: "100%" }}
               />
             </div>

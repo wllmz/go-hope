@@ -97,7 +97,7 @@ const PasswordModal = ({ onClose }) => {
           <button
             type="submit"
             disabled={loading}
-            className="px-4 py-2 bg-blue-500 text-white rounded-md"
+            className="px-4 py-2 bg-[#1D5F84] text-white rounded-md"
           >
             {loading ? "Chargement..." : "Enregistrer"}
           </button>

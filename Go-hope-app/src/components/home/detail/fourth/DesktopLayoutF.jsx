@@ -6,10 +6,29 @@ import { slideData } from "./slideData";
 const DesktopLayout = () => {
   const navigate = useNavigate();
 
-  // Fonction pour naviguer et scroller vers le haut
+  // Fonction améliorée pour naviguer et scroller vers le haut
   const handleNavigate = (path) => {
+    // Premièrement, défiler vers le haut
+    window.scrollTo({
+      top: 0,
+      behavior: "instant", // Force un défilement immédiat sans animation
+    });
+
+    // Ensuite, naviguer vers la page
     navigate(path);
-    window.scrollTo(0, 0);
+
+    // Ajouter un défilement supplémentaire avec un léger délai pour s'assurer que ça fonctionne après la navigation
+    setTimeout(() => {
+      window.scrollTo({
+        top: 0,
+        behavior: "instant",
+      });
+
+      // Utiliser requestAnimationFrame pour s'assurer que le scroll est effectué après le rendu
+      requestAnimationFrame(() => {
+        window.scrollTo(0, 0);
+      });
+    }, 100);
   };
 
   return (
