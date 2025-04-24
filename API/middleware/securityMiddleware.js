@@ -26,7 +26,7 @@ const excludedPaths = [
 // Rate limiting pour les routes d'authentification (plus strict pour la production)
 export const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: isProduction ? 10 : 50, // 10 tentatives en production, 50 en développement
+  max: isProduction ? 100 : 200, // 10 tentatives en production, 50 en développement
   message: "Trop de tentatives de connexion, veuillez réessayer plus tard.",
   standardHeaders: true,
   legacyHeaders: false,

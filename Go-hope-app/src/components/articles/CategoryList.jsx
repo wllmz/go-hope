@@ -22,7 +22,7 @@ const CategoryList = ({
               <div className="absolute inset-0 overflow-hidden">
                 <img
                   src={
-                    category.image ||
+                    category.category_image ||
                     "https://via.placeholder.com/400x250/333/fff"
                   }
                   alt={category.category_tittle}

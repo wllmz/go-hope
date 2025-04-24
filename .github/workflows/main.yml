@@ -18,6 +18,7 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USERNAME }}
           key: ${{ secrets.VPS_SSH_KEY }}
+
           command_timeout: 30m # Remplace script_timeout qui n'existe pas
           envs: GITHUB_SHA
           script: |
@@ -33,6 +34,7 @@ jobs:
             # Afficher les services disponibles pour debug
             echo "Services disponibles:"
             docker compose config --services
+
 
             # Build + up des services prod uniquement
             # Utilisez les noms exacts des services de votre docker-compose.yml
