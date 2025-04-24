@@ -8,7 +8,7 @@ const MIN_DIMENSION = 150;
 const ImageCropper = ({ closeModal, updateAvatar, initialImage }) => {
   const imgRef = useRef(null);
   const previewCanvasRef = useRef(null);
-  const fileInputRef = useRef(null); // Référence pour l'input de fichier
+  const fileInputRef = useRef(null);
   const [imgSrc, setImgSrc] = useState(initialImage || "");
   const [crop, setCrop] = useState();
   const [completedCrop, setCompletedCrop] = useState(null);
@@ -112,7 +112,7 @@ const ImageCropper = ({ closeModal, updateAvatar, initialImage }) => {
   };
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center max-w-full p-4 md:p-6">
       {/* Input de fichier caché */}
       <input
         ref={fileInputRef}
@@ -124,24 +124,41 @@ const ImageCropper = ({ closeModal, updateAvatar, initialImage }) => {
 
       {/* Si aucune image n'est présente, on affiche le champ de sélection */}
       {!imgSrc && (
-        <div className="flex flex-col items-center gap-4 mb-6">
-          <p className="text-gray-600 text-sm text-center">
+        <div className="flex flex-col items-center gap-4 mb-6 w-full max-w-md p-8 rounded-xl bg-gradient-to-b from-[#B3D7EC]/30 to-white">
+          <p className="text-[#0E3043] text-center font-medium">
             Sélectionnez une image pour votre profil
           </p>
           <button
             onClick={triggerFileInput}
-            className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-[#87BBDF] hover:bg-[#1D5F84] focus:outline-none"
+            className="inline-flex items-center justify-center py-2.5 px-5 border border-transparent shadow-md text-sm md:text-base font-medium rounded-full text-white bg-[#F5943A] hover:bg-[#F1731F] transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#F1731F]"
           >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5 mr-2"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+              />
+            </svg>
             Choisir une image
           </button>
         </div>
       )}
 
-      {error && <p className="text-red-400 text-xs mb-4">{error}</p>}
+      {error && <p className="text-red-500 text-sm mt-2 mb-4">{error}</p>}
 
       {imgSrc && (
-        <>
-          <div className="relative w-full">
+        <div className="w-full max-w-3xl">
+          <div className="relative w-full mb-6 p-4 rounded-xl bg-gradient-to-b from-[#B3D7EC]/20 to-white/60 shadow-sm">
+            <div className="text-[#1D5F84] font-medium text-center mb-4 text-sm md:text-base">
+              Recadrez votre photo de profil
+            </div>
             <ReactCrop
               crop={crop}
               onChange={(c) => setCrop(c)}
@@ -150,6 +167,7 @@ const ImageCropper = ({ closeModal, updateAvatar, initialImage }) => {
               keepSelection
               aspect={ASPECT_RATIO}
               minWidth={MIN_DIMENSION}
+              className="max-w-full mx-auto border border-[#B3D7EC]/50 rounded-lg overflow-hidden"
             >
               <img
                 ref={imgRef}
@@ -157,33 +175,48 @@ const ImageCropper = ({ closeModal, updateAvatar, initialImage }) => {
                 alt="À recadrer"
                 style={{ maxHeight: "60vh", margin: "0 auto" }}
                 onLoad={onImageLoad}
+                className="max-w-full h-auto"
               />
             </ReactCrop>
 
             {/* Bouton pour changer d'image */}
             <button
               onClick={triggerFileInput}
-              className="absolute top-2 right-2 bg-white bg-opacity-80 text-gray-700 rounded-full p-2 shadow hover:bg-opacity-100 focus:outline-none text-xs"
+              className="absolute top-3 right-3 bg-white/90 text-[#1D5F84] rounded-full p-2.5 shadow-md hover:bg-white focus:outline-none focus:ring-2 focus:ring-[#1D5F84] transition-all duration-300 flex items-center"
             >
-              Changer l'image
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
+                />
+              </svg>
+              <span className="ml-1.5 text-xs hidden sm:inline">Changer</span>
             </button>
           </div>
 
-          <div className="flex gap-4 mt-6">
+          <div className="flex flex-col sm:flex-row gap-3 justify-center mt-6">
             <button
-              className="py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none"
+              className="order-2 sm:order-1 py-2.5 px-6 border border-[#B3D7EC] shadow-sm text-sm md:text-base font-medium rounded-full text-[#1D5F84] bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#B3D7EC] transition-colors duration-300"
               onClick={closeModal}
             >
               Annuler
             </button>
             <button
-              className="py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-[#f79862] hover:bg-[#e78852] focus:outline-none"
+              className="order-1 sm:order-2 py-2.5 px-6 border border-transparent shadow-sm text-sm md:text-base font-medium rounded-full text-white bg-[#F5943A] hover:bg-[#F1731F] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#F1731F] transition-colors duration-300"
               onClick={handleCrop}
             >
               Valider
             </button>
           </div>
-        </>
+        </div>
       )}
 
       {/* Canvas caché pour générer l'image finale */}
