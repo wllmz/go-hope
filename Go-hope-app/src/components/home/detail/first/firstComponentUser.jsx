@@ -542,7 +542,7 @@ const FirstComponentUser = () => {
             <Box
               sx={{
                 fontSize: { xs: "14px", sm: "16px" },
-                color: "#7F8C8D",
+                color: "#1D5F84",
                 fontWeight: 400,
               }}
             >

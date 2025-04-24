@@ -135,6 +135,7 @@ async function startServer() {
     app.use("/api/auth", authLimiter);
     app.use("/api/articles", highTrafficLimiter);
     app.use("/api/forum", highTrafficLimiter);
+    app.use("/api/suivi", highTrafficLimiter);
     app.use("/api", apiLimiter);
 
     // Connexion MongoDB

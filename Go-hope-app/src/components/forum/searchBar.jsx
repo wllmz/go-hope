@@ -34,7 +34,7 @@ const SearchBar = () => {
   return (
     <div className=" ">
       {/* Conteneur arrondi, style "pill" */}
-      <div className="flex items-center bg-white rounded-lg px-4 py-2 shadow-sm m-auto w-11/12 sm:w-96 md:w-[400px] lg:w-[500px]">
+      <div className="flex items-center bg-white rounded-lg px-4 py-2 shadow-sm m-auto w-full sm:w-96 md:w-[400px] lg:w-[500px]">
         {/* Chevron de retour, affiché uniquement si on a déjà une recherche */}
         {showBackArrow && (
           <button

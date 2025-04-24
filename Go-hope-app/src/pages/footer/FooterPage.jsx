@@ -1,117 +1,58 @@
 import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/authContext";
-
+import Logo from "../../assets/Logo.png";
 const FooterPage = () => {
   const currentYear = new Date().getFullYear();
   const navigate = useNavigate();
   const { currentUser } = useContext(AuthContext);
   const isLoggedIn = !!currentUser;
 
+  // Fonction pour naviguer et défiler vers le haut
+  const navigateAndScrollTop = (path) => {
+    navigate(path);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
     <footer className="bg-gradient-to-b from-[#1D5F84] to-[#164c6d] text-white py-8 sm:py-12 mt-10">
       <div className="container mx-auto px-4 sm:px-6">
         {/* Section principale du footer */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-y-10 gap-x-6 mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-10 gap-x-6 mb-12">
           {/* Logo et slogan */}
           <div className="flex flex-col items-center sm:items-start transform hover:scale-105 transition duration-300">
-            <img
-              src="/src/assets/Logo.png"
-              alt="GoHope Logo"
-              className="h-24 sm:h-28 mb-3"
-            />
+            <img src={Logo} alt="GoHope Logo" className="h-24 sm:h-28 mb-3" />
           </div>
 
-          {/* Navigation au centre - visible uniquement si connecté */}
-          {isLoggedIn && (
-            <div className="w-full">
-              <h3 className="text-white text-lg font-semibold mb-4 text-center sm:text-left relative pb-2 before:content-[''] before:absolute before:bottom-0 before:left-1/2 before:sm:left-0 before:w-16 before:h-[2px] before:bg-[#8CBED6] before:transform before:translate-x-[-50%] before:sm:translate-x-0">
-                Navigation
-              </h3>
-              <div className="grid grid-cols-2 gap-x-4 gap-y-2 justify-items-center sm:justify-items-start">
-                <button
-                  onClick={() => navigate("/accueil")}
-                  className="text-white hover:text-[#8CBED6] transition duration-300 flex items-center w-auto"
-                >
-                  <span className="mr-2 text-[#8CBED6]">›</span>
-                  <span>Accueil</span>
-                </button>
-                <button
-                  onClick={() => navigate("/la-sep")}
-                  className="text-white hover:text-[#8CBED6] transition duration-300 flex items-center w-auto"
-                >
-                  <span className="mr-2 text-[#8CBED6]">›</span>
-                  <span>La SEP</span>
-                </button>
-                <button
-                  onClick={() => navigate("/forum")}
-                  className="text-white hover:text-[#8CBED6] transition duration-300 flex items-center w-auto"
-                >
-                  <span className="mr-2 text-[#8CBED6]">›</span>
-                  <span>Forum</span>
-                </button>
-                <button
-                  onClick={() => navigate("/partenaires")}
-                  className="text-white hover:text-[#8CBED6] transition duration-300 flex items-center w-auto"
-                >
-                  <span className="mr-2 text-[#8CBED6]">›</span>
-                  <span>Partenaires</span>
-                </button>
-              </div>
-            </div>
-          )}
-
           {/* Liens légaux */}
-          <div
-            className={`flex flex-col space-y-3 items-center ${
-              isLoggedIn ? "sm:items-end" : "sm:items-start lg:col-start-3"
-            }`}
-          >
-            <h3
-              className={`text-white text-lg font-semibold mb-1 text-center ${
-                isLoggedIn ? "sm:text-right" : "sm:text-left"
-              } relative pb-2 before:content-[''] before:absolute before:bottom-0 before:left-1/2 ${
-                isLoggedIn
-                  ? "before:sm:right-0 before:sm:left-auto"
-                  : "before:sm:left-0"
-              } before:w-16 before:h-[2px] before:bg-[#8CBED6] before:transform before:translate-x-[-50%] before:sm:translate-x-0`}
-            >
+          <div className="flex flex-col space-y-3 items-center sm:items-end">
+            <h3 className="text-white text-lg font-semibold mb-1 text-center sm:text-right relative pb-2 before:content-[''] before:absolute before:bottom-0 before:left-1/2 before:sm:right-0 before:sm:left-auto before:w-16 before:h-[2px] before:bg-[#8CBED6] before:transform before:translate-x-[-50%] before:sm:translate-x-0">
               Legal
             </h3>
-            <div
-              className={`mt-3 flex flex-col items-center ${
-                isLoggedIn ? "sm:items-end" : "sm:items-start"
-              } space-y-3`}
-            >
+            <div className="mt-3 flex flex-col items-center sm:items-end space-y-3">
               <button
-                onClick={() => navigate("/mentions-legales")}
-                className={`text-white hover:text-[#8CBED6] transition duration-300 text-center ${
-                  isLoggedIn ? "sm:text-right" : "sm:text-left"
-                }`}
+                onClick={() => navigateAndScrollTop("/mentions-legales")}
+                className="text-white hover:text-[#8CBED6] transition duration-300 text-center sm:text-right"
               >
                 Mentions Légales
               </button>
               <button
-                onClick={() => navigate("/politique-confidentialite")}
-                className={`text-white hover:text-[#8CBED6] transition duration-300 text-center ${
-                  isLoggedIn ? "sm:text-right" : "sm:text-left"
-                }`}
+                onClick={() =>
+                  navigateAndScrollTop("/politique-confidentialite")
+                }
+                className="text-white hover:text-[#8CBED6] transition duration-300 text-center sm:text-right"
               >
                 Politique de confidentialité
               </button>
               <button
-                onClick={() => navigate("/conditions-generales")}
-                className={`text-white hover:text-[#8CBED6] transition duration-300 text-center ${
-                  isLoggedIn ? "sm:text-right" : "sm:text-left"
-                }`}
+                onClick={() => navigateAndScrollTop("/conditions-generales")}
+                className="text-white hover:text-[#8CBED6] transition duration-300 text-center sm:text-right"
               >
                 Conditions générales
               </button>
               <button
-                onClick={() => navigate("/cookies")}
-                className={`text-white hover:text-[#8CBED6] transition duration-300 text-center ${
-                  isLoggedIn ? "sm:text-right" : "sm:text-left"
-                }`}
+                onClick={() => navigateAndScrollTop("/cookies")}
+                className="text-white hover:text-[#8CBED6] transition duration-300 text-center sm:text-right"
               >
                 Cookies
               </button>
@@ -130,7 +71,7 @@ const FooterPage = () => {
 
           <div className="flex justify-center space-x-4 mb-6 sm:mb-0 order-1 sm:order-2">
             <a
-              href="https://linkedin.com"
+              href="https://www.linkedin.com/company/gohope/posts/?feedView=all"
               target="_blank"
               rel="noopener noreferrer"
               className="text-white bg-[#0e4a71] hover:bg-[#8CBED6] p-2 sm:p-3 rounded-full transition duration-300 transform hover:scale-110"
@@ -145,7 +86,7 @@ const FooterPage = () => {
               </svg>
             </a>
             <a
-              href="https://instagram.com"
+              href="https://www.instagram.com/go.hope_/?hl=fr"
               target="_blank"
               rel="noopener noreferrer"
               className="text-white bg-[#0e4a71] hover:bg-[#8CBED6] p-2 sm:p-3 rounded-full transition duration-300 transform hover:scale-110"
@@ -164,7 +105,7 @@ const FooterPage = () => {
               </svg>
             </a>
             <a
-              href="https://facebook.com"
+              href="https://www.facebook.com/profile.php?id=61565476389207"
               target="_blank"
               rel="noopener noreferrer"
               className="text-white bg-[#0e4a71] hover:bg-[#8CBED6] p-2 sm:p-3 rounded-full transition duration-300 transform hover:scale-110"

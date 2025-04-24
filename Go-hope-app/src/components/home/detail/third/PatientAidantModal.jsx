@@ -73,7 +73,7 @@ const PatientAidantModal = ({ isOpen, onClose }) => {
             <div className="transform transition-all duration-700 delay-300 translate-y-0 opacity-100">
               <h2 className="text-5xl font-confiteria text-[#0E3043] mb-10 leading-relaxed">
                 Vous souhaitez rejoindre l'équipe GoHope <br />
-                et devenir patient aidant ?
+                et devenir patient partenaire?
               </h2>
               <p className="text-[#666666] text-2xl leading-relaxed max-w-3xl mx-auto mb-16">
                 Faites nous part de votre demande et de votre parcours.

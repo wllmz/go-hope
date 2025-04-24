@@ -1,9 +1,17 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import logo from "../../assets/Logo.png";
 import { FaHome, FaUsers, FaUser, FaFileAlt } from "react-icons/fa";
 
 const Menu = () => {
+  const navigate = useNavigate();
+
+  // Fonction pour naviguer et défiler vers le haut
+  const navigateAndScrollTop = (path) => {
+    navigate(path);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
     <>
       {/* Menu principal - visible sur desktop */}
@@ -22,6 +30,7 @@ const Menu = () => {
                     ? "text-[#F5943A] font-bold"
                     : "text-white font-medium"
                 }
+                onClick={() => navigateAndScrollTop("/accueil")}
               >
                 Accueil
               </NavLink>
@@ -34,6 +43,7 @@ const Menu = () => {
                     ? "text-[#F5943A] font-bold"
                     : "text-white font-medium"
                 }
+                onClick={() => navigateAndScrollTop("/forum")}
               >
                 Forum
               </NavLink>
@@ -46,6 +56,7 @@ const Menu = () => {
                     ? "text-[#F5943A] font-bold"
                     : "text-white font-medium"
                 }
+                onClick={() => navigateAndScrollTop("/la-sep")}
               >
                 La SEP
               </NavLink>
@@ -58,6 +69,7 @@ const Menu = () => {
                     ? "text-[#F5943A] font-bold"
                     : "text-white font-medium"
                 }
+                onClick={() => navigateAndScrollTop("/compte")}
               >
                 Compte
               </NavLink>
@@ -80,6 +92,7 @@ const Menu = () => {
                     : "text-white hover:text-[#F5943A]"
                 }`
               }
+              onClick={() => navigateAndScrollTop("/accueil")}
             >
               {({ isActive }) => (
                 <>
@@ -102,6 +115,7 @@ const Menu = () => {
                     : "text-white hover:text-[#F5943A]"
                 }`
               }
+              onClick={() => navigateAndScrollTop("/forum")}
             >
               {({ isActive }) => (
                 <>
@@ -124,6 +138,7 @@ const Menu = () => {
                     : "text-white hover:text-[#F5943A]"
                 }`
               }
+              onClick={() => navigateAndScrollTop("/la-sep")}
             >
               {({ isActive }) => (
                 <>
@@ -146,6 +161,7 @@ const Menu = () => {
                     : "text-white hover:text-[#F5943A]"
                 }`
               }
+              onClick={() => navigateAndScrollTop("/compte")}
             >
               {({ isActive }) => (
                 <>

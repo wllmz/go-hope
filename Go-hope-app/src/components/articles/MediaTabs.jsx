@@ -10,7 +10,7 @@ const MediaTabs = ({ selectedMediaType, setSelectedMediaType }) => {
           className={`w-full flex items-center justify-center transition-colors p-4 md:p-5 cursor-pointer ${
             selectedMediaType === "Fiche"
               ? "text-[#0E3043] z-40 shadow-lg rounded-b-3xl rounded-r-xl rounded-t-lg transform -translate-y-1"
-              : "bg-white text-[#87BBDF]"
+              : "bg-[#0f172a00] text-[#87BBDF] rounded-tr-[10px]"
           }`}
           title="Fiches"
         >
@@ -37,7 +37,7 @@ const MediaTabs = ({ selectedMediaType, setSelectedMediaType }) => {
           className={`w-full flex items-center justify-center transition-colors p-4 md:p-5 cursor-pointer ${
             selectedMediaType === "Vidéo"
               ? "text-[#0E3043] z-40 shadow-lg rounded-b-3xl rounded-l-xl rounded-t-lg transform -translate-y-1"
-              : "bg-white text-[#87BBDF]"
+              : "bg-[#0f172a00] text-[#87BBDF] rounded-tl-[10px]"
           }`}
           title="Vidéos"
         >

@@ -14,6 +14,7 @@ const SplitPhoneInput = ({
   onChange,
   placeholder = "Numéro",
   className = "",
+  iconComponent = null,
 }) => {
   // On suppose que la valeur est sous la forme : indicatif + numéro local
   // Exemple : "+33XXXXXXXXX".
@@ -56,11 +57,12 @@ const SplitPhoneInput = ({
   };
 
   return (
-    <div className={`flex space-x-2 ${className}`}>
+    <div className={`flex space-x-2 ${className} relative`}>
+      {iconComponent}
       <select
         value={country}
         onChange={handleCountryChange}
-        class="border border-gray-300 bg-white rounded-md p-2
+        className="border border-gray-300 bg-white rounded-md p-2
          focus:outline-none focus:border-[#F5943A]"
       >
         {countryCodes.map((c) => (

@@ -196,7 +196,10 @@ const Calendar = ({
                 </MonthName>
                 <DataIndicator
                   hasData={hasData}
-                  style={{ visibility: isFuture ? "hidden" : "visible" }}
+                  style={{
+                    visibility: isFuture ? "hidden" : "visible",
+                    backgroundColor: hasData ? "#1D5F84" : "#B3D7EC",
+                  }}
                   onClick={(e) => {
                     if (isSelected && !isLoading) {
                       e.stopPropagation();

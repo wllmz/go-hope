@@ -252,7 +252,7 @@ const AllSubject = () => {
               <button
                 className={`flex items-center px-4 py-2 min-w-[90px] whitespace-nowrap rounded-xl transition-all duration-200 ${
                   activeTab === "favoris"
-                    ? "bg-[#3B5F8A] text-white shadow"
+                    ? "bg-[#F1731F] text-white shadow"
                     : "bg-gray-200 text-gray-800 hover:bg-gray-300"
                 }`}
                 onClick={() => changeTab("favoris")}

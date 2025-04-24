@@ -6,7 +6,7 @@ const SlideCard = ({ slide }) => {
 
   return (
     // Sur mobile (en dessous de lg), on fixe la hauteur à 400px ; sur desktop, la hauteur est auto
-    <div className="w-full mt-4 overflow-hidden h-[400px] lg:h-auto bg-white">
+    <div className="w-full mt-4 overflow-hidden h-[400px] lg:h-auto">
       <div
         className={`flex flex-col items-center justify-between h-full p-4 rounded-xl shadow-md ${slide.cardColor}`}
       >
@@ -17,19 +17,19 @@ const SlideCard = ({ slide }) => {
           alt={slide.title}
         />
         <h2
-          className={`text-lg xl:text-xl ${slide.titleColor} text-center mb-3`}
+          className={`text-[20px] p-1 font-normal xl:text-xl ${slide.titleColor} text-center mb-3 font-confiteria`}
         >
           {slide.title}
         </h2>
         <p
-          className={`text-base xl:text-lg ${slide.textColor} text-center mt-2 mb-6`}
+          className={`text-[18px] p-1 font-normal xl:text-lg ${slide.textColor} text-center mt-2 mb-6`}
         >
           {slide.description}
         </p>
         <div className="flex justify-center">
           <button
             onClick={() => navigate(slide.link)}
-            className={`w-[200px] ${slide.buttonColor} text-white font-semibold py-2 px-2 rounded-lg shadow-md transition duration-300 text-base`}
+            className={`w-[200px] ${slide.buttonColor} text-white  py-2 px-2 rounded-lg shadow-md transition duration-300 text-base`}
           >
             {slide.buttonText}
           </button>

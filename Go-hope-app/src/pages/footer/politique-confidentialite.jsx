@@ -336,10 +336,10 @@ const PolitiqueConfidentialite = () => {
               <p className="mt-3">
                 Pour exercer ces droits, veuillez nous contacter à l'adresse :{" "}
                 <a
-                  href="mailto:privacy@go-hope.fr"
+                  href="mailto:contact.gohope@gmail.com"
                   className="text-[#1D5F84] hover:underline"
                 >
-                  privacy@go-hope.fr
+                  contact.gohope@gmail.com
                 </a>
                 . Nous nous efforcerons de répondre à votre demande dans un
                 délai d'un mois.
@@ -395,9 +395,6 @@ const PolitiqueConfidentialite = () => {
               <p className="mb-3">
                 GoHope
                 <br />
-                123 Avenue de l'Espoir
-                <br />
-                75000 Paris
                 <br />
                 France
               </p>
@@ -405,10 +402,10 @@ const PolitiqueConfidentialite = () => {
               <p className="mb-3">
                 Email :{" "}
                 <a
-                  href="mailto:privacy@go-hope.fr"
+                  href="mailto:contact.gohope@gmail.com"
                   className="text-[#1D5F84] hover:underline"
                 >
-                  privacy@go-hope.fr
+                  contact.gohope@gmail.com
                 </a>
               </p>
 

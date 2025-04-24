@@ -4,7 +4,7 @@ const CategoryList = ({ categories, onCategoryClick, subjectCounts }) => {
   return (
     <>
       <div className="flex justify-between items-center mb-4">
-        <h2>Liste des Catégories</h2>
+        <h2>Sujets populaires</h2>
       </div>
       {categories && categories.length > 0 ? (
         <ul className="grid grid-cols-3 gap-3 mb-8">
