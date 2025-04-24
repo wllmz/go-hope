@@ -142,7 +142,7 @@ const SubjectById = () => {
             <h1 className="text-base font-medium text-gray-900 mb-2 sm:mb-3 md:text-lg lg:text-xl">
               {currentSubject.title}
             </h1>
-            <p className="text-sm text-gray-700 mb-4 sm:mb-6 whitespace-pre-line md:text-base md:leading-relaxed">
+            <p className="text-sm text-[#1d5f84] mb-4 sm:mb-6 whitespace-pre-line md:text-base md:leading-relaxed">
               {currentSubject.content}
             </p>
 

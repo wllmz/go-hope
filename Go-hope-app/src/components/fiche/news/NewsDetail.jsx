@@ -160,8 +160,8 @@ const NewsDetail = () => {
           {news.image && (
             <div className="mb-6 flex justify-center">
               <img
-                src={news.image}
-                alt={news.titre}
+                src={news.article.image}
+                alt={news.article.titre}
                 className="max-w-full h-auto rounded-lg"
               />
             </div>
