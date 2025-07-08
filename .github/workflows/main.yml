@@ -2,14 +2,16 @@ name: Deploy to VPS
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Deploy to VPS
         uses: appleboy/ssh-action@v0.1.7
@@ -20,12 +22,21 @@ jobs:
           script: |
             cd /var/www/go-hope
 
-            echo "Pulling latest code..."
-            git pull origin main
+            # Désactiver BuildKit pour éviter le bug ContainerConfig
+            export DOCKER_BUILDKIT=0
 
-            echo "Building and deploying containers..."
-            docker-compose down go-hope-frontend go-hope-backend
-            docker-compose build --no-cache go-hope-frontend go-hope-backend
-            docker-compose up -d go-hope-frontend go-hope-backend
+            # Récupère la branche qui a déclenché le workflow
+            BRANCH="${{ github.ref }}"
+            echo "Branche déclenchante : $BRANCH"
 
-            echo "Deployment completed successfully!"
+            if [ "$BRANCH" = "refs/heads/main" ]; then
+              echo "Déploiement production (frontend et backend)"
+              git pull origin main
+              docker-compose stop frontend backend
+              docker-compose rm -f frontend backend
+              docker-compose pull frontend backend
+              docker-compose build --no-cache frontend backend
+              docker-compose up -d --remove-orphans frontend backend
+            fi
+
+            echo "Déploiement avec Docker terminé avec succès."
