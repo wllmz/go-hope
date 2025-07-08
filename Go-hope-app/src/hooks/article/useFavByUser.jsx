@@ -18,7 +18,7 @@ export const useFavByUser = () => {
       } else if (Array.isArray(data)) {
         setArticles(data);
       } else {
-        console.warn("Format de données inattendu dans getFavByUser :", data);
+        
         setArticles([]);
       }
     } catch (err) {

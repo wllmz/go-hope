@@ -17,7 +17,7 @@ const News = () => {
           setNews(newsFiches);
         }
       } catch (error) {
-        console.error("Erreur lors du chargement des actualités:", error);
+        
       } finally {
         setLoading(false);
       }

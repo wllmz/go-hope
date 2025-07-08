@@ -21,7 +21,7 @@ const CommentsSection = ({ initialComments, subjectId, currentUser }) => {
 
   const validComments = comments.filter((comment, index) => {
     if (!comment || !comment._id) {
-      console.error(`Commentaire invalide à l'index ${index}:`, comment);
+      
       return false;
     }
     return true;
@@ -64,7 +64,7 @@ const CommentsSection = ({ initialComments, subjectId, currentUser }) => {
         )
       );
     } catch (err) {
-      console.error("Erreur lors de la création du commentaire :", err);
+      
       // En cas d'erreur, retirer le commentaire temporaire
       setComments((prev) =>
         prev.filter((comment) => comment._id !== tempComment._id)
@@ -81,7 +81,7 @@ const CommentsSection = ({ initialComments, subjectId, currentUser }) => {
 
   const handleLikeToggle = async (comment) => {
     if (!user) {
-      console.error("Utilisateur non connecté.");
+      
       return;
     }
 
@@ -113,7 +113,6 @@ const CommentsSection = ({ initialComments, subjectId, currentUser }) => {
         await likeAComment(comment._id, {});
       }
     } catch (err) {
-      console.error("Erreur lors de la mise à jour du like :", err);
 
       // En cas d'erreur, restaurer l'état précédent
       setComments((prev) =>

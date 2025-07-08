@@ -17,10 +17,7 @@ const Sante = () => {
           setSante(santeFiches);
         }
       } catch (error) {
-        console.error(
-          "Erreur lors du chargement des informations santé:",
-          error
-        );
+        
       } finally {
         setLoading(false);
       }

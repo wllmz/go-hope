@@ -16,7 +16,7 @@ export const useLogout = () => {
       setUser(null); // Réinitialise l'état utilisateur dans le AuthContext
       return true; // Succès
     } catch (err) {
-      console.error("Erreur lors de la déconnexion :", err);
+      
       setError(err.response?.data?.message || "Erreur lors de la déconnexion.");
       return false; // Échec
     } finally {

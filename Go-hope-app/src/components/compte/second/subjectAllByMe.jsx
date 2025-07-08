@@ -46,10 +46,7 @@ const InfoUserSubjects = () => {
         await addToFavorites(subjectId);
       }
     } catch (err) {
-      console.error(
-        "Erreur lors de la mise à jour des favoris du sujet :",
-        err
-      );
+      
     }
   };
 

@@ -213,7 +213,6 @@ export const upsertUser = async (req, res) => {
       user,
     });
   } catch (error) {
-    console.error("Erreur dans upsertUser :", error.message);
 
     // Par défaut, on considère une erreur interne 500
     let status = 500;

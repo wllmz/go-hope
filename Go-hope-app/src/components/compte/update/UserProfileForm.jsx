@@ -96,7 +96,7 @@ const UserProfileForm = ({ user, onProfileChange, onEditImage }) => {
         // Upload du fichier avec notre hook
         await handleImageUpload(file);
       } catch (err) {
-        console.error("Erreur lors de l'upload:", err);
+        
       }
     };
 

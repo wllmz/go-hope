@@ -40,7 +40,7 @@ const LoginForm = () => {
         navigate("/accueil");
       }, 2000);
     } catch (err) {
-      console.error("Erreur de connexion :", err);
+      
       setShowSuccessMessage(false);
     }
   };

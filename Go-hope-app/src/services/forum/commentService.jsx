@@ -2,25 +2,15 @@ import axiosInstance from "../instance/axiosInstance";
 
 export const createComment = async (subjectId, commentData) => {
   try {
-    console.log("Tentative de création de commentaire:", {
-      subjectId,
-      commentData,
-      headers: axiosInstance.defaults.headers,
-    });
 
     const response = await axiosInstance.post(
       `/forum/comments/${subjectId}`,
       commentData
     );
 
-    console.log("Réponse reçue:", response);
     return response.data;
   } catch (error) {
-    console.error("Erreur détaillée:", {
-      status: error.response?.status,
-      data: error.response?.data,
-      headers: error.response?.headers,
-    });
+    
     return (
       error.response?.data || {
         message: "Erreur inconnue lors de la création du commentaire",

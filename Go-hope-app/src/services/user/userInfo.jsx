@@ -10,15 +10,11 @@ export const getUserInfo = async () => {
     });
 
     // Vérifie que la réponse est bien structurée
-    console.log("Response from API:", response.data);
 
     // Renvoi des données de la réponse
     return response.data;
   } catch (error) {
-    console.error(
-      "Erreur lors de la récupération des informations du user",
-      error
-    );
+    
     throw error; // Propagation de l'erreur
   }
 };
@@ -35,7 +31,7 @@ export const updatePassword = async (updatedData) => {
     // Renvoi des données de la réponse
     return response.data;
   } catch (error) {
-    console.error("Erreur lors de la mise à jour du mot de passe", error);
+    
     throw error; // Propagation de l'erreur
   }
 };
@@ -48,10 +44,7 @@ export const upsertUser = async (userData) => {
     // Renvoi des données de la réponse
     return response.data;
   } catch (error) {
-    console.error(
-      "Erreur lors de la création ou mise à jour de l'utilisateur",
-      error
-    );
+    
     throw error; // Propagation de l'erreur
   }
 };

@@ -22,7 +22,7 @@ const useArticle = () => {
       setError(null);
     } catch (err) {
       setError(err);
-      console.error("Erreur lors de la récupération des articles:", err);
+      
     } finally {
       setLoading(false);
     }
@@ -38,7 +38,7 @@ const useArticle = () => {
       return data;
     } catch (err) {
       setError(err);
-      console.error(`Erreur lors de la récupération de l'article ${id}:`, err);
+      
       return null;
     } finally {
       setLoading(false);
@@ -55,7 +55,7 @@ const useArticle = () => {
       return newArticle;
     } catch (err) {
       setError(err);
-      console.error("Erreur lors de la création de l'article:", err);
+      
       throw err;
     } finally {
       setLoading(false);
@@ -76,7 +76,7 @@ const useArticle = () => {
       return updatedArticle;
     } catch (err) {
       setError(err);
-      console.error(`Erreur lors de la mise à jour de l'article ${id}:`, err);
+      
       throw err;
     } finally {
       setLoading(false);
@@ -92,7 +92,7 @@ const useArticle = () => {
       setError(null);
     } catch (err) {
       setError(err);
-      console.error(`Erreur lors de la suppression de l'article ${id}:`, err);
+      
       throw err;
     } finally {
       setLoading(false);

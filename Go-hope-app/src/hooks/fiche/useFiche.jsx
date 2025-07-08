@@ -22,7 +22,7 @@ const useFiche = () => {
       setError(null);
     } catch (err) {
       setError(err);
-      console.error("Erreur lors de la récupération des fiches:", err);
+      
     } finally {
       setLoading(false);
     }
@@ -37,10 +37,7 @@ const useFiche = () => {
       return data;
     } catch (err) {
       setError(err);
-      console.error(
-        `Erreur lors de la récupération des fiches de catégorie ${categoryName}:`,
-        err
-      );
+      
       return [];
     } finally {
       setLoading(false);
@@ -57,7 +54,7 @@ const useFiche = () => {
       return newFiche;
     } catch (err) {
       setError(err);
-      console.error("Erreur lors de la création de la fiche:", err);
+      
       throw err;
     } finally {
       setLoading(false);
@@ -78,10 +75,7 @@ const useFiche = () => {
       return updatedFiche;
     } catch (err) {
       setError(err);
-      console.error(
-        `Erreur lors de la mise à jour de la fiche ${ficheId}:`,
-        err
-      );
+      
       throw err;
     } finally {
       setLoading(false);
@@ -97,10 +91,7 @@ const useFiche = () => {
       setError(null);
     } catch (err) {
       setError(err);
-      console.error(
-        `Erreur lors de la suppression de la fiche ${ficheId}:`,
-        err
-      );
+      
       throw err;
     } finally {
       setLoading(false);

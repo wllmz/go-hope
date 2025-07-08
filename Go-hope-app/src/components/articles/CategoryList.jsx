@@ -11,9 +11,7 @@ const CategoryList = ({
 
   // Fonction de gestion d'erreur d'image
   const handleImageError = (categoryId) => {
-    console.error(
-      `Erreur de chargement d'image pour la catégorie ${categoryId}`
-    );
+    
     setImageErrors((prev) => ({ ...prev, [categoryId]: true }));
   };
 
@@ -25,9 +23,6 @@ const CategoryList = ({
       {categories && categories.length > 0 ? (
         <ul className="grid grid-cols-3 gap-3 mb-8">
           {categories.map((category) => {
-            console.log(
-              `Catégorie: ${category.category_tittle}, Image URL: ${category.category_image}`
-            );
 
             return (
               <li

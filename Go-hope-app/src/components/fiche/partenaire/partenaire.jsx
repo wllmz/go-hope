@@ -17,10 +17,7 @@ const Partenaire = () => {
           setPartenaire(partenaireFiches);
         }
       } catch (error) {
-        console.error(
-          "Erreur lors du chargement des informations partenaire:",
-          error
-        );
+        
       } finally {
         setLoading(false);
       }

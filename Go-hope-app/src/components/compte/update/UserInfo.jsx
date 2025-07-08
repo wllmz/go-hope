@@ -129,7 +129,7 @@ const UserProfileUpdate = () => {
       // Rafraîchir les infos utilisateur après la mise à jour
       await fetchUserInfo();
     } catch (err) {
-      console.error("Erreur lors de la mise à jour de l'image:", err);
+      
       // La gestion des erreurs est déjà faite par le useEffect
     }
   };
@@ -152,7 +152,7 @@ const UserProfileUpdate = () => {
       // Rafraîchir les infos utilisateur après la mise à jour
       await fetchUserInfo();
     } catch (err) {
-      console.error("Erreur lors de la mise à jour du profil", err);
+      
       // La gestion des erreurs est déjà faite par le useEffect
     }
   };

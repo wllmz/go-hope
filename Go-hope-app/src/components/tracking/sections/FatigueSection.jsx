@@ -17,7 +17,7 @@ const FatigueSection = ({ data, selectedDate, onUpdateFatigue }) => {
     try {
       await onUpdateFatigue(newValue);
     } catch (error) {
-      console.error("Erreur lors de la mise à jour de la fatigue:", error);
+      
     }
   };
 

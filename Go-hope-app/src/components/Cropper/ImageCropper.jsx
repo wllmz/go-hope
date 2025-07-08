@@ -102,7 +102,7 @@ const ImageCropper = ({ closeModal, updateAvatar, initialImage }) => {
       setCrop(defaultCrop);
       setCompletedCrop(defaultCrop);
     } catch (err) {
-      console.error("Erreur lors du chargement de l'image:", err);
+      
       setError("Erreur lors du calcul des dimensions de l'image.");
     }
     return false;
@@ -126,12 +126,7 @@ const ImageCropper = ({ closeModal, updateAvatar, initialImage }) => {
       const scaleY = image.naturalHeight / image.height;
 
       if (isNaN(scaleX) || isNaN(scaleY) || scaleX <= 0 || scaleY <= 0) {
-        console.error("Dimensions invalides:", {
-          scaleX,
-          scaleY,
-          naturalWidth: image.naturalWidth,
-          width: image.width,
-        });
+        
         return;
       }
 
@@ -144,7 +139,7 @@ const ImageCropper = ({ closeModal, updateAvatar, initialImage }) => {
 
       // S'assurer que les dimensions sont positives et valides
       if (pixelCrop.width <= 0 || pixelCrop.height <= 0) {
-        console.error("Crop dimensions invalides:", pixelCrop);
+        
         return;
       }
 
@@ -184,7 +179,7 @@ const ImageCropper = ({ closeModal, updateAvatar, initialImage }) => {
       );
       ctx.restore();
     } catch (err) {
-      console.error("Erreur lors du recadrage:", err);
+      
       setError("Erreur lors du traitement de l'image.");
     }
   }, [completedCrop]);
@@ -215,7 +210,7 @@ const ImageCropper = ({ closeModal, updateAvatar, initialImage }) => {
       updateAvatar(dataUrl); // On transmet la data URL au parent
       closeModal();
     } catch (err) {
-      console.error("Erreur lors de la validation:", err);
+      
       setError("Erreur lors de la validation de l'image. Veuillez réessayer.");
     }
   };

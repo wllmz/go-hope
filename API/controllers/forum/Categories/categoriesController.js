@@ -11,7 +11,7 @@ export const listAllCategoriesForum = async (req, res) => {
       message: "Erreur lors de la récupération des catégories.",
       error: error.message,
     });
-    console.error(error);
+    
   }
 };
 
@@ -48,7 +48,7 @@ export const createCategorieForum = async (req, res) => {
       categorie: newCategorie,
     });
   } catch (error) {
-    console.error("Erreur lors de la création de la catégorie :", error);
+    
     return res.status(500).json({
       message: "Erreur lors de la création de la catégorie.",
       error: error.message,
@@ -72,7 +72,7 @@ export const deleteCategorieForum = async (req, res) => {
       message: "Erreur lors de la suppression de la catégorie.",
       error: error.message,
     });
-    console.error(error);
+    
   }
 };
 
@@ -104,7 +104,7 @@ export const updateCategorieForum = async (req, res) => {
       categorie: updatedCategorie,
     });
   } catch (error) {
-    console.error("Erreur lors de la mise à jour de la catégorie :", error);
+    
     res.status(500).json({
       message: "Erreur lors de la mise à jour de la catégorie.",
       error: error.message,
@@ -130,6 +130,6 @@ export const getCategorieByIdForum = async (req, res) => {
       message: "Erreur lors de la récupération de la catégorie.",
       error: error.message,
     });
-    console.error(error);
+    
   }
 };

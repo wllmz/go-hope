@@ -24,7 +24,7 @@ const SubjectById = () => {
     try {
       await fetchSubjectById(subjectId);
     } catch (err) {
-      console.error("Erreur lors de la récupération du subject :", err);
+      
     }
   };
 
@@ -78,7 +78,7 @@ const SubjectById = () => {
         await addToFavorites(currentSubject._id);
       }
     } catch (err) {
-      console.error("Erreur lors de la mise à jour des favoris :", err);
+      
       // En cas d'erreur, restaurer l'état précédent
       setIsFavorite(originalFavorite);
       setLocalFavorisCount(originalCount);

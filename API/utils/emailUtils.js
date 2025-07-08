@@ -95,9 +95,9 @@ export const sendVerificationEmail = async (email) => {
 
   try {
     await transporter.sendMail(mailOptions);
-    console.log("Email de vérification envoyé à : " + email);
+    
   } catch (error) {
-    console.error("Erreur lors de l'envoi de l'email de vérification :", error);
+    
   }
 };
 
@@ -175,9 +175,9 @@ export const sendInvitationEmail = async (email) => {
 
   try {
     await transporter.sendMail(mailOptions);
-    console.log("Email d'invitation envoyé à : " + email);
+    
   } catch (error) {
-    console.error("Erreur lors de l'envoi de l'email d'invitation :", error);
+    
   }
 };
 
@@ -239,8 +239,8 @@ export const sendNotificationEmail = async (email, companyName) => {
 
   try {
     await transporter.sendMail(mailOptions);
-    console.log("Email de notification envoyé à : " + email);
+    
   } catch (error) {
-    console.error("Erreur lors de l'envoi de l'email de notification :", error);
+    
   }
 };

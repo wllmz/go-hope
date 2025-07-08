@@ -44,7 +44,7 @@ const ArticleManagement = () => {
         setIsDeleteModalOpen(false);
         setSelectedArticle(null);
       } catch (err) {
-        console.error("Erreur lors de la suppression de l'article :", err);
+        
       }
     }
   };
@@ -55,7 +55,7 @@ const ArticleManagement = () => {
       setIsCreateModalOpen(false);
       fetchAllArticlesAdmin(); // Rafraîchir la liste après création
     } catch (err) {
-      console.error("Erreur lors de la création de l'article :", err);
+      
     }
   };
 
@@ -67,7 +67,7 @@ const ArticleManagement = () => {
         setSelectedArticle(null);
         fetchAllArticlesAdmin(); // Rafraîchir la liste après modification
       } catch (err) {
-        console.error("Erreur lors de la mise à jour de l'article :", err);
+        
       }
     }
   };

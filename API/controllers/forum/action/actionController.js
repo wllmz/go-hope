@@ -31,7 +31,7 @@ export const addToFavoris = async (req, res) => {
       subject,
     });
   } catch (error) {
-    console.error("Erreur lors de l'ajout aux favoris :", error);
+    
     res.status(500).json({
       message: "Erreur lors de l'ajout aux favoris.",
       error: error.message,
@@ -72,7 +72,7 @@ export const removeFromFavoris = async (req, res) => {
       subject,
     });
   } catch (error) {
-    console.error("Erreur lors du retrait des favoris :", error);
+    
     res.status(500).json({
       message: "Erreur lors du retrait des favoris.",
       error: error.message,

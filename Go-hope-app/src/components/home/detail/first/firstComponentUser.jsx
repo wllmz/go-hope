@@ -67,10 +67,6 @@ const FirstComponentUser = () => {
     if (uploadedImage && uploadedImage.filePath && !isUpdating) {
       const updateProfile = async () => {
         try {
-          console.log(
-            "Mise à jour du profil avec la nouvelle image:",
-            uploadedImage.filePath
-          );
 
           // Utiliser upsertUserData au lieu de updateUserProfile
           const imageData = {
@@ -80,7 +76,7 @@ const FirstComponentUser = () => {
 
           setProfileUpdateSuccess(true);
         } catch (error) {
-          console.error("Erreur lors de la mise à jour du profil:", error);
+          
         } finally {
           setShowImageCropperModal(false);
         }
@@ -101,11 +97,6 @@ const FirstComponentUser = () => {
     try {
       const endDate = addDays(weekStart, 6);
 
-      console.log("Chargement des données pour la semaine:", {
-        début: format(weekStart, "yyyy-MM-dd"),
-        fin: format(endDate, "yyyy-MM-dd"),
-      });
-
       const response = await getDatesWithData(
         format(weekStart, "yyyy-MM-dd"),
         format(endDate, "yyyy-MM-dd")
@@ -118,7 +109,7 @@ const FirstComponentUser = () => {
         });
       }
     } catch (error) {
-      console.error("Erreur lors du chargement des données:", error);
+      
     }
   };
 
@@ -143,9 +134,9 @@ const FirstComponentUser = () => {
 
         // Upload du fichier
         await handleImageUpload(file);
-        console.log("Image uploadée, en attente de mise à jour du profil...");
+        
       } catch (err) {
-        console.error("Erreur lors de l'upload:", err);
+        
         setShowImageCropperModal(false);
       }
     };
@@ -190,7 +181,7 @@ const FirstComponentUser = () => {
         });
       }
     } catch (error) {
-      console.error("Erreur lors de la récupération des données:", error);
+      
     }
   };
 
@@ -212,10 +203,6 @@ const FirstComponentUser = () => {
         niveau: activeTab !== "sensoriel" ? null : undefined,
       };
 
-      console.log("handleCreateSuivi - ZoneData reçu:", zoneData);
-      console.log("handleCreateSuivi - Date formatée:", formattedDate);
-      console.log("handleCreateSuivi - Nouvelle zone:", newZone);
-
       let fieldName;
       switch (activeTab) {
         case "motricite":
@@ -236,8 +223,6 @@ const FirstComponentUser = () => {
         [fieldName]: [newZone],
       });
 
-      console.log("handleCreateSuivi - Réponse de l'API:", response);
-
       if (response?.suivi) {
         setData((prev) => ({
           ...prev,
@@ -248,10 +233,10 @@ const FirstComponentUser = () => {
           humeur: response.suivi.humeur || null,
         }));
       } else {
-        console.error("Réponse de l'API invalide:", response);
+        
       }
     } catch (error) {
-      console.error("Erreur création suivi:", error);
+      
     }
   };
 
@@ -274,7 +259,7 @@ const FirstComponentUser = () => {
         ),
       }));
     } catch (error) {
-      console.error("Erreur mise à jour niveau:", error);
+      
     }
   };
 
@@ -284,21 +269,15 @@ const FirstComponentUser = () => {
       const response = await getSuiviByDate(formattedDate);
 
       if (!response?.suivi) {
-        console.error("Aucun suivi trouvé pour la date:", formattedDate);
+        
         return;
       }
 
       const suiviId = response.suivi._id;
       if (!suiviId) {
-        console.error("SuiviId non trouvé dans la réponse:", response);
+        
         return;
       }
-
-      console.log("Suppression de l'entrée:", {
-        suiviId,
-        entryId,
-        date: formattedDate,
-      });
 
       await removeTrackingEntry(
         suiviId,
@@ -311,7 +290,7 @@ const FirstComponentUser = () => {
         [activeTab]: prev[activeTab].filter((entry) => entry._id !== entryId),
       }));
     } catch (error) {
-      console.error("Erreur suppression entrée:", error);
+      
     }
   };
 
@@ -324,7 +303,7 @@ const FirstComponentUser = () => {
         troublesCognitifs: updatedData,
       }));
     } catch (error) {
-      console.error("Erreur mise à jour troubles cognitifs:", error);
+      
     }
   };
 
@@ -344,7 +323,7 @@ const FirstComponentUser = () => {
         fatigue: newValue,
       }));
     } catch (error) {
-      console.error("Erreur mise à jour fatigue:", error);
+      
     }
   };
 
@@ -360,18 +339,13 @@ const FirstComponentUser = () => {
         humeur: newValue,
       }));
     } catch (error) {
-      console.error("Erreur mise à jour humeur:", error);
+      
     }
   };
 
   const handleUpdateSensoriel = async (date, entryId, updatedData) => {
     try {
       const formattedDate = format(new Date(date), "yyyy-MM-dd");
-      console.log("Mise à jour sensoriel:", {
-        date: formattedDate,
-        entryId: entryId,
-        sensorielData: updatedData,
-      });
 
       const response = await updateSensoriel(
         formattedDate,
@@ -387,7 +361,7 @@ const FirstComponentUser = () => {
         }));
       }
     } catch (error) {
-      console.error("Erreur mise à jour sensoriel:", error);
+      
     }
   };
 
@@ -400,13 +374,11 @@ const FirstComponentUser = () => {
         sensoriel: prev.sensoriel.filter((entry) => entry._id !== objectId),
       }));
     } catch (error) {
-      console.error("Erreur suppression sensoriel:", error);
+      
     }
   };
 
   const renderContent = () => {
-    console.log("renderContent - Données actuelles:", data);
-    console.log("renderContent - Date sélectionnée:", selectedDate);
 
     switch (activeTab) {
       case "motricite":

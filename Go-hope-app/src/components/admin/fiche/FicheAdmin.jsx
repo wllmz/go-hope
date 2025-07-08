@@ -73,7 +73,7 @@ const FicheAdmin = () => {
           await removeFiche(ficheId);
           fetchAllFiches();
         } catch (error) {
-          console.error("Erreur lors de la suppression de la fiche:", error);
+          
         }
       }
     },
@@ -87,7 +87,7 @@ const FicheAdmin = () => {
           await removeArticle(articleId);
           fetchAllFiches(); // Recharger les fiches après suppression pour mettre à jour l'UI
         } catch (error) {
-          console.error("Erreur lors de la suppression de l'article:", error);
+          
         }
       }
     },

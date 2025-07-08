@@ -32,9 +32,7 @@ const CreateSubjectButton = ({ onSubjectCreated }) => {
   } = useUploads();
 
   useEffect(() => {
-    console.log("Categories chargées:", categories);
-    console.log("Categories loading:", categoriesLoading);
-    console.log("Categories error:", categoriesError);
+
   }, [categories, categoriesLoading, categoriesError]);
 
   const handleOpenModal = () => {
@@ -89,7 +87,7 @@ const CreateSubjectButton = ({ onSubjectCreated }) => {
             imageUrl = uploadResult.filePath;
           }
         } catch (uploadErr) {
-          console.error("Erreur lors de l'upload de l'image:", uploadErr);
+          
           setErrorMessage("Erreur lors de l'upload de l'image");
           setIsSubmitting(false);
           return;
@@ -104,12 +102,9 @@ const CreateSubjectButton = ({ onSubjectCreated }) => {
         image: imageUrl,
       };
 
-      console.log("Données envoyées au serveur:", subjectData);
-
       const response = await createSubject(subjectData);
       const newSubject = response.subject || response;
 
-      console.log("Sujet créé avec succès!");
       handleCloseModal();
 
       // Afficher la popup de confirmation de demande envoyée
@@ -118,7 +113,7 @@ const CreateSubjectButton = ({ onSubjectCreated }) => {
         onSubjectCreated(newSubject);
       }
     } catch (err) {
-      console.error("Erreur lors de la création du sujet:", err);
+      
       // Affichage spécifique du message d'erreur si présent dans err.message
       if (err && err.message) {
         setErrorMessage(err.message);

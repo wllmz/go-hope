@@ -17,7 +17,7 @@ const UserSubjects = ({
     const handleResize = () => {
       const mobile = window.innerWidth <= 768;
       setIsMobile(mobile);
-      console.log("Largeur fenêtre :", window.innerWidth, "Mobile :", mobile);
+      
     };
 
     handleResize(); // Vérification initiale

@@ -31,7 +31,7 @@ export const addToFavoris = async (req, res) => {
       article,
     });
   } catch (error) {
-    console.error("Erreur lors de l'ajout aux favoris :", error);
+    
     res.status(500).json({
       message: "Erreur lors de l'ajout aux favoris.",
       error: error.message,
@@ -72,7 +72,7 @@ export const removeFromFavoris = async (req, res) => {
       article,
     });
   } catch (error) {
-    console.error("Erreur lors du retrait des favoris :", error);
+    
     res.status(500).json({
       message: "Erreur lors du retrait des favoris.",
       error: error.message,
@@ -111,7 +111,7 @@ export const markArticleAsRead = async (req, res) => {
       article,
     });
   } catch (error) {
-    console.error("Erreur lors du marquage comme lu :", error);
+    
     res.status(500).json({
       message: "Erreur lors du marquage comme lu.",
       error: error.message,
@@ -152,7 +152,7 @@ export const unmarkArticleAsRead = async (req, res) => {
       article,
     });
   } catch (error) {
-    console.error("Erreur lors du retrait du marquage comme lu :", error);
+    
     res.status(500).json({
       message: "Erreur lors du retrait du marquage comme lu.",
       error: error.message,
