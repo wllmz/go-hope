@@ -40,13 +40,13 @@ dotenv.config();
 // Définition des URLs en fonction de l'environnement
 const API_URL =
   process.env.NODE_ENV === "production"
-    ? process.env.API_PROD_URL || "https://api.go-hope.fr"
-    : process.env.API_DEV_URL || "https://dev-api.go-hope.fr";
+    ? process.env.API_PROD_URL || "https://api.wllmz.fr"
+    : process.env.API_DEV_URL || "https://dev-api.wllmz.fr";
 
 const FRONTEND_URL =
   process.env.NODE_ENV === "production"
-    ? process.env.FRONTEND_PROD_URL || "https://app.go-hope.fr"
-    : process.env.FRONTEND_DEV_URL || "https://dev-app.go-hope.fr";
+    ? process.env.FRONTEND_PROD_URL || "https://app.wllmz.fr"
+    : process.env.FRONTEND_DEV_URL || "https://dev-app.wllmz.fr";
 
 const MONGO_URI =
   process.env.NODE_ENV === "production"
@@ -65,7 +65,7 @@ async function startServer() {
 
     // Configuration CORS optimisée pour app.go-hope.fr
     const corsOptions = {
-      origin: "https://app.go-hope.fr", // Seulement cette URL spécifique
+      origin: "https://app.wllmz.fr", // Seulement cette URL spécifique
       credentials: true,
       methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
       allowedHeaders: [
