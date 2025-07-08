@@ -34,7 +34,7 @@ jobs:
             docker-compose rm -f frontend backend
 
             # Build sans cache pour corriger l'erreur de syntaxe
-            docker-compose build --no-cache frontend backend
+            docker-compose build frontend backend
 
             # Redémarrer
             docker-compose up -d frontend backend
