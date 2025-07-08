@@ -28,6 +28,8 @@ const useArticles = () => {
     santeTimestamp: null,
     partenaireArticles: null,
     partenaireTimestamp: null,
+    newsArticles: null,
+    newsTimestamp: null,
   });
 
   // Vérifier si le cache est valide
