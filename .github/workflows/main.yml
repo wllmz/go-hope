@@ -25,18 +25,18 @@ jobs:
             # Désactiver BuildKit pour éviter le bug ContainerConfig
             export DOCKER_BUILDKIT=0
 
-            # Récupère la branche qui a déclenché le workflow
-            BRANCH="${{ github.ref }}"
-            echo "Branche déclenchante : $BRANCH"
+            echo "Pulling latest code..."
+            git pull origin main
 
-            if [ "$BRANCH" = "refs/heads/main" ]; then
-              echo "Déploiement production (frontend et backend)"
-              git pull origin main
-              docker-compose stop frontend backend
-              docker-compose rm -f frontend backend
-              docker-compose pull frontend backend
-              docker-compose build --no-cache frontend backend
-              docker-compose up -d --remove-orphans frontend backend
-            fi
+            echo "Building and deploying containers..."
+            # Arrêter seulement frontend et backend (garder traefik)
+            docker-compose stop frontend backend
+            docker-compose rm -f frontend backend
 
-            echo "Déploiement avec Docker terminé avec succès."
+            # Build sans cache pour corriger l'erreur de syntaxe
+            docker-compose build --no-cache frontend backend
+
+            # Redémarrer
+            docker-compose up -d frontend backend
+
+            echo "Déploiement terminé avec succès."
