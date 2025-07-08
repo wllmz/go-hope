@@ -85,7 +85,7 @@ const CategoryManagement = () => {
       setImagePreview(null);
       setSelectedImage(null);
     } catch (err) {
-      console.error("Erreur lors de la sauvegarde de la catégorie :", err);
+      
     }
   };
 
@@ -107,7 +107,7 @@ const CategoryManagement = () => {
       try {
         await deleteCategoryHandler(categoryId);
       } catch (err) {
-        console.error("Erreur lors de la suppression de la catégorie :", err);
+        
       }
     }
   };

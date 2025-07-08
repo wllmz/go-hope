@@ -23,7 +23,7 @@ const SubjectManagement = () => {
       await validateAdminSubject(subjectId, { validated: newStatus });
       fetchAdminSubjects();
     } catch (err) {
-      console.error("Erreur lors de la validation du sujet :", err);
+      
     }
   };
 

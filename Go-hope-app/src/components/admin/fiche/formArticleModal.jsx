@@ -90,9 +90,6 @@ const FormArticleModal = ({
   // Mise à jour des données du formulaire lorsqu'un article est sélectionné pour modification
   useEffect(() => {
     if (article) {
-      console.log("Article à modifier:", article);
-      console.log("Description de l'article:", article.description);
-      console.log("Fiche associée:", article.fiche);
 
       // Réinitialiser l'état de l'éditeur
       setEditorLoaded(false);
@@ -105,7 +102,7 @@ const FormArticleModal = ({
         );
         if (associatedFiche) {
           ficheTitre = associatedFiche.titre;
-          console.log("Fiche trouvée:", associatedFiche.titre);
+          
         }
       }
 
@@ -207,7 +204,7 @@ const FormArticleModal = ({
   };
 
   const handleQuillChange = (value) => {
-    console.log("Contenu de l'éditeur mis à jour:", value);
+    
     setFormData((prev) => ({
       ...prev,
       description: value,
@@ -215,7 +212,7 @@ const FormArticleModal = ({
   };
 
   const handleSelectChange = (e) => {
-    console.log("Nouvelle fiche sélectionnée:", e.target.value);
+    
     setFormData((prev) => ({
       ...prev,
       ficheTitre: e.target.value,
@@ -259,7 +256,6 @@ const FormArticleModal = ({
       let result;
 
       // Affichage des données avant envoi
-      console.log("Données à envoyer:", formData);
 
       if (isEditing) {
         // Mise à jour d'un article existant
@@ -269,14 +265,12 @@ const FormArticleModal = ({
         result = await addArticle(formData);
       }
 
-      console.log("Résultat de l'opération:", result);
-
       if (onSuccess) {
         onSuccess(result);
       }
       onClose();
     } catch (err) {
-      console.error("Erreur lors de la soumission:", err);
+      
       setError(
         err.message ||
           `Une erreur est survenue lors de la ${
@@ -289,8 +283,6 @@ const FormArticleModal = ({
   };
 
   // Log pour vérifier le contenu en cours d'affichage
-  console.log("Rendu du composant avec formData:", formData);
-  console.log("Description actuelle:", formData.description);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>

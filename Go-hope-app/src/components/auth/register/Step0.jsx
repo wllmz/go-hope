@@ -29,7 +29,7 @@ const Step0 = ({ email, setEmail, handleNextStep }) => {
       }
       handleNextStep(e);
     } catch (err) {
-      console.error("Erreur lors de la vérification de l'email :", err);
+      
     }
   };
 

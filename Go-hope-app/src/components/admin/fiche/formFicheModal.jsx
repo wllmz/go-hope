@@ -74,8 +74,6 @@ const FormFicheModal = ({ isOpen, onClose, onSuccess, fiche }) => {
   // Mise à jour des données du formulaire lorsqu'une fiche est sélectionnée pour modification
   useEffect(() => {
     if (fiche) {
-      console.log("Fiche à modifier reçue:", fiche);
-      console.log("Description de la fiche:", fiche.description);
 
       // Réinitialiser l'état de l'éditeur
       setEditorLoaded(false);
@@ -97,12 +95,6 @@ const FormFicheModal = ({ isOpen, onClose, onSuccess, fiche }) => {
         // Marquer l'éditeur comme chargé après avoir défini le contenu
         setEditorLoaded(true);
 
-        console.log("FormData après mise à jour:", {
-          titre: fiche.titre || "",
-          description: fiche.description || "",
-          image: fiche.image || "",
-          categorie: fiche.categorie || "",
-        });
       }, 100);
     } else {
       // Réinitialiser le formulaire si aucune fiche n'est sélectionnée
@@ -158,7 +150,7 @@ const FormFicheModal = ({ isOpen, onClose, onSuccess, fiche }) => {
   };
 
   const handleQuillChange = (value) => {
-    console.log("Contenu de l'éditeur mis à jour:", value);
+    
     setFormData((prev) => ({
       ...prev,
       description: value,
@@ -208,8 +200,6 @@ const FormFicheModal = ({ isOpen, onClose, onSuccess, fiche }) => {
     try {
       let result;
 
-      console.log("Données du formulaire à soumettre:", formData);
-
       if (isEditing) {
         // Mise à jour d'une fiche existante
         result = await modifyFiche(fiche._id, formData);
@@ -218,14 +208,12 @@ const FormFicheModal = ({ isOpen, onClose, onSuccess, fiche }) => {
         result = await addFiche(formData);
       }
 
-      console.log("Résultat de l'opération:", result);
-
       if (onSuccess) {
         onSuccess(result);
       }
       onClose();
     } catch (err) {
-      console.error("Erreur lors de la soumission:", err);
+      
       setError(
         err.message ||
           `Une erreur est survenue lors de la ${
@@ -238,8 +226,6 @@ const FormFicheModal = ({ isOpen, onClose, onSuccess, fiche }) => {
   };
 
   // Log pour vérifier le contenu en cours d'affichage
-  console.log("Rendu du composant avec formData:", formData);
-  console.log("Description actuelle:", formData.description);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>

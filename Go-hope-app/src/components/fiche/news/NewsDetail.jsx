@@ -9,53 +9,44 @@ const NewsDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  console.log("ID de l'actualité depuis les paramètres:", id);
-
   const { fetchFichesByCategory } = useFiche();
 
   useEffect(() => {
-    console.log("useEffect déclenché avec id:", id);
 
     const loadNewsData = async () => {
       try {
-        console.log("Début du chargement des données");
+        
         setLoading(true);
 
         // Récupération des fiches news
-        console.log("Appel de fetchFichesByCategory avec catégorie: news");
+        
         const newsFiches = await fetchFichesByCategory("news");
-        console.log("Résultat de fetchFichesByCategory:", newsFiches);
 
         // Vérifier si newsFiches est défini et est un tableau
         if (!newsFiches || !Array.isArray(newsFiches)) {
-          console.error("Données des fiches actualités invalides:", newsFiches);
+          
           setError("Impossible de récupérer les données des actualités");
           setLoading(false);
           return;
         }
 
-        console.log("Fiches actualités récupérées:", newsFiches.length);
-
         const foundNews = newsFiches.find((fiche) => fiche._id === id);
 
-        console.log("Résultat de la recherche d'actualité:", foundNews);
-
         if (!foundNews) {
-          console.error("Actualité non trouvée pour l'ID:", id);
+          
           setError("Actualité non trouvée");
           setLoading(false);
           return;
         }
 
-        console.log("Actualité trouvée:", foundNews.titre);
         setNews(foundNews);
         setError(null);
       } catch (err) {
-        console.error("Erreur lors du chargement de l'actualité:", err);
+        
         setError("Une erreur est survenue lors du chargement des données");
       } finally {
         setLoading(false);
-        console.log("Chargement terminé");
+        
       }
     };
 

@@ -16,7 +16,7 @@ const HumeurSection = ({ data, selectedDate, onUpdateHumeur }) => {
     try {
       await onUpdateHumeur(newValue);
     } catch (error) {
-      console.error("Erreur lors de la mise à jour de l'humeur:", error);
+      
     }
   };
 

@@ -4,10 +4,10 @@ import axiosInstance from "../instance/axiosInstance";
 export const markArticleAsReadService = async (articleId) => {
   try {
     const response = await axiosInstance.post(`/articles/read/${articleId}`);
-    console.log("Response from markArticleAsRead API:", response.data);
+    
     return response.data;
   } catch (error) {
-    console.error("Erreur lors du marquage de l'article comme lu :", error);
+    
     throw error; // Propagation de l'erreur
   }
 };
@@ -16,13 +16,10 @@ export const markArticleAsReadService = async (articleId) => {
 export const unmarkArticleAsReadService = async (articleId) => {
   try {
     const response = await axiosInstance.delete(`/articles/read/${articleId}`);
-    console.log("Response from unmarkArticleAsRead API:", response.data);
+    
     return response.data;
   } catch (error) {
-    console.error(
-      "Erreur lors de l'annulation du marquage de l'article comme lu :",
-      error
-    );
+    
     throw error; // Propagation de l'erreur
   }
 };
@@ -31,10 +28,10 @@ export const unmarkArticleAsReadService = async (articleId) => {
 export const addToFavorisService = async (articleId) => {
   try {
     const response = await axiosInstance.post(`/articles/fav/${articleId}`);
-    console.log("Response from addToFavoris API:", response.data);
+    
     return response.data;
   } catch (error) {
-    console.error("Erreur lors de l'ajout aux favoris :", error);
+    
     throw error; // Propagation de l'erreur
   }
 };
@@ -43,10 +40,10 @@ export const addToFavorisService = async (articleId) => {
 export const removeFromFavorisService = async (articleId) => {
   try {
     const response = await axiosInstance.delete(`/articles/fav/${articleId}`);
-    console.log("Response from removeFromFavoris API:", response.data);
+    
     return response.data;
   } catch (error) {
-    console.error("Erreur lors du retrait des favoris :", error);
+    
     throw error; // Propagation de l'erreur
   }
 };

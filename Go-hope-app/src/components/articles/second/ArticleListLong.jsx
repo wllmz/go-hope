@@ -37,7 +37,7 @@ const ArticleListLong = ({ articles, onArticleClick, onFavoritesUpdate }) => {
         onFavoritesUpdate(articleId, true);
       }
     } catch (err) {
-      console.error("Erreur lors de la mise à jour des favoris :", err);
+      
     }
   };
 

@@ -25,14 +25,13 @@ const ArticleById = () => {
   const [showSuccessAnimation, setShowSuccessAnimation] = useState(false);
 
   // Debug
-  console.log("ID de l'article depuis l'URL :", articleId);
 
   // Fonction pour récupérer l'article
   const fetchArticle = async () => {
     try {
       await fetchArticleById(articleId);
     } catch (err) {
-      console.error("Erreur lors de la récupération de l'article :", err);
+      
     }
   };
 
@@ -70,7 +69,7 @@ const ArticleById = () => {
       }
       await fetchArticle();
     } catch (err) {
-      console.error("Erreur lors de la mise à jour des favoris :", err);
+      
     }
   };
 
@@ -93,10 +92,7 @@ const ArticleById = () => {
         await markArticleAsRead(currentArticle._id);
       }
     } catch (err) {
-      console.error(
-        "Erreur lors de la mise à jour du statut de lecture :",
-        err
-      );
+      
       // En cas d'erreur, restaurer l'état précédent
       setIsRead(originalReadState);
       setShowSuccessAnimation(originalAnimationState);

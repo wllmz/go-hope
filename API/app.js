@@ -61,7 +61,6 @@ app.set("trust proxy", 1);
 async function startServer() {
   try {
     // Ajout de debug pour vérifier l'environnement
-    console.log("NODE_ENV =", process.env.NODE_ENV);
 
     // Configuration CORS optimisée pour app.go-hope.fr
     const corsOptions = {
@@ -139,17 +138,12 @@ async function startServer() {
     app.use("/api", apiLimiter);
 
     // Connexion MongoDB
-    console.log("Connexion à MongoDB...");
+    
     await connectMongoDb(MONGO_URI);
-    console.log("Connexion à MongoDB réussie !");
 
     // Logs pour debug
     app.use((req, res, next) => {
-      console.log(
-        `[${new Date().toISOString()}] ${req.method} ${req.url} - Origin: ${
-          req.headers.origin
-        }`
-      );
+      
       next();
     });
 
@@ -175,7 +169,6 @@ async function startServer() {
 
     // Gestion des erreurs
     app.use((err, req, res, next) => {
-      console.error("Erreur middleware:", err);
 
       if (err.code === "EBADCSRFTOKEN") {
         return res.status(403).json({
@@ -193,13 +186,10 @@ async function startServer() {
     // Démarrage du serveur
     const PORT = process.env.PORT || 5000;
     app.listen(PORT, () => {
-      console.log(`Serveur démarré sur http://localhost:${PORT}`);
-      console.log(`Environnement: ${process.env.NODE_ENV || "development"}`);
-      console.log(`Frontend URL: ${FRONTEND_URL}`);
-      console.log(`API URL: ${API_URL}`);
+
     });
   } catch (err) {
-    console.error("Erreur au démarrage du serveur :", err);
+    
   }
 }
 

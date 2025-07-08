@@ -11,66 +11,38 @@ const PartenaireDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  console.log("ID du partenaire depuis les paramètres:", id);
-
   const { fetchFichesByCategory } = useFiche();
 
-  console.log("Hooks initialisés - useFiche");
-
   useEffect(() => {
-    console.log("useEffect déclenché avec id:", id);
 
     const loadPartenaireAndArticles = async () => {
       try {
-        console.log("Début du chargement des données");
+        
         setLoading(true);
 
         // Récupération des fiches partenaires
-        console.log(
-          "Appel de fetchFichesByCategory avec catégorie: partenaire"
-        );
+        
         const partenaireFiches = await fetchFichesByCategory("partenaire");
-        console.log("Résultat de fetchFichesByCategory:", partenaireFiches);
 
         // Vérifier si partenaireFiches est défini et est un tableau
         if (!partenaireFiches || !Array.isArray(partenaireFiches)) {
-          console.error(
-            "Données des fiches partenaires invalides:",
-            partenaireFiches
-          );
-          console.log("Type de partenaireFiches:", typeof partenaireFiches);
+
           setError("Impossible de récupérer les données des partenaires");
           setLoading(false);
           return;
         }
 
-        console.log("Fiches partenaires récupérées:", partenaireFiches.length);
-        console.log(
-          "Liste des IDs de fiches:",
-          partenaireFiches.map((f) => f._id)
-        );
-
         const foundPartenaire = partenaireFiches.find(
           (fiche) => fiche._id === id
         );
 
-        console.log("Résultat de la recherche de partenaire:", foundPartenaire);
-
         if (!foundPartenaire) {
-          console.error("Partenaire non trouvé pour l'ID:", id);
-          console.log("ID recherché:", id);
-          console.log("Type de l'ID recherché:", typeof id);
-          console.log(
-            "IDs disponibles:",
-            partenaireFiches.map((f) => ({ id: f._id, type: typeof f._id }))
-          );
+
           setError("Partenaire non trouvé");
           setLoading(false);
           return;
         }
 
-        console.log("Partenaire trouvé:", foundPartenaire.titre);
-        console.log("Détails du partenaire:", JSON.stringify(foundPartenaire));
         setPartenaire(foundPartenaire);
 
         // Vérifier si le partenaire contient un article intégré
@@ -78,39 +50,31 @@ const PartenaireDetail = () => {
           foundPartenaire.article &&
           typeof foundPartenaire.article === "object"
         ) {
-          console.log(
-            "Article intégré dans le partenaire:",
-            foundPartenaire.article
-          );
+          
           if (foundPartenaire.article._id) {
             setArticles([foundPartenaire.article]);
-            console.log("Article intégré ajouté au tableau articles");
+            
           } else {
-            console.log("L'article intégré n'a pas d'ID valide");
+            
             setArticles([]);
           }
         } else {
-          console.log("Aucun article intégré trouvé dans le partenaire");
+          
           setArticles([]);
         }
 
         setError(null);
       } catch (err) {
-        console.error("Erreur lors du chargement du partenaire:", err);
-        console.error("Pile d'erreur:", err.stack);
-        console.error("Type d'erreur:", err.name);
-        console.error("Message d'erreur:", err.message);
+
         setError("Une erreur est survenue lors du chargement des données");
       } finally {
         setLoading(false);
-        console.log("Chargement terminé");
+        
       }
     };
 
     loadPartenaireAndArticles();
   }, [id, fetchFichesByCategory]);
-
-  console.log("État du rendu:", { loading, error, partenaire, articles });
 
   if (loading) {
     return (

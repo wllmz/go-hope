@@ -94,7 +94,7 @@ const CategoriesForumManagement = () => {
       setImagePreview(null);
       fetchCategories();
     } catch (err) {
-      console.error("Erreur lors de la création de la catégorie :", err);
+      
     }
   };
 
@@ -113,7 +113,7 @@ const CategoriesForumManagement = () => {
       setImagePreview(null);
       fetchCategories();
     } catch (err) {
-      console.error("Erreur lors de la modification de la catégorie :", err);
+      
     }
   };
 
@@ -125,7 +125,7 @@ const CategoriesForumManagement = () => {
       setIsDeleteModalOpen(false);
       fetchCategories();
     } catch (err) {
-      console.error("Erreur lors de la suppression de la catégorie :", err);
+      
     }
   };
 

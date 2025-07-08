@@ -26,7 +26,7 @@ export const createComment = async (req, res) => {
     await comment.populate("author", "firstName email");
     res.status(201).json(comment);
   } catch (error) {
-    console.error("Erreur lors de la création du commentaire:", error);
+    
     res
       .status(500)
       .json({ message: "Erreur lors de la création du commentaire" });
@@ -51,7 +51,7 @@ export const deleteComment = async (req, res) => {
 
     res.status(200).json({ message: "Commentaire supprimé avec succès" });
   } catch (error) {
-    console.error("Erreur lors de la suppression du commentaire:", error);
+    
     res.status(500).json({ message: "Erreur serveur." });
   }
 };
@@ -82,7 +82,7 @@ export const updateComment = async (req, res) => {
     await updatedComment.populate("author", "firstName email");
     res.status(200).json(updatedComment);
   } catch (error) {
-    console.error("Erreur lors de la mise à jour du commentaire:", error);
+    
     res.status(500).json({
       message: "Erreur serveur lors de la mise à jour du commentaire",
       error: error.message,
@@ -112,7 +112,7 @@ export const likeComment = async (req, res) => {
     await comment.populate("author", "firstName email");
     res.status(200).json(comment);
   } catch (error) {
-    console.error("Erreur lors de l'ajout du like :", error);
+    
     res.status(500).json({
       message: "Erreur lors de l'ajout du like.",
       error: error.message,
@@ -142,7 +142,7 @@ export const unlikeComment = async (req, res) => {
     await comment.populate("author", "firstName email");
     res.status(200).json(comment);
   } catch (error) {
-    console.error("Erreur lors du retrait du like :", error);
+    
     res.status(500).json({
       message: "Erreur lors du retrait du like.",
       error: error.message,

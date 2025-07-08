@@ -104,7 +104,7 @@ const SensorielSection = ({
 
       setShowModal(false);
     } catch (error) {
-      console.error("Erreur lors de la création:", error);
+      
     }
   };
 
@@ -112,7 +112,7 @@ const SensorielSection = ({
     event.stopPropagation();
     const entry = data[index];
     if (!entry._id) {
-      console.error("ID manquant pour la suppression");
+      
       return;
     }
 
@@ -121,7 +121,7 @@ const SensorielSection = ({
       setShowGaugeView(false);
       setSelectedZone(null);
     } catch (error) {
-      console.error("Erreur suppression:", error);
+      
     }
   };
 
@@ -138,7 +138,7 @@ const SensorielSection = ({
         setShowGaugeView(true);
       }, 0);
     } else {
-      console.error("Zone non trouvée:", zone);
+      
     }
   };
 
@@ -176,7 +176,7 @@ const SensorielSection = ({
         onUpdateSensoriel(date, entryId, sensorielData);
       }
     } catch (error) {
-      console.error("Erreur mise à jour sensoriel:", error);
+      
     }
   };
 

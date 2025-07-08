@@ -45,7 +45,7 @@ export const addToWaitlist = async (req, res) => {
       data: newWaitlistEntry,
     });
   } catch (error) {
-    console.error("Erreur lors de l'ajout à la liste d'attente:", error);
+    
     return res.status(500).json({
       success: false,
       message: "Erreur serveur",
@@ -76,7 +76,7 @@ export const getWaitlistStatus = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("Erreur lors de la récupération du statut:", error);
+    
     return res.status(500).json({
       success: false,
       message: "Erreur serveur",
@@ -102,10 +102,7 @@ export const getAllPendingUsers = async (req, res) => {
       data: waitlistEntries,
     });
   } catch (error) {
-    console.error(
-      "Erreur lors de la récupération des utilisateurs en attente:",
-      error
-    );
+    
     return res.status(500).json({
       success: false,
       message: "Erreur serveur",
@@ -131,10 +128,7 @@ export const getAllActivatedUsers = async (req, res) => {
       data: waitlistEntries,
     });
   } catch (error) {
-    console.error(
-      "Erreur lors de la récupération des utilisateurs activés:",
-      error
-    );
+    
     return res.status(500).json({
       success: false,
       message: "Erreur serveur",
@@ -177,18 +171,15 @@ export const updateWaitlistStatus = async (req, res) => {
         // Récupérer l'utilisateur complet sans filtrer les champs
         const user = await User.findById(userId);
 
-        console.log("Utilisateur complet:", user);
-        console.log("Email disponible:", user.email);
-
         if (user && user.email) {
           // Créer l'objet approprié pour la fonction d'activation
           const emailResult = await sendChatActivationNotification(user);
-          console.log("Résultat envoi email:", emailResult);
+          
         } else {
-          console.error("Email non disponible pour l'utilisateur:", userId);
+          
         }
       } catch (emailError) {
-        console.error("Erreur lors de l'envoi d'email:", emailError);
+        
       }
     }
 
@@ -209,7 +200,7 @@ export const updateWaitlistStatus = async (req, res) => {
       data: waitlistEntry,
     });
   } catch (error) {
-    console.error("Erreur lors de la mise à jour du statut:", error);
+    
     return res.status(500).json({
       success: false,
       message: "Erreur serveur",
@@ -236,10 +227,7 @@ export const removeFromWaitlist = async (req, res) => {
       message: "Désinscription de la liste d'attente réussie",
     });
   } catch (error) {
-    console.error(
-      "Erreur lors de la désinscription de la liste d'attente:",
-      error
-    );
+    
     return res.status(500).json({
       success: false,
       message: "Erreur serveur",

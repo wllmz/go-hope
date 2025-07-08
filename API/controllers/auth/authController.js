@@ -58,7 +58,6 @@ const setTokenCookies = (res, accessToken, refreshToken) => {
     path: "/",
   });
 
-  console.log("Set-Cookie headers envoyés : ", res.getHeaders()["set-cookie"]);
 };
 
 // 3. Fonction pour l'inscription d'un utilisateur
@@ -121,7 +120,7 @@ export const registerUser = async (req, res) => {
         "Utilisateur créé avec succès, un email de vérification a été envoyé !",
     });
   } catch (error) {
-    console.error("Erreur lors de l'inscription :", error.message);
+    
     res
       .status(500)
       .json({ message: "Erreur lors de la création de l'utilisateur" });
@@ -165,7 +164,7 @@ export const loginUser = async (req, res) => {
       .status(200)
       .json({ message: "Connexion réussie.", accessToken, refreshToken });
   } catch (error) {
-    console.error("Erreur lors de la connexion :", error.message);
+    
     res.status(500).json({ message: "Erreur serveur lors de la connexion." });
   }
 };
@@ -175,7 +174,7 @@ export const refreshToken = (req, res) => {
   const refreshTokenCookie = req.cookies.refreshToken;
 
   if (!refreshTokenCookie) {
-    console.log("Aucun refreshToken trouvé.");
+    
     return res
       .status(401)
       .json({ message: "Token de rafraîchissement manquant." });
@@ -183,7 +182,7 @@ export const refreshToken = (req, res) => {
 
   jwt.verify(refreshTokenCookie, JWT_REFRESH_SECRET, (err, decoded) => {
     if (err) {
-      console.error("Erreur de vérification du refreshToken : ", err);
+      
       return res
         .status(403)
         .json({ message: "Token de rafraîchissement invalide ou expiré." });
@@ -217,14 +216,13 @@ export const refreshToken = (req, res) => {
 // 6. Fonction pour la déconnexion d'un utilisateur
 export const logoutUser = (req, res) => {
   try {
-    console.log("Début de la déconnexion...");
 
     // Vérification des cookies reçus
     const accessToken = req.cookies.accessToken;
     const refreshToken = req.cookies.refreshToken;
 
     if (!accessToken && !refreshToken) {
-      console.log("Aucun token trouvé dans les cookies !");
+      
       return res.status(401).json({
         message: "Erreur personnalisée : Aucun token trouvé dans les cookies.",
       });
@@ -247,12 +245,11 @@ export const logoutUser = (req, res) => {
       path: "/",
     });
 
-    console.log("Cookies supprimés avec succès !");
     res.status(200).json({
       message: "Déconnexion réussie avec succès.",
     });
   } catch (error) {
-    console.error("Erreur lors de la déconnexion :", error.message);
+    
     res.status(500).json({
       message: `Erreur serveur : ${error.message}`,
     });
@@ -296,7 +293,7 @@ export const verifyEmail = async (req, res) => {
     // Redirection vers la page d'accueil après la vérification de l'email
     return res.redirect(`${FRONTEND_URL}/verification`);
   } catch (error) {
-    console.error("Erreur lors de la vérification de l'email:", error);
+    
     res
       .status(500)
       .json({ message: "Erreur lors de la vérification de l'email." });
@@ -319,7 +316,7 @@ export const checkEmail = async (req, res) => {
 
     return res.status(200).json({ message: "Email disponible." });
   } catch (error) {
-    console.error("Erreur lors de la vérification de l'email:", error);
+    
     return res
       .status(500)
       .json({ message: "Erreur lors de la vérification de l'email." });
@@ -338,7 +335,7 @@ export const checkUsername = async (req, res) => {
 
     return res.status(200).json({ message: "Username disponible." });
   } catch (error) {
-    console.error("Erreur lors de la vérification du username:", error);
+    
     return res
       .status(500)
       .json({ message: "Erreur lors de la vérification du username." });
@@ -371,7 +368,7 @@ export const resendVerificationEmail = async (req, res) => {
 
     return res.status(200).json({ message: "Email de vérification renvoyé." });
   } catch (error) {
-    console.error("Erreur lors de l'envoi de l'email de vérification :", error);
+    
     return res
       .status(500)
       .json({ message: "Erreur lors de l'envoi de l'email de vérification." });
@@ -406,7 +403,7 @@ export const resetPassword = async (req, res) => {
 
     res.status(200).json({ message: "Mot de passe réinitialisé avec succès." });
   } catch (error) {
-    console.error("Erreur lors de la réinitialisation du mot de passe:", error);
+    
     res
       .status(500)
       .json({ message: "Erreur lors de la réinitialisation du mot de passe." });
@@ -445,7 +442,7 @@ export const forgotPassword = async (req, res) => {
         "Si cet email existe, vous recevrez un email de réinitialisation.",
     });
   } catch (error) {
-    console.error(error);
+    
     return res.status(500).json({
       message: "Erreur lors de la demande de réinitialisation.",
     });

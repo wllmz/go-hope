@@ -40,7 +40,7 @@ const Step1 = ({
         return;
       }
     } catch (err) {
-      console.error("Erreur lors de la vérification du username :", err);
+      
       return;
     }
 

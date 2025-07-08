@@ -53,7 +53,7 @@ const PatientAidantModal = ({ isOpen, onClose }) => {
           }
 
           if (typeof fileUrl !== "string") {
-            console.error("Format de réponse inattendu:", uploadResult);
+            
             fileUrl = JSON.stringify(uploadResult);
           }
 
@@ -63,7 +63,7 @@ const PatientAidantModal = ({ isOpen, onClose }) => {
           }));
         }
       } catch (err) {
-        console.error("Erreur lors du téléchargement du certificat:", err);
+        
       }
     }
   };
@@ -84,11 +84,10 @@ const PatientAidantModal = ({ isOpen, onClose }) => {
         user: user.id,
       };
 
-      console.log("Données envoyées:", requestData);
       await createRequest(requestData);
       onClose();
     } catch (err) {
-      console.error("Erreur lors de la création de la demande:", err);
+      
     }
   };
 

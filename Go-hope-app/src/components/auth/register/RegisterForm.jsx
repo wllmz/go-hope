@@ -33,7 +33,7 @@ const RegisterForm = () => {
       await registerUser(data); // Appel au hook pour l'enregistrement
       setStep(3); // Passe à l'étape 3 en cas de succès
     } catch (err) {
-      console.error("Erreur d'enregistrement :", err);
+      
     }
   };
 

@@ -44,7 +44,7 @@ router.post("/check-username", checkUsername);
 router.post("/resend-verification-email", resendVerificationEmail);
 
 router.get("/me", verifyToken, (req, res) => {
-  console.log("Utilisateur autorisé :", req.user); // Pour debug
+   // Pour debug
   res.status(200).json({ user: req.user }); // Retourner les infos utilisateur
 });
 

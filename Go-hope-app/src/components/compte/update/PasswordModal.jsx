@@ -26,7 +26,7 @@ const PasswordModal = ({ onClose }) => {
       });
       onClose(); // Ferme la modal en cas de succès
     } catch (err) {
-      console.error("Erreur lors de la mise à jour du mot de passe", err);
+      
     }
   };
 

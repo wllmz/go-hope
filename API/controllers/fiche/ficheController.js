@@ -2,7 +2,7 @@ import ficheModel from "../../models/fiche/ficheModel.js";
 import mongoose from "mongoose";
 
 const handleError = (res, message, error) => {
-  console.error(message, error);
+  
   res.status(500).json({ message, error: error.message });
 };
 

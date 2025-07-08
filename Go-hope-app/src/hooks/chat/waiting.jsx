@@ -24,7 +24,7 @@ export const useWaitingList = () => {
       setWaitlistStatus(status);
     } catch (err) {
       setError("Erreur lors de la vérification du statut");
-      console.error(err);
+      
     } finally {
       setIsLoading(false);
     }
@@ -39,7 +39,7 @@ export const useWaitingList = () => {
       await checkWaitlistStatus(); // Rafraîchir le statut après l'inscription
     } catch (err) {
       setError("Erreur lors de l'inscription à la liste d'attente");
-      console.error(err);
+      
     } finally {
       setIsLoading(false);
     }
@@ -54,7 +54,7 @@ export const useWaitingList = () => {
       setPendingUsers(users);
     } catch (err) {
       setError("Erreur lors de la récupération des utilisateurs en attente");
-      console.error(err);
+      
     } finally {
       setIsLoading(false);
     }
@@ -69,7 +69,7 @@ export const useWaitingList = () => {
       setActivatedUsers(users);
     } catch (err) {
       setError("Erreur lors de la récupération des utilisateurs activés");
-      console.error(err);
+      
     } finally {
       setIsLoading(false);
     }
@@ -86,7 +86,7 @@ export const useWaitingList = () => {
       await fetchActivatedUsers();
     } catch (err) {
       setError("Erreur lors de la mise à jour du statut");
-      console.error(err);
+      
     } finally {
       setIsLoading(false);
     }
@@ -101,7 +101,7 @@ export const useWaitingList = () => {
       setWaitlistStatus(null);
     } catch (err) {
       setError("Erreur lors de la désinscription");
-      console.error(err);
+      
     } finally {
       setIsLoading(false);
     }

@@ -46,7 +46,7 @@ const useCategories = () => {
         }
       }
     } catch (err) {
-      console.error("Erreur lors de la récupération du cache:", err);
+      
       // En cas d'erreur, supprimer le cache pour éviter des problèmes futurs
       localStorage.removeItem(CATEGORIES_CACHE_KEY);
       localStorage.removeItem(CATEGORIES_CACHE_EXPIRY_KEY);
@@ -70,7 +70,7 @@ const useCategories = () => {
         },
       }));
     } catch (err) {
-      console.error("Erreur lors de la mise à jour du cache:", err);
+      
     }
   }, []);
 

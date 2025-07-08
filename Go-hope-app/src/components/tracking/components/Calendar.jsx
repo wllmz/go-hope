@@ -70,7 +70,9 @@ const DaysContainer = styled(Box)(({ theme }) => ({
   },
 }));
 
-const DayButton = styled(Box)(({ theme, isSelected, isFuture }) => ({
+const DayButton = styled(Box, {
+  shouldForwardProp: (prop) => prop !== "isSelected" && prop !== "isFuture",
+})(({ theme, isSelected, isFuture }) => ({
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
@@ -98,7 +100,9 @@ const DayButton = styled(Box)(({ theme, isSelected, isFuture }) => ({
   },
 }));
 
-const DayNumber = styled(Box)(({ theme, isSelected, isFuture }) => ({
+const DayNumber = styled(Box, {
+  shouldForwardProp: (prop) => prop !== "isSelected" && prop !== "isFuture",
+})(({ theme, isSelected, isFuture }) => ({
   fontSize: "16px",
   fontWeight: 600,
   fontFamily: "'Confiteria', cursive",
@@ -110,7 +114,9 @@ const DayNumber = styled(Box)(({ theme, isSelected, isFuture }) => ({
   },
 }));
 
-const MonthName = styled(Box)(({ theme, isSelected, isFuture }) => ({
+const MonthName = styled(Box, {
+  shouldForwardProp: (prop) => prop !== "isSelected" && prop !== "isFuture",
+})(({ theme, isSelected, isFuture }) => ({
   fontSize: "12px",
   fontFamily: "'Confiteria', cursive",
   color: isFuture ? "#999" : "#87BBDF",
@@ -121,7 +127,9 @@ const MonthName = styled(Box)(({ theme, isSelected, isFuture }) => ({
   },
 }));
 
-const DataIndicator = styled(Box)(({ theme, hasData }) => ({
+const DataIndicator = styled(Box, {
+  shouldForwardProp: (prop) => prop !== "hasData",
+})(({ theme, hasData }) => ({
   width: "24px",
   height: "24px",
   borderRadius: "50%",

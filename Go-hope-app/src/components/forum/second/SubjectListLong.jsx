@@ -36,7 +36,7 @@ const SubjectListLong = ({ subjects, onSubjectClick, onFavoritesUpdate }) => {
         await addToFavorites(subjectId);
       }
     } catch (err) {
-      console.error("Erreur lors de la mise à jour des favoris :", err);
+      
       // En cas d'erreur, restaurer l'état précédent
       setFavorites((prev) => ({ ...prev, [subjectId]: originalFavorite }));
     }

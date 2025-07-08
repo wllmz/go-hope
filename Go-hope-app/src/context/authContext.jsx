@@ -15,22 +15,14 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        console.log("Vérification de l'utilisateur...");
+        
         const authenticatedUser = await getAuthenticatedUser();
-        console.log("Utilisateur authentifié :", authenticatedUser);
-        console.log(
-          "Structure de l'utilisateur:",
-          JSON.stringify(authenticatedUser, null, 2)
-        );
 
         if (authenticatedUser) {
           setUser(authenticatedUser);
         }
       } catch (error) {
-        console.warn(
-          "Erreur lors de la récupération de l'utilisateur :",
-          error
-        );
+        
         setUser(null);
       } finally {
         setLoading(false);
@@ -41,8 +33,6 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const hasRole = (role) => {
-    console.log("Vérification du rôle:", role);
-    console.log("User object:", user);
 
     if (user && user.user && Array.isArray(user.user.roles)) {
       return user.user.roles.includes(role);
@@ -51,9 +41,7 @@ export const AuthProvider = ({ children }) => {
     return false;
   };
 
-
   const isAuthenticated = () => !!user;
-
 
   const logout = () => {
     document.cookie =

@@ -5,7 +5,7 @@ import { sendNewSubjectNotificationEmail } from "../../../utils/emailAtelier.js"
 import mongoose from "mongoose";
 
 const handleError = (res, message, error) => {
-  console.error(message, error);
+  
   res.status(500).json({ message, error: error.message });
 };
 
@@ -26,7 +26,7 @@ export const listAllSubjects = async (req, res) => {
       message: "Erreur lors de la récupération des sujets.",
       error: error.message,
     });
-    console.error(error);
+    
   }
 };
 
@@ -43,7 +43,7 @@ export const listAllSubjectsAdmin = async (req, res) => {
       message: "Erreur lors de la récupération des sujets.",
       error: error.message,
     });
-    console.error(error);
+    
   }
 };
 
@@ -93,7 +93,6 @@ export const createSubject = async (req, res) => {
     });
 
     // Ajouter cette ligne pour déboguer
-    console.log("Informations d'auteur:", newSubject.author);
 
     // Utiliser le nom d'utilisateur s'il existe, sinon utiliser "Utilisateur"
     const authorName =
@@ -104,13 +103,10 @@ export const createSubject = async (req, res) => {
     // 5. Envoyer un e-mail aux administrateurs pour les prévenir d'un nouveau sujet
     sendNewSubjectNotificationEmail(newSubject.title, authorName)
       .then(() => {
-        console.log("Notification e-mail envoyée aux administrateurs.");
+        
       })
       .catch((emailError) => {
-        console.error(
-          "Erreur lors de l'envoi de la notification e-mail :",
-          emailError
-        );
+        
       });
 
     return res.status(201).json({
@@ -152,7 +148,7 @@ export const deleteSubject = async (req, res) => {
       message: "Erreur lors de la suppression du sujet.",
       error: error.message,
     });
-    console.error(error);
+    
   }
 };
 
@@ -205,7 +201,7 @@ export const updateSubject = async (req, res) => {
       message: "Erreur lors de la mise à jour du sujet.",
       error: error.message,
     });
-    console.error(error);
+    
   }
 };
 
@@ -237,13 +233,12 @@ export const getSubjectById = async (req, res) => {
       message: "Erreur lors de la récupération du sujet.",
       error: error.message,
     });
-    console.error(error);
+    
   }
 };
 
 export const getFavorisSubjectsByUser = async (req, res) => {
   const authId = req.user.id;
-  console.log("User ID:", authId);
 
   // Vérifier la validité de l'ID utilisateur
   if (!mongoose.Types.ObjectId.isValid(authId)) {
@@ -253,15 +248,12 @@ export const getFavorisSubjectsByUser = async (req, res) => {
   try {
     // Conversion en ObjectId
     const objectIdUser = new mongoose.Types.ObjectId(authId);
-    console.log("ObjectId pour la recherche dans 'favoris' :", objectIdUser);
 
     // Recherche des sujets où l'utilisateur a ajouté le sujet aux favoris
     const favorisSubjects = await Subject.find({ favoris: objectIdUser })
       .select("+favoris")
       .populate("categories", "categorie")
       .populate("author", "username");
-
-    console.log("Sujets favoris trouvés :", favorisSubjects);
 
     if (favorisSubjects.length === 0) {
       return res.status(201).json({ message: "aucun sujets en favoris" });
@@ -272,7 +264,7 @@ export const getFavorisSubjectsByUser = async (req, res) => {
       favorisSubjects,
     });
   } catch (error) {
-    console.error("Erreur lors de la récupération des sujets favoris :", error);
+    
     res.status(500).json({
       message: "Erreur lors de la récupération des sujets favoris.",
       error: error.message,
@@ -371,7 +363,7 @@ export const listAllSubjectsByUser = async (req, res) => {
       message: "Erreur lors de la récupération des sujets de l'utilisateur.",
       error: error.message,
     });
-    console.error(error);
+    
   }
 };
 
@@ -404,7 +396,7 @@ export const getPendingSubjectsByUser = async (req, res) => {
       message: "Erreur lors de la récupération des sujets en attente.",
       error: error.message,
     });
-    console.error(error);
+    
   }
 };
 
@@ -441,6 +433,6 @@ export const deleteOwnSubject = async (req, res) => {
       message: "Erreur lors de la suppression du sujet.",
       error: error.message,
     });
-    console.error(error);
+    
   }
 };

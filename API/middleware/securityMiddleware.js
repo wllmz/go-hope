@@ -97,12 +97,6 @@ export const csrfProtection = (req, res, next) => {
   }
 
   // Log pour le débogage
-  console.log(
-    "CSRF check failed: Cookie token =",
-    cookieToken,
-    "Header token =",
-    headerToken
-  );
 
   return res.status(403).json({
     message: "Erreur de sécurité CSRF",

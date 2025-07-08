@@ -16,7 +16,7 @@ const PatientAidantList = () => {
       await updateStatus(requestId, newStatus);
       fetchUserRequests();
     } catch (err) {
-      console.error("Erreur lors de la mise à jour du statut:", err);
+      
     }
   };
 

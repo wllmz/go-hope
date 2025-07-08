@@ -2,7 +2,7 @@ import categoryModel from "../../models/article/categoriesModel.js";
 
 // Gestion des erreurs
 const handleError = (res, message, error) => {
-  console.error(message, error);
+  
   res.status(500).json({ message, error: error.message });
 };
 

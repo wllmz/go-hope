@@ -75,9 +75,9 @@ export const sendNewSubjectNotificationEmail = async (
 
   try {
     await transporter.sendMail(mailOptions);
-    console.log("E-mail de notification envoyé aux administrateurs");
+    
   } catch (error) {
-    console.error("Erreur lors de l'envoi de la notification e-mail :", error);
+    
     throw error;
   }
 };

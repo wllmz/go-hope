@@ -17,7 +17,7 @@ export const useArticleActions = () => {
       setError(null);
       return response;
     } catch (err) {
-      console.error("Erreur lors du marquage de l'article comme lu :", err);
+      
       setError("Impossible de marquer l'article comme lu.");
     } finally {
       setActionLoading(false);
@@ -31,10 +31,7 @@ export const useArticleActions = () => {
       setError(null);
       return response;
     } catch (err) {
-      console.error(
-        "Erreur lors de l'annulation du marquage de l'article :",
-        err
-      );
+      
       setError("Impossible d'annuler le marquage de l'article.");
     } finally {
       setActionLoading(false);
@@ -48,7 +45,7 @@ export const useArticleActions = () => {
       setError(null);
       return response;
     } catch (err) {
-      console.error("Erreur lors de l'ajout aux favoris :", err);
+      
       setError("Impossible d'ajouter l'article aux favoris.");
     } finally {
       setActionLoading(false);
@@ -62,7 +59,7 @@ export const useArticleActions = () => {
       setError(null);
       return response;
     } catch (err) {
-      console.error("Erreur lors du retrait des favoris :", err);
+      
       setError("Impossible de retirer l'article des favoris.");
     } finally {
       setActionLoading(false);

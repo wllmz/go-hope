@@ -7,9 +7,9 @@ const refreshAccessTokenIfNeeded = async () => {
     if (!newAccessToken) {
       throw new Error("Échec du rafraîchissement du token");
     }
-    console.log("Token rafraîchi avec succès");
+    
   } catch (error) {
-    console.error("Erreur lors du rafraîchissement du token :", error);
+    
   }
 };
 

@@ -91,22 +91,13 @@ const AllSubject = () => {
     let filtered = [...subjects];
 
     // Debug: Afficher les dates et vérifier les favoris
-    console.log(
-      "Sujets avec dates:",
-      subjects.map((s) => ({
-        id: s._id,
-        title: s.title,
-        date: s.createdAt,
-        favorisCount: s.favoris?.length || 0,
-      }))
-    );
 
     switch (activeTab) {
       case "favoris":
         // Filtrer les sujets favoris de l'utilisateur
         if (user) {
           filtered = subjects.filter((subject) => favorites[subject._id]);
-          console.log("Sujets favoris filtrés:", filtered.length);
+          
         } else {
           filtered = [];
         }
@@ -119,13 +110,7 @@ const AllSubject = () => {
           const bFavoris = b.favoris?.length || 0;
           return bFavoris - aFavoris;
         });
-        console.log(
-          "Tri par popularité:",
-          filtered.map((s) => ({
-            title: s.title,
-            favorisCount: s.favoris?.length || 0,
-          }))
-        );
+        
         break;
 
       case "recent":
@@ -137,14 +122,7 @@ const AllSubject = () => {
           const dateB = new Date(b.created_at);
           return dateB - dateA;
         });
-        console.log(
-          "Tri par date:",
-          filtered.map((s) => ({
-            title: s.title,
-            date: s.created_at,
-            dateObj: new Date(s.created_at),
-          }))
-        );
+        
         break;
 
       // Cas par défaut (aucun filtre actif)
@@ -201,7 +179,7 @@ const AllSubject = () => {
         await addToFavorites(subjectId);
       }
     } catch (err) {
-      console.error("Erreur lors de la mise à jour des favoris :", err);
+      
       // En cas d'erreur, restaurer l'état précédent
       setFavorites((prev) => ({ ...prev, [subjectId]: originalFavorite }));
     }
@@ -226,7 +204,7 @@ const AllSubject = () => {
   // Changer d'onglet
   const changeTab = (tab) => {
     setActiveTab(tab);
-    console.log("Changement d'onglet vers:", tab);
+    
   };
 
   return (
