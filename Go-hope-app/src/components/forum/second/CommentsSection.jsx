@@ -4,7 +4,7 @@ import useComments from "../../../hooks/forum/useComments";
 import { useUserInfo } from "../../../hooks/user/useUserInfo";
 import User from "../../../assets/user.png";
 
-const CommentsSection = ({ initialComments, subjectId }) => {
+const CommentsSection = ({ initialComments, subjectId, currentUser }) => {
   const { addComment, likeAComment, unlikeAComment } = useComments();
   const { user } = useUserInfo();
 
@@ -30,15 +30,46 @@ const CommentsSection = ({ initialComments, subjectId }) => {
   const handleCreate = async () => {
     if (!newCommentContent.trim() || isSubmitting) return;
 
+    const originalContent = newCommentContent; // Sauvegarder le contenu original
+
+    // Créer le commentaire temporaire
+    const tempComment = {
+      _id: Date.now().toString(), // ID temporaire
+      content: originalContent,
+      author: {
+        username: (currentUser || user)?.username || "Vous",
+        role: (currentUser || user)?.role || "Patient·e",
+        image: (currentUser || user)?.image,
+      },
+      likes: [],
+      createdAt: new Date().toISOString(),
+    };
+
     try {
       setIsSubmitting(true);
-      const newComment = await addComment(subjectId, {
-        content: newCommentContent,
-      });
-      setComments((prev) => [...prev, newComment]);
+
+      // Mise à jour optimiste : ajouter le commentaire immédiatement
+      setComments((prev) => [...prev, tempComment]);
       setNewCommentContent("");
+
+      // Appel API en arrière-plan
+      const newComment = await addComment(subjectId, {
+        content: originalContent,
+      });
+
+      // Remplacer le commentaire temporaire par le vrai
+      setComments((prev) =>
+        prev.map((comment) =>
+          comment._id === tempComment._id ? newComment : comment
+        )
+      );
     } catch (err) {
       console.error("Erreur lors de la création du commentaire :", err);
+      // En cas d'erreur, retirer le commentaire temporaire
+      setComments((prev) =>
+        prev.filter((comment) => comment._id !== tempComment._id)
+      );
+      setNewCommentContent(originalContent); // Remettre le contenu original
     } finally {
       setIsSubmitting(false);
     }
@@ -57,23 +88,45 @@ const CommentsSection = ({ initialComments, subjectId }) => {
     // Empêcher les actions multiples sur le même commentaire
     if (likeLoadingStates[comment._id]) return;
 
+    const isLiked = isCommentLiked(comment);
+
     try {
       setLikeLoadingStates((prev) => ({ ...prev, [comment._id]: true }));
 
-      const isLiked = isCommentLiked(comment);
-      let updatedComment;
-
-      if (isLiked) {
-        updatedComment = await unlikeAComment(comment._id, {});
-      } else {
-        updatedComment = await likeAComment(comment._id, {});
-      }
-
+      // Mise à jour optimiste : mettre à jour l'UI immédiatement
       setComments((prev) =>
-        prev.map((c) => (c._id === comment._id ? updatedComment : c))
+        prev.map((c) => {
+          if (c._id === comment._id) {
+            const newLikes = isLiked
+              ? c.likes.filter((likeId) => likeId !== user._id)
+              : [...(c.likes || []), user._id];
+            return { ...c, likes: newLikes };
+          }
+          return c;
+        })
       );
+
+      // Appel API en arrière-plan
+      if (isLiked) {
+        await unlikeAComment(comment._id, {});
+      } else {
+        await likeAComment(comment._id, {});
+      }
     } catch (err) {
       console.error("Erreur lors de la mise à jour du like :", err);
+
+      // En cas d'erreur, restaurer l'état précédent
+      setComments((prev) =>
+        prev.map((c) => {
+          if (c._id === comment._id) {
+            const originalLikes = isLiked
+              ? [...(c.likes || []), user._id]
+              : c.likes.filter((likeId) => likeId !== user._id);
+            return { ...c, likes: originalLikes };
+          }
+          return c;
+        })
+      );
     } finally {
       setLikeLoadingStates((prev) => ({ ...prev, [comment._id]: false }));
     }
@@ -108,7 +161,9 @@ const CommentsSection = ({ initialComments, subjectId }) => {
                 />
                 <div>
                   <p className="text-sm font-medium text-gray-800 sm:text-base">
-                    {comment.author?.username || "Inconnu"}
+                    {comment.author?.username ||
+                      (currentUser || user)?.username ||
+                      "Inconnu"}
                   </p>
                   <p className="text-xs text-gray-500">
                     {comment.author?.role || "Patient·e"}

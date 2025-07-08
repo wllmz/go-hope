@@ -20,9 +20,7 @@ const AllSubject = () => {
     fetchSubjects();
   }, [fetchSubjects]);
 
-  if (subjectsLoading) {
-    return <div className="text-center py-4">Chargement...</div>;
-  }
+  // Gestion des erreurs seulement - pas de chargement bloquant
   if (subjectsError) {
     return (
       <div className="text-center py-4 text-red-500">
@@ -44,11 +42,21 @@ const AllSubject = () => {
     <div className="w-full min-h-screen">
       <Header />
       <div className="max-w-6xl mx-auto p-5 bg-white">
-        <SubjectList
-          subjects={displayedSubjects}
-          onSubjectClick={handleSubjectClick}
-          onFavoritesUpdate={fetchSubjects} // Utilisez fetchSubjects ici
-        />
+        {/* Affichage progressif des sujets */}
+        {subjectsLoading ? (
+          <div className="flex justify-center items-center h-64">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#3B5F8A] mx-auto mb-4"></div>
+              <p className="text-gray-600">Chargement des sujets...</p>
+            </div>
+          </div>
+        ) : (
+          <SubjectList
+            subjects={displayedSubjects}
+            onSubjectClick={handleSubjectClick}
+            onFavoritesUpdate={fetchSubjects}
+          />
+        )}
       </div>
     </div>
   );

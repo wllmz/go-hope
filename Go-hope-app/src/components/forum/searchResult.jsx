@@ -48,8 +48,13 @@ const SearchResult = ({ subjects, onSubjectClick, onFavoritesUpdate }) => {
   };
 
   return (
-    <div className="space-y-6">
-      <SearchBar />
+    <div className="space-y-6 mt-5">
+      <div className="mx-auto max-w-6xl px-4">
+        <h1 className="mb-6 pl-2 sm:pl-0">Forum</h1>
+        <div className="p-4">
+          <SearchBar />
+        </div>
+      </div>
 
       {error && <p className="text-red-500 px-4">{error}</p>}
 

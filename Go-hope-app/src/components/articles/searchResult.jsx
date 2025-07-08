@@ -58,9 +58,12 @@ const SearchResult = ({ articles, onArticleClick, onFavoritesUpdate }) => {
   return (
     <div className="">
       <div className="max-w-6xl mx-auto p-5">
-        {/* Barre de recherche */}
-        <div className="p-4">
-          <SearchBar />
+        <div className="mx-auto max-w-6xl px-4">
+          <h1 className="mb-6 pl-2 sm:pl-0">La sclérose en plaques</h1>
+          <div className="p-4">
+            {/* Barre de recherche */}
+            <SearchBar />
+          </div>
         </div>
 
         {error && <p className="text-red-500 px-4">{error}</p>}
