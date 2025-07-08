@@ -93,7 +93,7 @@ export const createSubject = async (req, res) => {
     });
 
     // Ajouter cette ligne pour déboguer
-    console.log("Informations d'auteur:", newSubject.author);
+
 
     // Utiliser le nom d'utilisateur s'il existe, sinon utiliser "Utilisateur"
     const authorName =
@@ -104,7 +104,7 @@ export const createSubject = async (req, res) => {
     // 5. Envoyer un e-mail aux administrateurs pour les prévenir d'un nouveau sujet
     sendNewSubjectNotificationEmail(newSubject.title, authorName)
       .then(() => {
-        console.log("Notification e-mail envoyée aux administrateurs.");
+
       })
       .catch((emailError) => {
         console.error(
@@ -243,7 +243,7 @@ export const getSubjectById = async (req, res) => {
 
 export const getFavorisSubjectsByUser = async (req, res) => {
   const authId = req.user.id;
-  console.log("User ID:", authId);
+
 
   // Vérifier la validité de l'ID utilisateur
   if (!mongoose.Types.ObjectId.isValid(authId)) {
@@ -253,7 +253,7 @@ export const getFavorisSubjectsByUser = async (req, res) => {
   try {
     // Conversion en ObjectId
     const objectIdUser = new mongoose.Types.ObjectId(authId);
-    console.log("ObjectId pour la recherche dans 'favoris' :", objectIdUser);
+
 
     // Recherche des sujets où l'utilisateur a ajouté le sujet aux favoris
     const favorisSubjects = await Subject.find({ favoris: objectIdUser })
@@ -261,7 +261,7 @@ export const getFavorisSubjectsByUser = async (req, res) => {
       .populate("categories", "categorie")
       .populate("author", "username");
 
-    console.log("Sujets favoris trouvés :", favorisSubjects);
+
 
     if (favorisSubjects.length === 0) {
       return res.status(201).json({ message: "aucun sujets en favoris" });

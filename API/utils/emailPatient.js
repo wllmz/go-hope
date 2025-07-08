@@ -69,7 +69,6 @@ export const sendNewPatientAidantRequestEmail = async (title, username) => {
 
   try {
     await transporter.sendMail(mailOptions);
-    console.log("E-mail de notification envoyé aux administrateurs");
   } catch (error) {
     console.error(
       "Erreur lors de l'envoi de l'e-mail de notification :",
@@ -175,7 +174,6 @@ export const sendPatientAidantDecisionEmail = async (
 
   try {
     await transporter.sendMail(mailOptions);
-    console.log("E-mail de décision envoyé à l'utilisateur");
   } catch (error) {
     console.error("Erreur lors de l'envoi de l'e-mail de décision :", error);
     throw error;

@@ -25,7 +25,6 @@ const CategoryList = ({
       {categories && categories.length > 0 ? (
         <ul className="grid grid-cols-3 gap-3 mb-8">
           {categories.map((category) => {
-            console.log(
               `Catégorie: ${category.category_tittle}, Image URL: ${category.category_image}`
             );
 

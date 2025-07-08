@@ -32,9 +32,6 @@ const CreateSubjectButton = ({ onSubjectCreated }) => {
   } = useUploads();
 
   useEffect(() => {
-    console.log("Categories chargées:", categories);
-    console.log("Categories loading:", categoriesLoading);
-    console.log("Categories error:", categoriesError);
   }, [categories, categoriesLoading, categoriesError]);
 
   const handleOpenModal = () => {
@@ -104,12 +101,10 @@ const CreateSubjectButton = ({ onSubjectCreated }) => {
         image: imageUrl,
       };
 
-      console.log("Données envoyées au serveur:", subjectData);
 
       const response = await createSubject(subjectData);
       const newSubject = response.subject || response;
 
-      console.log("Sujet créé avec succès!");
       handleCloseModal();
 
       // Afficher la popup de confirmation de demande envoyée

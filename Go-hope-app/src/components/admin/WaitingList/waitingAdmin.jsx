@@ -22,7 +22,6 @@ const WaitingAdmin = () => {
     const loadData = async () => {
       const now = Date.now();
       if (now - lastFetchTime < 2000) {
-        console.log("Requête ignorée (trop fréquente)");
         return;
       }
 

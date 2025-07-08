@@ -34,12 +34,10 @@ const TroublesCognitifsSection = ({
   onUpdateTroublesCognitifs,
 }) => {
   useEffect(() => {
-    console.log("TroublesCognitifsSection - Données reçues:", data);
   }, [data]);
 
   const handleNiveauChange = async (trouble, newNiveau) => {
     try {
-      console.log("TroublesCognitifsSection - Mise à jour niveau:", {
         trouble,
         newNiveau,
         currentData: data,
@@ -60,7 +58,6 @@ const TroublesCognitifsSection = ({
       // Appeler la fonction de mise à jour passée en props
       await onUpdateTroublesCognitifs(updatedData);
 
-      console.log("TroublesCognitifsSection - Mise à jour réussie");
     } catch (error) {
       console.error("Erreur mise à jour niveau:", error);
     }

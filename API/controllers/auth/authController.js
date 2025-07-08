@@ -58,7 +58,7 @@ const setTokenCookies = (res, accessToken, refreshToken) => {
     path: "/",
   });
 
-  console.log("Set-Cookie headers envoyés : ", res.getHeaders()["set-cookie"]);
+
 };
 
 // 3. Fonction pour l'inscription d'un utilisateur
@@ -175,7 +175,7 @@ export const refreshToken = (req, res) => {
   const refreshTokenCookie = req.cookies.refreshToken;
 
   if (!refreshTokenCookie) {
-    console.log("Aucun refreshToken trouvé.");
+
     return res
       .status(401)
       .json({ message: "Token de rafraîchissement manquant." });
@@ -217,14 +217,14 @@ export const refreshToken = (req, res) => {
 // 6. Fonction pour la déconnexion d'un utilisateur
 export const logoutUser = (req, res) => {
   try {
-    console.log("Début de la déconnexion...");
+
 
     // Vérification des cookies reçus
     const accessToken = req.cookies.accessToken;
     const refreshToken = req.cookies.refreshToken;
 
     if (!accessToken && !refreshToken) {
-      console.log("Aucun token trouvé dans les cookies !");
+
       return res.status(401).json({
         message: "Erreur personnalisée : Aucun token trouvé dans les cookies.",
       });
@@ -247,7 +247,7 @@ export const logoutUser = (req, res) => {
       path: "/",
     });
 
-    console.log("Cookies supprimés avec succès !");
+
     res.status(200).json({
       message: "Déconnexion réussie avec succès.",
     });

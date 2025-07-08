@@ -14,7 +14,6 @@ const API_URL =
 // Route pour le téléchargement
 router.post("/", uploadConf.single("image"), (req, res) => {
   try {
-    console.log("Fichier reçu :", req.file);
 
     if (!req.file) {
       console.error("Aucun fichier téléchargé");
@@ -22,7 +21,6 @@ router.post("/", uploadConf.single("image"), (req, res) => {
     }
 
     const filePath = `/uploads/${req.file.filename}`;
-    console.log("Chemin du fichier :", filePath);
 
     res.status(200).json({
       message: "Fichier téléchargé avec succès",

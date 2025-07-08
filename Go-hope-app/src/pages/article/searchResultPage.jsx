@@ -21,7 +21,6 @@ const SearchResultsPage = () => {
   }, [query, performSearch]);
 
   const handleSubjectClick = (articleId) => {
-    console.log("Article cliqué :", articleId);
     // Redirigez vers la page de détails ou effectuez autre action
     navigate(`/la-sep/${articleId}`);
   };

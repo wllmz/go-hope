@@ -41,7 +41,6 @@ const ArticleModal = ({ isOpen, onClose, onSubmit, article, mode }) => {
   // Appel de fetchAllCategories à chaque ouverture de la modal
   useEffect(() => {
     if (isOpen) {
-      console.log("Modal ouverte, appel de fetchAllCategories");
       fetchAllCategories().catch((err) =>
         console.error("Erreur lors de fetchAllCategories :", err)
       );
@@ -52,8 +51,6 @@ const ArticleModal = ({ isOpen, onClose, onSubmit, article, mode }) => {
   useEffect(() => {
     if (isOpen) {
       if (article && mode === "edit") {
-        console.log("Article reçu dans la modal :", article);
-        console.log("Catégories de l'article :", article.category);
 
         setFormData({
           title: article.title || "",
@@ -102,7 +99,6 @@ const ArticleModal = ({ isOpen, onClose, onSubmit, article, mode }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    console.log(`Changement de ${name}:`, value);
     setFormData((prev) => ({
       ...prev,
       [name]: value,
@@ -145,7 +141,6 @@ const ArticleModal = ({ isOpen, onClose, onSubmit, article, mode }) => {
 
   // Gestion spécifique pour ReactQuill (champ content)
   const handleContentChange = (value) => {
-    console.log("Changement de contenu :", value);
     setFormData((prev) => ({
       ...prev,
       content: value,
@@ -188,14 +183,12 @@ const ArticleModal = ({ isOpen, onClose, onSubmit, article, mode }) => {
     if (!formData.category) {
       newErrors.category = "Une catégorie est requise";
     }
-    console.log("Erreurs de validation :", newErrors);
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Soumission du formulaire avec les données :", formData);
 
     // Vérifier si un upload est en cours
     if (uploadLoading) {

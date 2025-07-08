@@ -18,7 +18,6 @@ const InfoUser = () => {
   const { handleLogout, loading: logoutLoading } = useLogout();
 
   // Logs pour déboguer
-  console.log("User object:", user);
 
   // Vérification correcte du rôle admin
   const isAdmin =
@@ -29,7 +28,6 @@ const InfoUser = () => {
       (Array.isArray(user.roles) && user.roles.includes("admin")) ||
       user.role === "admin");
 
-  console.log("isAdmin:", isAdmin);
 
   // Gestion des favoris pour les sujets
   const {
@@ -87,7 +85,6 @@ const InfoUser = () => {
       const favIds = article.favoris?.map((fav) => fav.toString()) || [];
       fav[article._id] = favIds.includes(userId);
     });
-    console.log("Article favorites calculés :", fav);
     setArticleFavorites(fav);
   }, [articles, user]);
 
@@ -99,7 +96,6 @@ const InfoUser = () => {
   // Appel initial pour charger les articles favoris depuis le backend
   useEffect(() => {
     fetchFavbyUser();
-    console.log("fetchFavbyUser appelé");
   }, [fetchFavbyUser]);
 
   const onNavigateToAllFavorites = () => {
@@ -166,13 +162,10 @@ const InfoUser = () => {
       if (articleFavorites[articleId]) {
         await removeFromFavoris(articleId);
         setArticleFavorites((prev) => ({ ...prev, [articleId]: false }));
-        console.log(`Favori retiré pour l'article ${articleId}`);
       } else {
         await addToFavoris(articleId);
         setArticleFavorites((prev) => ({ ...prev, [articleId]: true }));
-        console.log(`Favori ajouté pour l'article ${articleId}`);
       }
-      console.log(
         "Etat des articleFavorites après mise à jour :",
         articleFavorites
       );

@@ -12,7 +12,6 @@ const SanteDetail = () => {
   const [error, setError] = useState(null);
   const { fetchAllArticlesSante } = useArticles();
 
-  console.log("ID de l'article santé depuis les paramètres:", id);
 
   const { fetchFichesByCategory } = useFiche();
 
@@ -21,7 +20,6 @@ const SanteDetail = () => {
     const loadArticles = async () => {
       try {
         await fetchAllArticlesSante();
-        console.log("Articles santé préchargés");
       } catch (err) {
         console.error("Erreur lors du préchargement des articles santé:", err);
       }
@@ -30,17 +28,13 @@ const SanteDetail = () => {
   }, [fetchAllArticlesSante]);
 
   useEffect(() => {
-    console.log("useEffect déclenché avec id:", id);
 
     const loadSanteData = async () => {
       try {
-        console.log("Début du chargement des données");
         setLoading(true);
 
         // Récupération des fiches santé
-        console.log("Appel de fetchFichesByCategory avec catégorie: sante");
         const santeFiches = await fetchFichesByCategory("sante");
-        console.log("Résultat de fetchFichesByCategory:", santeFiches);
 
         // Vérifier si santeFiches est défini et est un tableau
         if (!santeFiches || !Array.isArray(santeFiches)) {
@@ -50,11 +44,9 @@ const SanteDetail = () => {
           return;
         }
 
-        console.log("Fiches santé récupérées:", santeFiches.length);
 
         const foundSante = santeFiches.find((fiche) => fiche._id === id);
 
-        console.log("Résultat de la recherche de fiche santé:", foundSante);
 
         if (!foundSante) {
           console.error("Fiche santé non trouvée pour l'ID:", id);
@@ -63,7 +55,6 @@ const SanteDetail = () => {
           return;
         }
 
-        console.log("Fiche santé trouvée:", foundSante.titre);
         setSante(foundSante);
         setError(null);
       } catch (err) {
@@ -71,7 +62,6 @@ const SanteDetail = () => {
         setError("Une erreur est survenue lors du chargement des données");
       } finally {
         setLoading(false);
-        console.log("Chargement terminé");
       }
     };
 

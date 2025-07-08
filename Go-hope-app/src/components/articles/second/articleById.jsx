@@ -32,7 +32,6 @@ const ArticleById = () => {
   const [showSuccessAnimation, setShowSuccessAnimation] = useState(false);
 
   // Debug
-  console.log("ID de l'article depuis l'URL :", articleId);
 
   // Fonction pour récupérer l'article
   const fetchArticle = async () => {

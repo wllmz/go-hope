@@ -87,7 +87,6 @@ export const sendResetPasswordEmail = async (email, resetURL) => {
 
   try {
     await transporter.sendMail(mailOptions);
-    console.log("Email de réinitialisation envoyé à : " + email);
   } catch (error) {
     console.error(
       "Erreur lors de l'envoi de l'email de réinitialisation :",

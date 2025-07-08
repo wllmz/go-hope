@@ -13,7 +13,6 @@ export const uploadImage = async (file) => {
     const formData = new FormData();
     formData.append("image", file);
 
-    console.log("uploadImage - Fichier à envoyer:", file.name);
 
     const response = await axiosInstance.post("/uploads", formData, {
       headers: {
@@ -21,7 +20,6 @@ export const uploadImage = async (file) => {
       },
     });
 
-    console.log("uploadImage - Réponse de l'API:", response.data);
     return response.data;
   } catch (error) {
     console.error("uploadImage - Erreur:", {

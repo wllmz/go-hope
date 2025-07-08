@@ -3,7 +3,6 @@ import axiosInstance from "../instance/axiosInstance";
 // Créer une nouvelle demande de patient-aidant
 export const createPatientAidantRequest = async (requestData) => {
   try {
-    console.log(
       "createPatientAidantRequest - Données reçues:",
       JSON.stringify(requestData, null, 2)
     );
@@ -11,7 +10,6 @@ export const createPatientAidantRequest = async (requestData) => {
       "/patient-aidant/create",
       requestData
     );
-    console.log(
       "createPatientAidantRequest - Réponse de l'API:",
       JSON.stringify(response.data, null, 2)
     );
@@ -71,7 +69,6 @@ export const deletePatientAidantRequest = async (requestId) => {
 // Mettre à jour le statut d'une demande (admin uniquement)
 export const updatePatientAidantStatus = async (requestId, status) => {
   try {
-    console.log("updatePatientAidantStatus - Données reçues:", {
       requestId,
       status,
     });
@@ -79,7 +76,6 @@ export const updatePatientAidantStatus = async (requestId, status) => {
       `/patient-aidant/${requestId}/status`,
       { status }
     );
-    console.log(
       "updatePatientAidantStatus - Réponse de l'API:",
       JSON.stringify(response.data, null, 2)
     );

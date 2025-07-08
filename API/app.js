@@ -40,13 +40,13 @@ dotenv.config();
 // Définition des URLs en fonction de l'environnement
 const API_URL =
   process.env.NODE_ENV === "production"
-    ? process.env.API_PROD_URL || "https://api.go-hope.fr"
-    : process.env.API_DEV_URL || "https://dev-api.go-hope.fr";
+    ? process.env.API_PROD_URL || "https://api.wllmz.fr"
+    : process.env.API_DEV_URL || "https://dev-api.wllmz.fr";
 
 const FRONTEND_URL =
   process.env.NODE_ENV === "production"
-    ? process.env.FRONTEND_PROD_URL || "https://app.go-hope.fr"
-    : process.env.FRONTEND_DEV_URL || "https://dev-app.go-hope.fr";
+    ? process.env.FRONTEND_PROD_URL || "https://app.wllmz.fr"
+    : process.env.FRONTEND_DEV_URL || "https://dev-app.wllmz.fr";
 
 const MONGO_URI =
   process.env.NODE_ENV === "production"
@@ -61,11 +61,10 @@ app.set("trust proxy", 1);
 async function startServer() {
   try {
     // Ajout de debug pour vérifier l'environnement
-    console.log("NODE_ENV =", process.env.NODE_ENV);
 
     // Configuration CORS optimisée pour app.go-hope.fr
     const corsOptions = {
-      origin: "https://app.go-hope.fr", // Seulement cette URL spécifique
+      origin: "https://app.wllmz.fr", // Seulement cette URL spécifique
       credentials: true,
       methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
       allowedHeaders: [
@@ -139,13 +138,10 @@ async function startServer() {
     app.use("/api", apiLimiter);
 
     // Connexion MongoDB
-    console.log("Connexion à MongoDB...");
     await connectMongoDb(MONGO_URI);
-    console.log("Connexion à MongoDB réussie !");
 
     // Logs pour debug
     app.use((req, res, next) => {
-      console.log(
         `[${new Date().toISOString()}] ${req.method} ${req.url} - Origin: ${
           req.headers.origin
         }`
@@ -193,10 +189,6 @@ async function startServer() {
     // Démarrage du serveur
     const PORT = process.env.PORT || 5000;
     app.listen(PORT, () => {
-      console.log(`Serveur démarré sur http://localhost:${PORT}`);
-      console.log(`Environnement: ${process.env.NODE_ENV || "development"}`);
-      console.log(`Frontend URL: ${FRONTEND_URL}`);
-      console.log(`API URL: ${API_URL}`);
     });
   } catch (err) {
     console.error("Erreur au démarrage du serveur :", err);

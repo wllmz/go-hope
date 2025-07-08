@@ -82,7 +82,6 @@ export const sendWaitlistConfirmation = async (user) => {
 
   try {
     await transporter.sendMail(mailOptions);
-    console.log("Email de confirmation envoyé à:", user.email);
     return true;
   } catch (error) {
     console.error("Erreur lors de l'envoi de l'email de confirmation:", error);
@@ -102,8 +101,6 @@ export const sendChatActivationNotification = async (user) => {
   }
 
   try {
-    console.log("Tentative d'envoi d'email à:", user.email);
-    console.log("Configuration mail:", {
       service: "gmail",
       user: EMAIL_USER ? "OK" : "MANQUANT",
       pass: EMAIL_PASSWORD ? "OK" : "MANQUANT",
@@ -175,7 +172,6 @@ export const sendChatActivationNotification = async (user) => {
     };
 
     const info = await transporter.sendMail(mailOptions);
-    console.log("Email envoyé avec succès:", info.messageId);
     return true;
   } catch (error) {
     console.error("Erreur détaillée lors de l'envoi de l'email:", error);

@@ -91,7 +91,6 @@ const AllSubject = () => {
     let filtered = [...subjects];
 
     // Debug: Afficher les dates et vérifier les favoris
-    console.log(
       "Sujets avec dates:",
       subjects.map((s) => ({
         id: s._id,
@@ -106,7 +105,6 @@ const AllSubject = () => {
         // Filtrer les sujets favoris de l'utilisateur
         if (user) {
           filtered = subjects.filter((subject) => favorites[subject._id]);
-          console.log("Sujets favoris filtrés:", filtered.length);
         } else {
           filtered = [];
         }
@@ -119,7 +117,6 @@ const AllSubject = () => {
           const bFavoris = b.favoris?.length || 0;
           return bFavoris - aFavoris;
         });
-        console.log(
           "Tri par popularité:",
           filtered.map((s) => ({
             title: s.title,
@@ -137,7 +134,6 @@ const AllSubject = () => {
           const dateB = new Date(b.created_at);
           return dateB - dateA;
         });
-        console.log(
           "Tri par date:",
           filtered.map((s) => ({
             title: s.title,
@@ -221,7 +217,6 @@ const AllSubject = () => {
   // Changer d'onglet
   const changeTab = (tab) => {
     setActiveTab(tab);
-    console.log("Changement d'onglet vers:", tab);
   };
 
   return (

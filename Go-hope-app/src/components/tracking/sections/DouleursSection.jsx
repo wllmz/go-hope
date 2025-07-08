@@ -72,7 +72,6 @@ const DouleursSection = ({
   const [showModal, setShowModal] = useState(false);
 
   const handleSelection = async (selection) => {
-    console.log("Nouvelle sélection:", selection);
     try {
       const selections = Array.isArray(selection) ? selection : [selection];
 
@@ -108,7 +107,6 @@ const DouleursSection = ({
 
   const handleDeleteZone = async (index) => {
     const entry = data[index];
-    console.log("Tentative de suppression:", { entry, index });
 
     if (!entry._id) {
       console.error("ID manquant pour la suppression:", entry);

@@ -20,7 +20,6 @@ const SearchResultsPage = () => {
   }, [query, performSearch]);
 
   const handleSubjectClick = (subjectId) => {
-    console.log("Subject clicked:", subjectId);
     // Redirigez vers la page de détails, par exemple
     navigate(`/forum/sujet/${subjectId}`);
   };

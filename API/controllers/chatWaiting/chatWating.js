@@ -177,13 +177,13 @@ export const updateWaitlistStatus = async (req, res) => {
         // Récupérer l'utilisateur complet sans filtrer les champs
         const user = await User.findById(userId);
 
-        console.log("Utilisateur complet:", user);
-        console.log("Email disponible:", user.email);
+
+
 
         if (user && user.email) {
           // Créer l'objet approprié pour la fonction d'activation
           const emailResult = await sendChatActivationNotification(user);
-          console.log("Résultat envoi email:", emailResult);
+
         } else {
           console.error("Email non disponible pour l'utilisateur:", userId);
         }

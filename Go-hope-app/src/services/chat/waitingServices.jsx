@@ -4,7 +4,6 @@ import axiosInstance from "../instance/axiosInstance";
 export const addToWaitlist = async () => {
   try {
     const response = await axiosInstance.post("/waitlist/add");
-    console.log("Inscription à la liste d'attente:", response.data);
     return response.data;
   } catch (error) {
     console.error("Erreur lors de l'inscription à la liste d'attente", error);
@@ -16,7 +15,6 @@ export const addToWaitlist = async () => {
 export const getWaitlistStatus = async () => {
   try {
     const response = await axiosInstance.get("/waitlist/status");
-    console.log("Statut de la liste d'attente:", response.data);
     return response.data;
   } catch (error) {
     // Si l'utilisateur n'est pas dans la liste d'attente (erreur 404), on retourne null
@@ -35,7 +33,6 @@ export const getWaitlistStatus = async () => {
 export const getPendingUsers = async () => {
   try {
     const response = await axiosInstance.get("/waitlist/pending");
-    console.log("Liste des utilisateurs en attente:", response.data);
     return response.data;
   } catch (error) {
     console.error(
@@ -50,7 +47,6 @@ export const getPendingUsers = async () => {
 export const getActivatedUsers = async () => {
   try {
     const response = await axiosInstance.get("/waitlist/activated");
-    console.log("Liste des utilisateurs activés:", response.data);
     return response.data;
   } catch (error) {
     console.error(
@@ -68,7 +64,6 @@ export const updateWaitlistStatus = async (userId, status) => {
       userId,
       status,
     });
-    console.log("Statut mis à jour:", response.data);
     return response.data;
   } catch (error) {
     console.error("Erreur lors de la mise à jour du statut", error);
@@ -80,7 +75,6 @@ export const updateWaitlistStatus = async (userId, status) => {
 export const removeFromWaitlist = async () => {
   try {
     const response = await axiosInstance.delete("/waitlist/remove");
-    console.log("Désinscription réussie:", response.data);
     return response.data;
   } catch (error) {
     console.error(

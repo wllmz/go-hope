@@ -47,10 +47,6 @@ const SensorielGaugeView = ({ data, onUpdate, onBack, selectedDate }) => {
 
   const handleNiveauChange = async (type, newNiveau) => {
     try {
-      console.log("=== Début mise à jour sensoriel ===");
-      console.log("Type:", type);
-      console.log("Ancien niveau:", localData[type]);
-      console.log("Nouveau niveau:", newNiveau);
 
       // Mise à jour locale immédiate
       setLocalData((prev) => ({
@@ -62,14 +58,9 @@ const SensorielGaugeView = ({ data, onUpdate, onBack, selectedDate }) => {
       const sensorielData = {};
       sensorielData[type] = newNiveau;
 
-      console.log("=== Données à envoyer ===");
-      console.log("selectedDate:", selectedDate);
-      console.log("data._id:", data._id);
-      console.log("sensorielData:", sensorielData);
 
       await onUpdate(selectedDate, data._id, sensorielData);
 
-      console.log("=== Fin mise à jour sensoriel ===");
     } catch (error) {
       console.error(`Erreur lors de la mise à jour du ${type}:`, error);
       // Revenir à l'état précédent en cas d'erreur

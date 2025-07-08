@@ -1,6 +1,6 @@
 // Middleware pour vérifier le rôle Admin
 export const AdminRole = (req, res, next) => {
-  console.log(req.user);
+
   if (req.user && req.user.roles && req.user.roles.includes("admin")) {
     next();
   } else {
@@ -10,7 +10,7 @@ export const AdminRole = (req, res, next) => {
 
 // Middleware pour vérifier le rôle Parent
 export const ParentRole = (req, res, next) => {
-  console.log(req.user);
+
   if (req.user && req.user.roles && req.user.roles.includes("parent")) {
     next();
   } else {
@@ -20,7 +20,7 @@ export const ParentRole = (req, res, next) => {
 
 // Middleware pour vérifier le rôle Pro
 export const ProRole = (req, res, next) => {
-  console.log(req.user);
+
   if (req.user && req.user.roles && req.user.roles.includes("pro")) {
     next();
   } else {

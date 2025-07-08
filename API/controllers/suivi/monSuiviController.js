@@ -4,15 +4,15 @@ import { format } from "date-fns";
 // Créer ou ajouter des entrées au suivi
 export const userSuivi = async (req, res) => {
   try {
-    console.log("=== Début userSuivi ===");
-    console.log("Headers:", req.headers);
-    console.log("Body:", req.body);
+
+
+
 
     const authId = req.user.id;
-    console.log("Auth ID:", authId);
+
 
     const { date } = req.body;
-    console.log("Date reçue:", date);
+
 
     // Recherche du document de suivi de l'utilisateur pour la date spécifique
     let suivi = await suiviModel.findOne({
@@ -23,11 +23,11 @@ export const userSuivi = async (req, res) => {
       },
     });
 
-    console.log("Suivi existant:", suivi);
+
 
     // Si le suivi n'existe pas, on le crée
     if (!suivi) {
-      console.log("Création d'un nouveau suivi");
+
       const suiviData = {
         user: authId,
         date: new Date(date + "T00:00:00.000Z"),
@@ -35,7 +35,7 @@ export const userSuivi = async (req, res) => {
 
       // Ajout des champs facultatifs uniquement s'ils sont fournis
       if (req.body.motricité) {
-        console.log("Ajout motricité:", req.body.motricité);
+
         suiviData.motricité = req.body.motricité;
       }
       if (req.body.sensoriel) suiviData.sensoriel = req.body.sensoriel;
@@ -43,13 +43,13 @@ export const userSuivi = async (req, res) => {
       if (req.body.fatigue) suiviData.fatigue = req.body.fatigue;
       if (req.body.humeur) suiviData.humeur = req.body.humeur;
 
-      console.log("Données du nouveau suivi:", suiviData);
+
 
       suivi = new suiviModel(suiviData);
-      console.log("Nouveau suivi créé:", suivi);
+
 
       await suivi.save();
-      console.log("Suivi sauvegardé en base");
+
 
       return res.status(201).json({
         message: "Suivi créé avec succès",
@@ -58,10 +58,10 @@ export const userSuivi = async (req, res) => {
     }
 
     // Si le suivi existe, ajouter les nouvelles entrées
-    console.log("Mise à jour du suivi existant");
+
 
     if (req.body.motricité && Array.isArray(req.body.motricité)) {
-      console.log("Ajout de nouvelles entrées motricité:", req.body.motricité);
+
       if (!suivi.motricité) suivi.motricité = [];
       req.body.motricité.forEach((newEntry) => {
         suivi.motricité.push(newEntry);
@@ -69,7 +69,7 @@ export const userSuivi = async (req, res) => {
     }
 
     if (req.body.douleurs && Array.isArray(req.body.douleurs)) {
-      console.log("Ajout de nouvelles entrées douleurs:", req.body.douleurs);
+
       if (!suivi.douleurs) suivi.douleurs = [];
       req.body.douleurs.forEach((newEntry) => {
         suivi.douleurs.push(newEntry);
@@ -77,7 +77,7 @@ export const userSuivi = async (req, res) => {
     }
 
     if (req.body.sensoriel && Array.isArray(req.body.sensoriel)) {
-      console.log("Ajout de nouvelles entrées sensoriel:", req.body.sensoriel);
+
       if (!suivi.sensoriel) suivi.sensoriel = [];
       req.body.sensoriel.forEach((newEntry) => {
         suivi.sensoriel.push(newEntry);
@@ -86,18 +86,18 @@ export const userSuivi = async (req, res) => {
 
     // Mise à jour des champs simples
     if (req.body.fatigue !== undefined) {
-      console.log("Mise à jour de la fatigue:", req.body.fatigue);
+
       suivi.fatigue = req.body.fatigue;
     }
 
     if (req.body.humeur !== undefined) {
-      console.log("Mise à jour de la fatigue:", req.body.humeur);
+
       suivi.humeur = req.body.humeur;
     }
 
-    console.log("Suivi avant sauvegarde:", suivi);
+
     const updatedSuivi = await suivi.save();
-    console.log("Suivi après sauvegarde:", updatedSuivi);
+
 
     res.status(200).json({
       message: "Entrées ajoutées au suivi avec succès",
@@ -337,10 +337,10 @@ export const removeField = async (req, res) => {
 // Modifier une entrée spécifique
 export const updateTrackingEntry = async (req, res) => {
   try {
-    console.log("=== Début updateTrackingEntry ===");
-    console.log("Headers:", req.headers);
-    console.log("Body:", req.body);
-    console.log("Params:", req.params);
+
+
+
+
 
     const authId = req.user.id;
     const { category, entryId } = req.params;
@@ -367,7 +367,7 @@ export const updateTrackingEntry = async (req, res) => {
       });
     }
 
-    console.log("Suivi trouvé:", suivi);
+
 
     // Mettre à jour l'entrée spécifique
     suivi[category] = suivi[category].map((item) => {
@@ -378,7 +378,7 @@ export const updateTrackingEntry = async (req, res) => {
     });
 
     const updatedSuivi = await suivi.save();
-    console.log("Suivi mis à jour avec succès:", updatedSuivi);
+
 
     res.status(200).json({
       message: `Entrée ${category} mise à jour avec succès`,
@@ -400,9 +400,9 @@ export const updateTrackingEntry = async (req, res) => {
 // Modifier un champ simple (fatigue, humeur, troublesCognitifs)
 export const updateSimpleField = async (req, res) => {
   try {
-    console.log("=== Début updateSimpleField ===");
-    console.log("Headers:", req.headers);
-    console.log("Body:", req.body);
+
+
+
 
     const authId = req.user.id;
     const { date, field, value } = req.body;
@@ -431,9 +431,9 @@ export const updateSimpleField = async (req, res) => {
     const nextDay = new Date(targetDate);
     nextDay.setDate(nextDay.getDate() + 1);
 
-    console.log("Date reçue:", date);
-    console.log("Date cible formatée (avec fuseau horaire):", targetDate);
-    console.log("Jour suivant:", nextDay);
+
+
+
 
     // Trouver ou créer le suivi
     let suivi = await suiviModel.findOne({
@@ -444,11 +444,11 @@ export const updateSimpleField = async (req, res) => {
       },
     });
 
-    console.log("Suivi trouvé:", suivi);
+
 
     // Si aucun suivi n'existe pour cette date, en créer un nouveau
     if (!suivi) {
-      console.log("Création d'un nouveau suivi pour la date:", targetDate);
+
       suivi = new suiviModel({
         user: authId,
         date: targetDate,
@@ -477,7 +477,7 @@ export const updateSimpleField = async (req, res) => {
     }
 
     const updatedSuivi = await suivi.save();
-    console.log("Suivi mis à jour avec succès:", updatedSuivi);
+
 
     res.status(200).json({
       message: `Champ ${field} mis à jour avec succès`,
@@ -499,9 +499,9 @@ export const updateSimpleField = async (req, res) => {
 // Mettre à jour les troubles cognitifs
 export const updateTroublesCognitifs = async (req, res) => {
   try {
-    console.log("=== Début updateTroublesCognitifs ===");
-    console.log("Headers:", req.headers);
-    console.log("Body:", req.body);
+
+
+
 
     const authId = req.user.id;
     const { date, troublesCognitifs } = req.body;
@@ -520,9 +520,9 @@ export const updateTroublesCognitifs = async (req, res) => {
     const nextDay = new Date(targetDate);
     nextDay.setDate(nextDay.getDate() + 1);
 
-    console.log("Date reçue:", date);
-    console.log("Date cible formatée:", targetDate);
-    console.log("Troubles cognitifs reçus:", troublesCognitifs);
+
+
+
 
     // Trouver ou créer le suivi
     let suivi = await suiviModel.findOne({
@@ -533,11 +533,11 @@ export const updateTroublesCognitifs = async (req, res) => {
       },
     });
 
-    console.log("Suivi trouvé:", suivi);
+
 
     // Si aucun suivi n'existe pour cette date, en créer un nouveau
     if (!suivi) {
-      console.log("Création d'un nouveau suivi pour la date:", targetDate);
+
       suivi = new suiviModel({
         user: authId,
         date: targetDate,
@@ -564,7 +564,7 @@ export const updateTroublesCognitifs = async (req, res) => {
     });
 
     const updatedSuivi = await suivi.save();
-    console.log("Suivi mis à jour avec succès:", updatedSuivi);
+
 
     res.status(200).json({
       message: "Troubles cognitifs mis à jour avec succès",
@@ -586,9 +586,9 @@ export const updateTroublesCognitifs = async (req, res) => {
 // Mettre à jour une entrée sensorielle
 export const updateSensoriel = async (req, res) => {
   try {
-    console.log("=== Début updateSensoriel ===");
-    console.log("Headers:", req.headers);
-    console.log("Body:", req.body);
+
+
+
 
     const authId = req.user.id;
     const { date, entryId, sensorielData } = req.body;
@@ -643,9 +643,9 @@ export const updateSensoriel = async (req, res) => {
     const nextDay = new Date(targetDate);
     nextDay.setDate(nextDay.getDate() + 1);
 
-    console.log("Date reçue:", date);
-    console.log("Date cible formatée:", targetDate);
-    console.log("Données sensorielles reçues:", sensorielData);
+
+
+
 
     // Trouver le suivi
     let suivi = await suiviModel.findOne({
@@ -679,7 +679,7 @@ export const updateSensoriel = async (req, res) => {
     });
 
     const updatedSuivi = await suivi.save();
-    console.log("Suivi mis à jour avec succès:", updatedSuivi);
+
 
     res.status(200).json({
       message: "Données sensorielles mises à jour avec succès",
@@ -744,15 +744,15 @@ export const removeSensorielObject = async (req, res) => {
 
 export const getDatesWithData = async (req, res) => {
   try {
-    console.log("=== Début getDatesWithData ===");
-    console.log("Headers:", req.headers);
-    console.log("Body:", req.body);
+
+
+
 
     const authId = req.user.id;
-    console.log("Auth ID:", authId);
+
 
     const { startDate, endDate } = req.body;
-    console.log("Dates reçues - Début:", startDate, "Fin:", endDate);
+
 
     if (!startDate || !endDate) {
       return res.status(400).json({
@@ -764,7 +764,7 @@ export const getDatesWithData = async (req, res) => {
     const start = new Date(startDate + "T00:00:00.000Z");
     const end = new Date(endDate + "T23:59:59.999Z");
 
-    console.log("Dates formatées pour la recherche:", {
+
       start: start.toISOString(),
       end: end.toISOString(),
     });
@@ -785,12 +785,12 @@ export const getDatesWithData = async (req, res) => {
       })
       .select("date -_id");
 
-    console.log("Suivis trouvés:", suivis);
+
 
     // Formater les dates pour la réponse
     const dates = suivis.map((suivi) => format(suivi.date, "yyyy-MM-dd"));
 
-    console.log("Dates formatées pour la réponse:", dates);
+
 
     res.status(200).json({
       message: "Dates récupérées avec succès",

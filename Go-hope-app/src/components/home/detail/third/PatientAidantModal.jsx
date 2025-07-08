@@ -84,7 +84,6 @@ const PatientAidantModal = ({ isOpen, onClose }) => {
         user: user.id,
       };
 
-      console.log("Données envoyées:", requestData);
       await createRequest(requestData);
       onClose();
     } catch (err) {

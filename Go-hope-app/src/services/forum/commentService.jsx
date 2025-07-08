@@ -2,7 +2,6 @@ import axiosInstance from "../instance/axiosInstance";
 
 export const createComment = async (subjectId, commentData) => {
   try {
-    console.log("Tentative de création de commentaire:", {
       subjectId,
       commentData,
       headers: axiosInstance.defaults.headers,
@@ -13,7 +12,6 @@ export const createComment = async (subjectId, commentData) => {
       commentData
     );
 
-    console.log("Réponse reçue:", response);
     return response.data;
   } catch (error) {
     console.error("Erreur détaillée:", {

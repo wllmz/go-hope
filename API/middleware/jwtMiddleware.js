@@ -8,11 +8,11 @@ export const verifyToken = (req, res, next) => {
   try {
     // Récupérer le token d'accès dans les cookies
     const accessToken = req.cookies.accessToken;
-    console.log("Token d'accès reçu dans les cookies :", accessToken);
+
 
     // Vérifier si l'accessToken est présent
     if (!accessToken) {
-      console.log("Aucun accessToken trouvé dans les cookies.");
+
       return res.status(401).json({ message: "AccessToken manquant." });
     }
 
@@ -25,11 +25,11 @@ export const verifyToken = (req, res, next) => {
           .json({ message: "AccessToken invalide ou expiré." });
       }
 
-      console.log("Token décodé avec succès :", decoded);
+
 
       // Attacher les informations de l'utilisateur à la requête
       req.user = decoded;
-      console.log("Utilisateur attaché à la requête :", req.user);
+
       next();
     });
   } catch (error) {

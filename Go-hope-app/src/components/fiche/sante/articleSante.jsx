@@ -20,7 +20,6 @@ const AllArticle = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      console.log("Chargement des articles santé...");
       await fetchAllArticlesSante();
     };
     fetchData();
@@ -29,11 +28,8 @@ const AllArticle = () => {
   // Ajouter un effet pour déboguer les articles récupérés
   useEffect(() => {
     if (articles && articles.length > 0) {
-      console.log("Articles récupérés:", articles.length);
-      console.log("Types d'articles (mediaType):", [
         ...new Set(articles.map((a) => a.mediaType)),
       ]);
-      console.log("Genres d'articles:", [
         ...new Set(articles.map((a) => a.genre)),
       ]);
     }
@@ -61,7 +57,6 @@ const AllArticle = () => {
 
   // Vérifier si des articles existent
   if (!articles || articles.length === 0) {
-    console.log("Aucun article n'a été trouvé");
     return (
       <div className="text-center py-4 text-gray-500">
         Aucun article trouvé. Veuillez vérifier que des articles sont associés à
@@ -76,7 +71,6 @@ const AllArticle = () => {
     filteredArticles = articles.filter(
       (article) => article.mediaType === selectedMediaType
     );
-    console.log(
       `Articles filtrés par mediaType '${selectedMediaType}':`,
       filteredArticles.length
     );
@@ -88,7 +82,6 @@ const AllArticle = () => {
     ? filteredArticles.slice(0, 4)
     : filteredArticles;
 
-  console.log("Articles à afficher:", displayedArticles.length);
 
   const handleArticleClick = (articleId) => {
     navigate(`/la-sep/${articleId}`);

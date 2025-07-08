@@ -1,0 +1,47 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            set -e  # Arrêter le script en cas d'erreur
+
+            cd /var/www/go-hope
+
+            # Désactiver BuildKit pour éviter le bug ContainerConfig
+            export DOCKER_BUILDKIT=0
+
+            echo "Déploiement production (frontend et backend)"
+
+            # Mise à jour du code
+            git pull origin main
+
+            # Arrêt des services
+            docker-compose stop frontend backend traefik || true
+
+            # Suppression des anciens conteneurs
+            docker-compose rm -f frontend backend || true
+
+            # Reconstruction des images
+            docker-compose build --no-cache frontend backend
+
+            # Redémarrage des services
+            docker-compose up -d --remove-orphans
+
+            echo "Déploiement terminé avec succès."

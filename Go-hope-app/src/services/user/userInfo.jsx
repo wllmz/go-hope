@@ -10,7 +10,6 @@ export const getUserInfo = async () => {
     });
 
     // Vérifie que la réponse est bien structurée
-    console.log("Response from API:", response.data);
 
     // Renvoi des données de la réponse
     return response.data;

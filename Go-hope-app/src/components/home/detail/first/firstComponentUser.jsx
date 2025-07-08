@@ -67,7 +67,6 @@ const FirstComponentUser = () => {
     if (uploadedImage && uploadedImage.filePath && !isUpdating) {
       const updateProfile = async () => {
         try {
-          console.log(
             "Mise à jour du profil avec la nouvelle image:",
             uploadedImage.filePath
           );
@@ -101,7 +100,6 @@ const FirstComponentUser = () => {
     try {
       const endDate = addDays(weekStart, 6);
 
-      console.log("Chargement des données pour la semaine:", {
         début: format(weekStart, "yyyy-MM-dd"),
         fin: format(endDate, "yyyy-MM-dd"),
       });
@@ -143,7 +141,6 @@ const FirstComponentUser = () => {
 
         // Upload du fichier
         await handleImageUpload(file);
-        console.log("Image uploadée, en attente de mise à jour du profil...");
       } catch (err) {
         console.error("Erreur lors de l'upload:", err);
         setShowImageCropperModal(false);
@@ -212,9 +209,6 @@ const FirstComponentUser = () => {
         niveau: activeTab !== "sensoriel" ? null : undefined,
       };
 
-      console.log("handleCreateSuivi - ZoneData reçu:", zoneData);
-      console.log("handleCreateSuivi - Date formatée:", formattedDate);
-      console.log("handleCreateSuivi - Nouvelle zone:", newZone);
 
       let fieldName;
       switch (activeTab) {
@@ -236,7 +230,6 @@ const FirstComponentUser = () => {
         [fieldName]: [newZone],
       });
 
-      console.log("handleCreateSuivi - Réponse de l'API:", response);
 
       if (response?.suivi) {
         setData((prev) => ({
@@ -294,7 +287,6 @@ const FirstComponentUser = () => {
         return;
       }
 
-      console.log("Suppression de l'entrée:", {
         suiviId,
         entryId,
         date: formattedDate,
@@ -367,7 +359,6 @@ const FirstComponentUser = () => {
   const handleUpdateSensoriel = async (date, entryId, updatedData) => {
     try {
       const formattedDate = format(new Date(date), "yyyy-MM-dd");
-      console.log("Mise à jour sensoriel:", {
         date: formattedDate,
         entryId: entryId,
         sensorielData: updatedData,
@@ -405,8 +396,6 @@ const FirstComponentUser = () => {
   };
 
   const renderContent = () => {
-    console.log("renderContent - Données actuelles:", data);
-    console.log("renderContent - Date sélectionnée:", selectedDate);
 
     switch (activeTab) {
       case "motricite":

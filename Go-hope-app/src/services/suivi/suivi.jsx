@@ -41,17 +41,14 @@ export const createSuivi = async (suiviData, date) => {
       date: rest.date,
     };
 
-    console.log(
       "createSuivi - Données reçues:",
       JSON.stringify(suiviData, null, 2)
     );
-    console.log(
       "createSuivi - Données transformées:",
       JSON.stringify(dataToSend, null, 2)
     );
 
     const response = await axiosInstance.post("/suivi", dataToSend);
-    console.log(
       "createSuivi - Réponse de l'API:",
       JSON.stringify(response.data, null, 2)
     );
@@ -89,7 +86,6 @@ export const getSuiviById = async (suiviId) => {
 // Récupérer un suivi par date
 export const getSuiviByDate = async (date) => {
   try {
-    console.log("Date envoyée à l'API:", date);
     const dateStr =
       typeof date === "string"
         ? date.split("T")[0]
@@ -208,14 +204,12 @@ export const updateSensoriel = async (date, entryId, sensorielData) => {
       sensorielData,
     };
 
-    console.log("updateSensoriel - Données à envoyer:", dataToSend);
 
     const response = await axiosInstance.put(
       "/suivi/update-sensoriel",
       dataToSend
     );
 
-    console.log("updateSensoriel - Réponse:", response.data);
     return response.data;
   } catch (error) {
     console.error("Erreur lors de la mise à jour sensoriel:", error);
@@ -241,7 +235,6 @@ export const removeSensorielObject = async (objectId) => {
 // Récupérer les dates avec données sur une période
 export const getDatesWithData = async (startDate, endDate) => {
   try {
-    console.log("getDatesWithData - Dates envoyées à l'API:", {
       startDate,
       endDate,
     });
@@ -261,7 +254,6 @@ export const getDatesWithData = async (startDate, endDate) => {
       endDate: endDateStr,
     });
 
-    console.log(
       "getDatesWithData - Réponse de l'API:",
       JSON.stringify(response.data, null, 2)
     );
