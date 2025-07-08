@@ -34,7 +34,7 @@ const CategorieById = () => {
     }
   }, [categories, categoryId]); // Dépendances correctes
 
-  if (loading) return <div className="text-center py-4">Chargement...</div>;
+  // Gestion des erreurs seulement - pas de chargement bloquant
   if (error)
     return (
       <div className="text-center py-4 text-red-500">
@@ -71,20 +71,32 @@ const CategorieById = () => {
           </p>
         </div>
 
-        {/* Utilisation de SubjectListLong pour afficher les sujets filtrés */}
-        <SubjectListLong
-          subjects={filteredSubjects}
-          onSubjectClick={handleSubjectClick}
-          onFavoritesUpdate={() => {}} // Fonction vide pour éviter les erreurs
-        />
-
-        {/* Si aucun sujet n'est trouvé */}
-        {filteredSubjects.length === 0 && (
-          <div className="text-center py-8 bg-gray-50 rounded-lg">
-            <p className="text-gray-600">
-              Aucune publication n'a été trouvée dans cette catégorie.
-            </p>
+        {/* Affichage progressif des sujets */}
+        {loading ? (
+          <div className="flex justify-center items-center h-64">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#3B5F8A] mx-auto mb-4"></div>
+              <p className="text-gray-600">Chargement des sujets...</p>
+            </div>
           </div>
+        ) : (
+          <>
+            {/* Utilisation de SubjectListLong pour afficher les sujets filtrés */}
+            <SubjectListLong
+              subjects={filteredSubjects}
+              onSubjectClick={handleSubjectClick}
+              onFavoritesUpdate={fetchSubjects}
+            />
+
+            {/* Si aucun sujet n'est trouvé */}
+            {filteredSubjects.length === 0 && (
+              <div className="text-center py-8 bg-gray-50 rounded-lg">
+                <p className="text-gray-600">
+                  Aucune publication n'a été trouvée dans cette catégorie.
+                </p>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>

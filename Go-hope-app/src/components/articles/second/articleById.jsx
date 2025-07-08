@@ -3,14 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import useArticles from "../../../hooks/article/useArticles";
 import { useUserInfo } from "../../../hooks/user/useUserInfo";
 import { useArticleActions } from "../../../hooks/article/useArticleActions";
-import {
-  FaBookmark,
-  FaRegBookmark,
-  FaBookOpen,
-  FaCheck,
-  FaClock,
-  FaFileAlt,
-} from "react-icons/fa";
+import { FaBookOpen, FaCheck, FaClock, FaFileAlt } from "react-icons/fa";
 import DOMPurify from "dompurify";
 import Logo from "../../../assets/Logo-article.png";
 
@@ -83,28 +76,34 @@ const ArticleById = () => {
 
   const handleReadToggle = async () => {
     if (!currentArticle || !user) return;
+
+    // Sauvegarder l'état actuel pour le rollback
+    const originalReadState = isRead;
+    const originalAnimationState = showSuccessAnimation;
+
     try {
+      // Mise à jour optimiste : mettre à jour l'UI immédiatement
       if (isRead) {
-        await unmarkArticleAsRead(currentArticle._id);
         setIsRead(false);
+        await unmarkArticleAsRead(currentArticle._id);
       } else {
-        await markArticleAsRead(currentArticle._id);
         setIsRead(true);
         setShowSuccessAnimation(true);
         setTimeout(() => setShowSuccessAnimation(false), 1000);
+        await markArticleAsRead(currentArticle._id);
       }
-      await fetchArticle();
     } catch (err) {
       console.error(
         "Erreur lors de la mise à jour du statut de lecture :",
         err
       );
+      // En cas d'erreur, restaurer l'état précédent
+      setIsRead(originalReadState);
+      setShowSuccessAnimation(originalAnimationState);
     }
   };
 
-  if (loading || userLoading) {
-    return <div className="text-center py-4">Chargement...</div>;
-  }
+  // Gestion des erreurs seulement - pas de chargement bloquant
   if (error) {
     return (
       <div className="text-center py-4 text-red-500">Erreur : {error}</div>
@@ -114,9 +113,6 @@ const ArticleById = () => {
     return (
       <div className="text-center py-4 text-red-500">Erreur : {userError}</div>
     );
-  }
-  if (!currentArticle) {
-    return <div className="text-center py-4">Aucun article trouvé.</div>;
   }
 
   // Fonction pour déterminer si l'URL est une URL YouTube
@@ -176,7 +172,7 @@ const ArticleById = () => {
           {/* Sur mobile : une seule carte, sur desktop : deux cartes séparées */}
           <div className="lg:col-span-8">
             <div>
-              {/* Header avec titre complet */}
+              {/* Header avec titre complet - toujours visible */}
               <div className="p-4 space-y-4">
                 {/* Bouton retour */}
                 <div className="flex items-center">
@@ -202,105 +198,121 @@ const ArticleById = () => {
                   </button>
                 </div>
 
-                {/* Ligne d'information */}
-                <div className="flex justify-center px-4">
-                  <div className="flex w-full bg-white/80 rounded-lg">
-                    <div className="flex-1 flex items-center gap-2 px-3 py-1.5 justify-center">
-                      <FaFileAlt className="text-gray-400" size={14} />
-                      <span className="text-sm text-gray-600">
-                        {currentArticle.category &&
-                        currentArticle.category.length > 0
-                          ? currentArticle.category[0].category_tittle
-                          : "Catégorie non définie"}
-                      </span>
+                {/* Ligne d'information - affichage conditionnel */}
+                {!loading && currentArticle && (
+                  <div className="flex justify-center px-4">
+                    <div className="flex w-full bg-white/80 rounded-lg">
+                      <div className="flex-1 flex items-center gap-2 px-3 py-1.5 justify-center">
+                        <FaFileAlt className="text-gray-400" size={14} />
+                        <span className="text-sm text-gray-600">
+                          {currentArticle.category &&
+                          currentArticle.category.length > 0
+                            ? currentArticle.category[0].category_tittle
+                            : "Catégorie non définie"}
+                        </span>
+                      </div>
+                      <div className="flex-1 flex items-center gap-2 px-3 py-1.5 justify-center">
+                        <FaClock className="text-gray-400" size={14} />
+                        <span className="text-sm text-gray-600">
+                          {currentArticle.mediaType === "Vidéo"
+                            ? `${currentArticle.videoDuration}min`
+                            : `${currentArticle.time_lecture}min`}
+                        </span>
+                      </div>
                     </div>
-                    <div className="flex-1 flex items-center gap-2 px-3 py-1.5 justify-center">
-                      <FaClock className="text-gray-400" size={14} />
-                      <span className="text-sm text-gray-600">
-                        {currentArticle.mediaType === "Vidéo"
-                          ? `${currentArticle.videoDuration}min`
-                          : `${currentArticle.time_lecture}min`}
-                      </span>
-                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Contenu principal - affichage progressif */}
+              {loading || !currentArticle ? (
+                <div className="flex justify-center items-center h-64">
+                  <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#3B5F8A] mx-auto mb-4"></div>
+                    <p className="text-gray-600">Chargement de l'article...</p>
                   </div>
                 </div>
-              </div>
-
-              {/* Titre de l'article aligné avec le contenu */}
-              <div className="px-4">
-                <h1 className="text-xl md:text-2xl font-bold text-orange-500 font-confiteria mb-4">
-                  {currentArticle.title}
-                </h1>
-              </div>
-
-              {/* Contenu principal */}
-              {currentArticle.mediaType === "Vidéo" ? (
-                <>
-                  {/* Section vidéo */}
-                  <div className="relative px-4 mb-4">
-                    <div className="aspect-video w-full rounded-2xl overflow-hidden shadow-lg">
-                      {renderVideo()}
-                    </div>
-                  </div>
-
-                  {/* Contenu texte pour la vidéo */}
-                  <div className="p-4 md:p-6">
-                    <div className="prose max-w-none">
-                      <div
-                        dangerouslySetInnerHTML={{
-                          __html: DOMPurify.sanitize(currentArticle.content),
-                        }}
-                        className="text-sm md:text-base text-gray-600 leading-relaxed"
-                      />
-                    </div>
-                  </div>
-                </>
               ) : (
                 <>
-                  {/* Première partie du contenu article */}
-                  <div className="p-4 md:p-6">
-                    <div className="prose max-w-none">
-                      <div
-                        dangerouslySetInnerHTML={{
-                          __html: DOMPurify.sanitize(
-                            currentArticle.content.split("<img")[0]
-                          ),
-                        }}
-                        className="text-sm md:text-base text-gray-600 leading-relaxed"
-                      />
-                    </div>
+                  {/* Titre de l'article aligné avec le contenu */}
+                  <div className="px-4">
+                    <h1 className="text-xl md:text-2xl font-bold text-orange-500 font-confiteria mb-4">
+                      {currentArticle.title}
+                    </h1>
                   </div>
 
-                  {/* Image de l'article */}
-                  <div className="relative px-4 mb-4">
-                    <div className="aspect-video w-full rounded-2xl overflow-hidden shadow-lg">
-                      <img
-                        src={currentArticle.image}
-                        alt={currentArticle.title}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  </div>
+                  {/* Contenu principal */}
+                  {currentArticle.mediaType === "Vidéo" ? (
+                    <>
+                      {/* Section vidéo */}
+                      <div className="relative px-4 mb-4">
+                        <div className="aspect-video w-full rounded-2xl overflow-hidden shadow-lg">
+                          {renderVideo()}
+                        </div>
+                      </div>
 
-                  {/* Deuxième partie du contenu article */}
-                  <div className="p-4 md:p-6">
-                    <div className="prose max-w-none">
-                      <div
-                        dangerouslySetInnerHTML={{
-                          __html: DOMPurify.sanitize(
-                            currentArticle.content.includes("<img")
-                              ? currentArticle.content
-                                  .split("<img")[1]
-                                  .split(">")
-                                  .slice(1)
-                                  .join(">")
-                              : ""
-                          ),
-                        }}
-                        className="text-sm md:text-base text-gray-600 leading-relaxed"
-                      />
-                    </div>
-                  </div>
+                      {/* Contenu texte pour la vidéo */}
+                      <div className="p-4 md:p-6">
+                        <div className="prose max-w-none">
+                          <div
+                            dangerouslySetInnerHTML={{
+                              __html: DOMPurify.sanitize(
+                                currentArticle.content
+                              ),
+                            }}
+                            className="text-sm md:text-base text-gray-600 leading-relaxed"
+                          />
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      {/* Première partie du contenu article */}
+                      <div className="p-4 md:p-6">
+                        <div className="prose max-w-none">
+                          <div
+                            dangerouslySetInnerHTML={{
+                              __html: DOMPurify.sanitize(
+                                currentArticle.content.split("<img")[0]
+                              ),
+                            }}
+                            className="text-sm md:text-base text-gray-600 leading-relaxed"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Image de l'article */}
+                      <div className="relative px-4 mb-4">
+                        <div className="aspect-video w-full rounded-2xl overflow-hidden shadow-lg">
+                          <img
+                            src={currentArticle.image}
+                            alt={currentArticle.title}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      </div>
+
+                      {/* Deuxième partie du contenu article */}
+                      <div className="p-4 md:p-6">
+                        <div className="prose max-w-none">
+                          <div
+                            dangerouslySetInnerHTML={{
+                              __html: DOMPurify.sanitize(
+                                currentArticle.content.includes("<img")
+                                  ? currentArticle.content
+                                      .split("<img")[1]
+                                      .split(">")
+                                      .slice(1)
+                                      .join(">")
+                                  : ""
+                              ),
+                            }}
+                            className="text-sm md:text-base text-gray-600 leading-relaxed"
+                          />
+                        </div>
+                      </div>
+                    </>
+                  )}
                 </>
               )}
             </div>
@@ -310,23 +322,32 @@ const ArticleById = () => {
               <div className="mt-0">
                 <div className="p-4 md:p-6">
                   {/* Bouton marquer comme lu */}
-                  <button
-                    onClick={handleReadToggle}
-                    className={`w-full flex items-center justify-center gap-2 py-3 rounded-lg transition-colors ${
-                      isRead
-                        ? "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                        : "bg-gray-100 text-[#3B5F8A]"
-                    }`}
-                  >
-                    {showSuccessAnimation ? (
-                      <FaCheck size={20} />
-                    ) : (
-                      <FaBookOpen size={20} />
-                    )}
-                    <span>
-                      {isRead ? "Marquer comme non lu" : "Marquer comme lu"}
-                    </span>
-                  </button>
+                  {userLoading ? (
+                    <div className="w-full flex items-center justify-center gap-2 py-3 rounded-lg bg-gray-100">
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[#3B5F8A]"></div>
+                      <span className="text-gray-600">Chargement...</span>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={handleReadToggle}
+                      className={`w-full flex items-center justify-center gap-2 py-3 rounded-lg transition-colors ${
+                        isRead
+                          ? "bg-green-100 text-green-600 hover:bg-green-200"
+                          : "bg-gray-100 text-[#3B5F8A] hover:bg-gray-200"
+                      }`}
+                    >
+                      {showSuccessAnimation ? (
+                        <FaCheck size={20} className="text-green-600" />
+                      ) : isRead ? (
+                        <FaCheck size={20} className="text-green-600" />
+                      ) : (
+                        <FaBookOpen size={20} />
+                      )}
+                      <span>
+                        {isRead ? "Marquer comme non lu" : "Marquer comme lu"}
+                      </span>
+                    </button>
+                  )}
 
                   {/* Footer */}
                   <div className="mt-8 flex items-center justify-center gap-2">
@@ -344,38 +365,49 @@ const ArticleById = () => {
           <div className="hidden lg:block lg:col-span-4">
             <div className="shadow p-4 md:p-6 sticky top-4">
               {/* Bouton marquer comme lu */}
-              <button
-                onClick={handleReadToggle}
-                className={`w-full flex items-center justify-center gap-2 py-3 rounded-lg transition-colors ${
-                  isRead
-                    ? "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                    : "bg-gray-100 text-[#3B5F8A]"
-                }`}
-              >
-                {showSuccessAnimation ? (
-                  <FaCheck size={20} />
-                ) : (
-                  <FaBookOpen size={20} />
-                )}
-                <span>
-                  {isRead ? "Marquer comme non lu" : "Marquer comme lu"}
-                </span>
-              </button>
+              {userLoading ? (
+                <div className="w-full flex items-center justify-center gap-2 py-3 rounded-lg bg-gray-100">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[#3B5F8A]"></div>
+                  <span className="text-gray-600">Chargement...</span>
+                </div>
+              ) : (
+                <button
+                  onClick={handleReadToggle}
+                  className={`w-full flex items-center justify-center gap-2 py-3 rounded-lg transition-colors ${
+                    isRead
+                      ? "bg-green-100 text-green-600 hover:bg-green-200"
+                      : "bg-gray-100 text-[#3B5F8A] hover:bg-gray-200"
+                  }`}
+                >
+                  {showSuccessAnimation ? (
+                    <FaCheck size={20} className="text-green-600" />
+                  ) : isRead ? (
+                    <FaCheck size={20} className="text-green-600" />
+                  ) : (
+                    <FaBookOpen size={20} />
+                  )}
+                  <span>
+                    {isRead ? "Marquer comme non lu" : "Marquer comme lu"}
+                  </span>
+                </button>
+              )}
 
               {/* Informations supplémentaires - visible uniquement sur desktop */}
-              <div className="mt-6">
-                <h3 className="text-lg font-semibold mb-2">À propos</h3>
-                <div className="space-y-2">
-                  <p className="text-sm text-gray-600">
-                    Type: {currentArticle.type}
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    {currentArticle.mediaType === "Vidéo"
-                      ? `Durée: ${currentArticle.videoDuration} minutes`
-                      : `Durée: ${currentArticle.time_lecture} minutes`}
-                  </p>
+              {!loading && currentArticle && (
+                <div className="mt-6">
+                  <h3 className="text-lg font-semibold mb-2">À propos</h3>
+                  <div className="space-y-2">
+                    <p className="text-sm text-gray-600">
+                      Type: {currentArticle.type}
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      {currentArticle.mediaType === "Vidéo"
+                        ? `Durée: ${currentArticle.videoDuration} minutes`
+                        : `Durée: ${currentArticle.time_lecture} minutes`}
+                    </p>
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Footer */}
               <div className="mt-6 flex items-center justify-center gap-2">

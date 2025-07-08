@@ -23,41 +23,56 @@ const SubjectListLong = ({ subjects, onSubjectClick, onFavoritesUpdate }) => {
   }, [subjects, user]);
 
   const handleFavorisClick = async (subjectId) => {
-    if (favorites[subjectId]) {
-      await removeFromFavorites(subjectId);
-      setFavorites((prev) => ({ ...prev, [subjectId]: false }));
-    } else {
-      await addToFavorites(subjectId);
-      setFavorites((prev) => ({ ...prev, [subjectId]: true }));
+    // Sauvegarder l'état actuel pour le rollback
+    const originalFavorite = favorites[subjectId];
+
+    try {
+      // Mise à jour optimiste : mettre à jour l'UI immédiatement
+      if (favorites[subjectId]) {
+        setFavorites((prev) => ({ ...prev, [subjectId]: false }));
+        await removeFromFavorites(subjectId);
+      } else {
+        setFavorites((prev) => ({ ...prev, [subjectId]: true }));
+        await addToFavorites(subjectId);
+      }
+    } catch (err) {
+      console.error("Erreur lors de la mise à jour des favoris :", err);
+      // En cas d'erreur, restaurer l'état précédent
+      setFavorites((prev) => ({ ...prev, [subjectId]: originalFavorite }));
     }
   };
 
-  const handleBackClick = () => {
-    navigate(-1);
+  const handleBackClick = (e) => {
+    // Empêcher le comportement par défaut et la propagation
+    e.preventDefault();
+    e.stopPropagation();
+
+    // Navigation directe vers la page du forum (plus fiable)
+    navigate("/forum");
   };
 
   return (
     <div className="space-y-6">
       <button
+        type="button"
         onClick={handleBackClick}
-        className="text-orange-500 hover:text-orange-600 transition-colors"
-        title="Retour"
+        className="flex items-center text-[#3B5F8A] hover:text-[#2E4A6A] font-medium"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          className="h-6 w-6"
+          className="h-5 w-5 mr-1"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
-          style={{ transform: "scaleX(-1)" }}
         >
           <path
             strokeLinecap="round"
             strokeLinejoin="round"
             strokeWidth={2}
-            d="M9 5l7 7-7 7"
+            d="M15 19l-7-7 7-7"
           />
         </svg>
+        <span>Retour</span>
       </button>
 
       {error && <p className="text-red-500 px-4">{error}</p>}

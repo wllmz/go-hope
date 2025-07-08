@@ -159,9 +159,7 @@ const AllSubject = () => {
   }, [subjects, favorites, user, activeTab]);
 
   // Gestion des chargements et erreurs
-  if (subjectsLoading || categoriesLoading || userLoading) {
-    return <div className="text-center py-4">Chargement...</div>;
-  }
+  // Affichage progressif au lieu d'un chargement bloquant
   if (subjectsError) {
     return (
       <div className="text-center py-4 text-red-500">
@@ -188,18 +186,25 @@ const AllSubject = () => {
   }
 
   const handleFavorisClick = async (subjectId) => {
-    if (favorites[subjectId]) {
-      // Si le sujet est déjà favorisé, le retirer
-      await removeFromFavorites(subjectId);
-      setFavorites((prev) => ({ ...prev, [subjectId]: false }));
-    } else {
-      // Sinon, l'ajouter aux favoris
-      await addToFavorites(subjectId);
-      setFavorites((prev) => ({ ...prev, [subjectId]: true }));
-    }
+    // Sauvegarder l'état actuel pour le rollback
+    const originalFavorite = favorites[subjectId];
 
-    // Mettre à jour les sujets pour refléter le changement dans le tri "populaire"
-    fetchSubjects();
+    try {
+      // Mise à jour optimiste : mettre à jour l'UI immédiatement
+      if (favorites[subjectId]) {
+        // Si le sujet est déjà favorisé, le retirer
+        setFavorites((prev) => ({ ...prev, [subjectId]: false }));
+        await removeFromFavorites(subjectId);
+      } else {
+        // Sinon, l'ajouter aux favoris
+        setFavorites((prev) => ({ ...prev, [subjectId]: true }));
+        await addToFavorites(subjectId);
+      }
+    } catch (err) {
+      console.error("Erreur lors de la mise à jour des favoris :", err);
+      // En cas d'erreur, restaurer l'état précédent
+      setFavorites((prev) => ({ ...prev, [subjectId]: originalFavorite }));
+    }
   };
 
   // Préparation des données à afficher
@@ -228,13 +233,20 @@ const AllSubject = () => {
     <div className="w-full min-h-screen">
       <Header />
       <div className="max-w-6xl mx-auto p-5 bg-white">
-        <CategoryList
-          categories={displayedCategories}
-          onCategoryClick={handleCategoryClick}
-          subjectCounts={subjectCounts}
-        />
+        {/* Affichage progressif des catégories */}
+        {categoriesLoading ? (
+          <div className="flex justify-center items-center h-32">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#3B5F8A]"></div>
+          </div>
+        ) : (
+          <CategoryList
+            categories={displayedCategories}
+            onCategoryClick={handleCategoryClick}
+            subjectCounts={subjectCounts}
+          />
+        )}
 
-        {/* Onglets de filtrage */}
+        {/* Onglets de filtrage - toujours affichés */}
         <div className="flex justify-center mb-6 overflow-hidden">
           <div className="overflow-x-auto pb-2 max-w-full no-scrollbar">
             <div className="inline-flex space-x-2 p-1">
@@ -256,6 +268,7 @@ const AllSubject = () => {
                     : "bg-gray-200 text-gray-800 hover:bg-gray-300"
                 }`}
                 onClick={() => changeTab("favoris")}
+                disabled={userLoading}
               >
                 <svg
                   className="w-4 h-4 mr-1.5 transition-colors"
@@ -270,7 +283,8 @@ const AllSubject = () => {
                     d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"
                   />
                 </svg>
-                Favoris
+                Favoris{" "}
+                {userLoading && <span className="ml-1 text-xs">⏳</span>}
               </button>
               <button
                 className={`px-4 py-2 min-w-[90px] whitespace-nowrap rounded-xl font-medium transition-all duration-200 ${
@@ -296,15 +310,25 @@ const AllSubject = () => {
           </div>
         </div>
 
-        <SubjectList
-          subjects={filteredSubjects}
-          handleSubjectClick={handleSubjectClick}
-          onNavigateToAllSubjects={handleNavigateToAllSubjects}
-          onFavoritesUpdate={fetchSubjects}
-          handleFavorisClick={handleFavorisClick}
-          actionLoading={actionLoading}
-          favorites={favorites}
-        />
+        {/* Affichage progressif des sujets */}
+        {subjectsLoading ? (
+          <div className="flex justify-center items-center h-64">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#3B5F8A] mx-auto mb-4"></div>
+              <p className="text-gray-600">Chargement des sujets...</p>
+            </div>
+          </div>
+        ) : (
+          <SubjectList
+            subjects={filteredSubjects}
+            handleSubjectClick={handleSubjectClick}
+            onNavigateToAllSubjects={handleNavigateToAllSubjects}
+            onFavoritesUpdate={fetchSubjects}
+            handleFavorisClick={handleFavorisClick}
+            actionLoading={actionLoading}
+            favorites={favorites}
+          />
+        )}
       </div>
 
       {/* Ajoutez ce style dans votre CSS global ou utilisez une balise <style> dans votre composant */}
