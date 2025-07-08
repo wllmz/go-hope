@@ -6,8 +6,8 @@ console.log("Hostname:", hostname);
 
 // Choisir l'URL de l'API en fonction du nom de domaine
 const API_URL = hostname.includes("dev-app")
-  ? "https://dev-api.go-hope.fr/api"
-  : "https://api.go-hope.fr/api";
+  ? "https://dev-api.wllmz.fr/api"
+  : "https://api.wllmz.fr/api";
 
 console.log("API_URL:", API_URL);
 
