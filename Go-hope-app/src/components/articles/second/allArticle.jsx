@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import useArticles from "../../hooks/article/useArticles";
-import useCategories from "../../hooks/article/useCategories";
-import { useUserInfo } from "../../hooks/user/useUserInfo";
-import Header from "./Header";
-import CategoryList from "./CategoryList";
-import ArticleList from "./ArticleList";
-import ReadProgress from "./ReadProgress"; // Import du composant ReadProgress
+import useArticles from "../../../hooks/article/useArticles";
+import useCategories from "../../../hooks/article/useCategories";
+import { useUserInfo } from "../../../hooks/user/useUserInfo";
+import Header from "../Header";
+import CategoryList from "../CategoryList";
+import ArticleList from "../ArticleList";
+import ReadProgress from "../ReadProgress"; // Import du composant ReadProgress
 
 const AllArticle = () => {
   const navigate = useNavigate();
