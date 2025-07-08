@@ -29,8 +29,10 @@ jobs:
 
             echo "Déploiement production (frontend et backend)"
 
-            # Mise à jour du code
-            git pull origin main
+            # Mise à jour du code (force)
+            git fetch origin main
+            git reset --hard origin/main
+            git clean -fd
 
             # Arrêt des services
             docker-compose stop frontend backend traefik || true
